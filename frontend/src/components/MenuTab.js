@@ -422,16 +422,26 @@ function BlockActionEditor({ value, buttons, onUpdate }) {
 }
 
 // Create Menu View
-function CreateMenuView({ buttons, onBack }) {
+function CreateMenuView({ buttons, menus, onBack }) {
   const [name, setName] = useState('');
   const [selectedButtons, setSelectedButtons] = useState([]);
+  const [currentButtonId, setCurrentButtonId] = useState('');
 
-  const toggleButton = (buttonId) => {
-    setSelectedButtons(prev =>
-      prev.includes(buttonId)
-        ? prev.filter(id => id !== buttonId)
-        : [...prev, buttonId]
-    );
+  const handleAddButton = () => {
+    if (!currentButtonId) {
+      alert('Выберите кнопку');
+      return;
+    }
+    if (selectedButtons.includes(currentButtonId)) {
+      alert('Эта кнопка уже добавлена');
+      return;
+    }
+    setSelectedButtons([...selectedButtons, currentButtonId]);
+    setCurrentButtonId('');
+  };
+
+  const handleRemoveButton = (buttonId) => {
+    setSelectedButtons(selectedButtons.filter(id => id !== buttonId));
   };
 
   const handleSave = async () => {
@@ -452,6 +462,11 @@ function CreateMenuView({ buttons, onBack }) {
     } catch (error) {
       alert('Ошибка при создании меню');
     }
+  };
+
+  const getButtonName = (buttonId) => {
+    const button = buttons.find(b => b.id === buttonId);
+    return button ? button.name : buttonId;
   };
 
   return (
@@ -475,27 +490,65 @@ function CreateMenuView({ buttons, onBack }) {
       </div>
 
       <div className="form-group">
-        <label>Добавить кнопки:</label>
+        <div className="section-header">
+          <label>Кнопки меню:</label>
+        </div>
+        
         {buttons.length === 0 ? (
-          <div className="empty-state">Сначала создайте кнопки</div>
+          <div className="empty-state">Сначала создайте кнопки в разделе "Создать кнопки"</div>
         ) : (
-          <div className="buttons-list">
-            {buttons.map(btn => (
-              <label key={btn.id} className="button-card">
-                <input
-                  type="checkbox"
-                  checked={selectedButtons.includes(btn.id)}
-                  onChange={() => toggleButton(btn.id)}
-                />
-                <span className="button-name">{btn.name}</span>
-                <span className="button-actions">{btn.actions.length} действий</span>
-              </label>
-            ))}
-          </div>
+          <>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+              <select
+                value={currentButtonId}
+                onChange={(e) => setCurrentButtonId(e.target.value)}
+                className="action-select"
+                style={{ flex: 1 }}
+              >
+                <option value="">Выберите кнопку</option>
+                {buttons.map(btn => (
+                  <option key={btn.id} value={btn.id}>{btn.name}</option>
+                ))}
+              </select>
+              <button 
+                className="btn-primary btn-sm" 
+                onClick={handleAddButton}
+                style={{ whiteSpace: 'nowrap' }}
+              >
+                <FiPlus /> Добавить кнопку
+              </button>
+            </div>
+
+            {selectedButtons.length > 0 && (
+              <div className="selected-buttons-list">
+                <div style={{ fontSize: '13px', color: '#8d969e', marginBottom: '10px' }}>
+                  Добавленные кнопки ({selectedButtons.length}):
+                </div>
+                {selectedButtons.map((buttonId, index) => (
+                  <div key={buttonId} className="selected-button-item">
+                    <span className="button-order">#{index + 1}</span>
+                    <span className="button-name" style={{ flex: 1 }}>{getButtonName(buttonId)}</span>
+                    <button
+                      className="btn-icon-small btn-delete"
+                      onClick={() => handleRemoveButton(buttonId)}
+                      title="Удалить кнопку"
+                    >
+                      <FiTrash2 />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
 
-      <button className="btn-primary btn-block" onClick={handleSave} data-testid="save-menu-btn">
+      <button 
+        className="btn-primary btn-block" 
+        onClick={handleSave} 
+        data-testid="save-menu-btn"
+        disabled={selectedButtons.length === 0}
+      >
         Сохранить меню
       </button>
     </div>
