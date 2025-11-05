@@ -34,9 +34,14 @@ class TelegramBotManager:
             async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await self._handle_button_press(update, bot_id)
             
-            from telegram.ext import CallbackQueryHandler
+            # Add my_chat_member handler for bot block/unblock events
+            async def handle_my_chat_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
+                await self._handle_chat_member_update(update, bot_id)
+            
+            from telegram.ext import CallbackQueryHandler, ChatMemberHandler
             application.add_handler(MessageHandler(filters.ALL, handle_message))
             application.add_handler(CallbackQueryHandler(handle_callback_query))
+            application.add_handler(ChatMemberHandler(handle_my_chat_member, ChatMemberHandler.MY_CHAT_MEMBER))
             
             # Start application in background
             await application.initialize()
