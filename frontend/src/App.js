@@ -117,6 +117,13 @@ function App() {
             </div>
           )}
           <button 
+            className="btn-primary btn-broadcast"
+            onClick={() => setShowBroadcastModal(true)}
+            data-testid="broadcast-button"
+          >
+            <FiSend size={16} /> Массовая отправка
+          </button>
+          <button 
             className="btn-icon"
             onClick={() => setShowBotManager(!showBotManager)}
             data-testid="settings-button"
