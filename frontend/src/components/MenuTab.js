@@ -601,4 +601,111 @@ function AssignMenuView({ bots, menus, assignments, onBack }) {
   );
 }
 
+// Manage Buttons View
+function ManageButtonsView({ buttons, onBack }) {
+  const handleDelete = async (buttonId, buttonName) => {
+    if (!window.confirm(`Удалить кнопку "${buttonName}"?`)) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${API}/menu-buttons/${buttonId}`);
+      alert('Кнопка удалена!');
+      onBack();
+    } catch (error) {
+      console.error('Failed to delete button:', error);
+      alert('Ошибка при удалении кнопки');
+    }
+  };
+
+  return (
+    <div className="manage-buttons-view">
+      <div className="view-header">
+        <h3>Управление кнопками ({buttons.length})</h3>
+        <button className="btn-secondary" onClick={onBack}>
+          <FiX /> Назад
+        </button>
+      </div>
+
+      {buttons.length === 0 ? (
+        <div className="empty-state">Нет созданных кнопок</div>
+      ) : (
+        <div className="manage-list">
+          {buttons.map(button => (
+            <div key={button.id} className="manage-item">
+              <div className="manage-item-info">
+                <div className="manage-item-name">{button.name}</div>
+                <div className="manage-item-meta">
+                  {button.actions.length} действий
+                </div>
+              </div>
+              <button
+                className="btn-icon-small btn-delete"
+                onClick={() => handleDelete(button.id, button.name)}
+                title="Удалить кнопку"
+              >
+                <FiTrash2 />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Manage Menus View
+function ManageMenusView({ menus, onBack }) {
+  const handleDelete = async (menuId, menuName) => {
+    if (!window.confirm(`Удалить меню "${menuName}"?`)) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${API}/bot-menus/${menuId}`);
+      alert('Меню удалено!');
+      onBack();
+    } catch (error) {
+      console.error('Failed to delete menu:', error);
+      alert('Ошибка при удалении меню');
+    }
+  };
+
+  return (
+    <div className="manage-menus-view">
+      <div className="view-header">
+        <h3>Управление меню ({menus.length})</h3>
+        <button className="btn-secondary" onClick={onBack}>
+          <FiX /> Назад
+        </button>
+      </div>
+
+      {menus.length === 0 ? (
+        <div className="empty-state">Нет созданных меню</div>
+      ) : (
+        <div className="manage-list">
+          {menus.map(menu => (
+            <div key={menu.id} className="manage-item">
+              <div className="manage-item-info">
+                <div className="manage-item-name">{menu.name}</div>
+                <div className="manage-item-meta">
+                  {menu.button_ids.length} кнопок
+                </div>
+              </div>
+              <button
+                className="btn-icon-small btn-delete"
+                onClick={() => handleDelete(menu.id, menu.name)}
+                title="Удалить меню"
+              >
+                <FiTrash2 />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 export default MenuTab;
