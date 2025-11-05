@@ -40,9 +40,8 @@ function BotManager({ bots, onClose, onBotAdded, onBotDeleted, embedded = false 
     }
   };
 
-  return (
-    <div className="modal-overlay" data-testid="bot-manager-modal">
-      <div className="modal bot-manager-modal">
+  const content = (
+    <div>
         <div className="modal-header">
           <h2 className="modal-title">Управление ботами</h2>
           <button className="modal-close" onClick={onClose} data-testid="close-bot-manager">
