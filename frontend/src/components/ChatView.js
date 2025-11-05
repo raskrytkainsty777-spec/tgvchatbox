@@ -24,7 +24,17 @@ function ChatView({ chat, onMessageSent }) {
       loadMessages();
       markAsRead();
     }
+    loadQuickReplies();
   }, [chat?.id]);
+
+  const loadQuickReplies = async () => {
+    try {
+      const response = await axios.get(`${API}/quick-replies`);
+      setQuickReplies(response.data);
+    } catch (error) {
+      console.error('Failed to load quick replies:', error);
+    }
+  };
 
   useEffect(() => {
     scrollToBottom();
