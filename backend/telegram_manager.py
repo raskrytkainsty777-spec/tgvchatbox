@@ -359,6 +359,68 @@ class TelegramBotManager:
         try:
             # Get button details
             button = await self.db.menu_buttons.find_one({"id": button_id})
+
+    async def _handle_menu_command(self, bot_id: str, user_id: int, command: str) -> bool:
+        """Handle menu command and execute button actions"""
+        try:
+            # Get button id from command mapping
+            if not hasattr(self, 'command_button_map'):
+                return False
+            
+            button_id = self.command_button_map.get(f"{bot_id}_{command}")
+            if not button_id:
+                return False
+            
+            # Get button details
+            button = await self.db.menu_buttons.find_one({"id": button_id})
+            if not button:
+                return False
+            
+            chat_id = f"{bot_id}_{user_id}"
+            
+            # Execute button actions
+            for action in button.get("actions", []):
+                action_type = action.get("type")
+                action_value = action.get("value")
+                
+                if action_type == "text" and action_value:
+                    # Send text message
+                    text = action_value.get("text", "")
+                    await self.send_message(bot_id, user_id, text)
+                
+                elif action_type == "url" and action_value:
+                    # Send URL as text
+                    url = action_value.get("url", "")
+                    await self.send_message(bot_id, user_id, f"🔗 {url}")
+                
+                elif action_type == "label" and action_value:
+                    # Add label to chat
+                    label_id = action_value.get("label_id")
+                    if label_id:
+                        await self.db.chats.update_one(
+                            {"id": chat_id},
+                            {"$addToSet": {"labels": label_id}}
+                        )
+                        logger.info(f"Label {label_id} added to chat {chat_id}")
+                
+                elif action_type == "block" and action_value:
+                    # Send block text (nested buttons not supported in command menu)
+                    text = action_value.get("text", "")
+                    await self.send_message(bot_id, user_id, text)
+                
+                elif action_type == "back":
+                    # Show available commands
+                    await self.send_message(bot_id, user_id, "Используйте меню бота (☰) для выбора команды")
+            
+            logger.info(f"Menu command /{command} executed for user {user_id}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to handle menu command: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
+
             if not button:
                 logger.error(f"Button {button_id} not found")
                 return
