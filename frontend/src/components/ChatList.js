@@ -454,13 +454,12 @@ function ChatList({
                   onClick={() => onChatSelect(chat)}
                 >
                   <div 
-                    className={`chat-avatar ${chat.sale_amount ? 'buyer-avatar' : ''}`}
+                    className={`chat-avatar ${chat.sale_amount ? 'buyer-avatar' : 'clickable-avatar'}`}
                     onClick={(e) => {
-                      if (chat.sale_amount) {
-                        e.stopPropagation();
-                        handleStarClick(chat, e);
-                      }
+                      e.stopPropagation();
+                      handleStarClick(chat, e);
                     }}
+                    title={chat.sale_amount ? `Продажа: ${chat.sale_amount}` : 'Добавить продажу'}
                   >
                     {chat.sale_amount ? (
                       <div className="buyer-info">
