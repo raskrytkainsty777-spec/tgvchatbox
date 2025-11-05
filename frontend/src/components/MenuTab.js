@@ -768,6 +768,18 @@ function AssignMenuView({ bots, menus, assignments, onBack }) {
                     Сохранить
                   </button>
                 </div>
+                
+                {/* Refresh commands button - shown only if bot has assigned menu */}
+                {assignments.find(a => a.bot_id === bot.id) && (
+                  <button
+                    className="btn-secondary btn-sm"
+                    onClick={() => handleRefreshCommands(bot.id)}
+                    style={{ marginTop: '10px', width: '100%' }}
+                    title="Переназначить меню для обновления команд в Telegram"
+                  >
+                    🔄 Обновить команды
+                  </button>
+                )}
               </div>
             ))}
           </div>
