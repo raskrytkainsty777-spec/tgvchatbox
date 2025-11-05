@@ -528,42 +528,49 @@
 }
 
 
-/* Star Icon for Sales */
-.chat-star-container {
+/* Buyer Avatar Styles */
+.clickable-avatar {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clickable-avatar:hover {
+  background: #2a3f5f;
+  transform: scale(1.05);
+}
+
+.buyer-avatar {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0 !important;
+}
+
+.buyer-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
+
+.buyer-info {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 12px;
-  cursor: pointer;
-  transition: transform 0.2s;
+  width: 100%;
+  height: 100%;
+  color: #0e1621;
 }
 
-.chat-star-container:hover {
-  transform: scale(1.1);
+.dollar-icon {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 2px;
 }
 
-.chat-star {
-  font-size: 20px;
-  color: #8d969e;
-  transition: all 0.2s;
-}
-
-.chat-star.filled {
-  color: #FFD700;
-  filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.5));
-}
-
-.chat-star-container:hover .chat-star {
-  color: #FFD700;
-}
-
-.sale-amount {
-  font-size: 10px;
-  color: #FFD700;
-  font-weight: 600;
-  margin-top: 2px;
-  text-align: center;
+.buyer-amount {
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 /* Sale Popup */
