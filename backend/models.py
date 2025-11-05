@@ -60,3 +60,60 @@ class BroadcastMessage(BaseModel):
 
 class MarkReadRequest(BaseModel):
     chat_id: str
+
+# ============= NEW MODELS =============
+
+class Label(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    color: str  # hex color like #FF5733
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class LabelCreate(BaseModel):
+    name: str
+    color: str
+
+class LabelResponse(BaseModel):
+    id: str
+    name: str
+    color: str
+    created_at: datetime
+
+class QuickReply(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    shortcut: str  # например "привет" для /привет
+    text: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class QuickReplyCreate(BaseModel):
+    shortcut: str
+    text: str
+
+class QuickReplyResponse(BaseModel):
+    id: str
+    shortcut: str
+    text: str
+    created_at: datetime
+
+class AutoReply(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    keywords: List[str]  # ключевые слова
+    message: str
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class AutoReplyCreate(BaseModel):
+    keywords: List[str]
+    message: str
+    is_active: bool = True
+
+class AutoReplyResponse(BaseModel):
+    id: str
+    keywords: List[str]
+    message: str
+    is_active: bool
+    created_at: datetime
+
+class SetLabelsRequest(BaseModel):
+    chat_ids: List[str]
+    label_ids: List[str]
