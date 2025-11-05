@@ -64,6 +64,16 @@
   padding: 20px;
   border-radius: 10px;
   text-align: center;
+  transition: all 0.2s;
+}
+
+.stat-card.clickable {
+  cursor: pointer;
+}
+
+.stat-card.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(82, 136, 193, 0.3);
 }
 
 .stat-number {
