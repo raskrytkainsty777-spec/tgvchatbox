@@ -536,7 +536,7 @@ class TelegramChatPanelTester:
             
         # Test 5: Test with invalid amount (negative)
         if self.existing_chats:
-            invalid_amount_data = {"amount": -100.0}
+            invalid_amount_data = {"chat_id": self.existing_chats[0]['id'], "amount": -100.0}
             response = self.make_request("POST", f"/chats/{self.existing_chats[0]['id']}/sale", invalid_amount_data)
             if response and response.status_code >= 400:
                 self.log_result("Negative Amount", True, f"Correctly rejected negative amount: {response.status_code}")
