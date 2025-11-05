@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Test Suite for Bot Menu System
-Tests all menu-related endpoints with comprehensive scenarios
+Backend API Test Suite for Telegram Chat Panel
+Tests menu system and sales tracking system endpoints
 """
 
 import requests
@@ -12,7 +12,7 @@ from datetime import datetime
 # Get backend URL from frontend env
 BACKEND_URL = "https://menu-bot-panel.preview.emergentagent.com/api"
 
-class MenuSystemTester:
+class TelegramChatPanelTester:
     def __init__(self):
         self.base_url = BACKEND_URL
         self.session = requests.Session()
