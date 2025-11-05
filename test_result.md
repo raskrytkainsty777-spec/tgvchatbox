@@ -243,6 +243,16 @@ agent_communication:
       - GET /api/bot-menus - retrieve all menus
       - POST /api/bot-menu-assignments - assign menu to bot
       - GET /api/bot-menu-assignments - retrieve all assignments
+  - agent: "main"
+    message: |
+      Fixed button creation API format issue. Modified handleSave function in CreateButtonView to format action values correctly:
+      - text actions: string -> {text: value}
+      - url actions: string -> {url: value}  
+      - label actions: string -> {label_id: value}
+      - back actions: null (no value needed)
+      - block actions: already in correct dict format
+      
+      Ready for frontend retesting to verify button creation now works.
   - agent: "testing"
     message: |
       ✅ Bot Menu System API Testing COMPLETED Successfully!
