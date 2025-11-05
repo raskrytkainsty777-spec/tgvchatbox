@@ -30,10 +30,36 @@ body {
   flex-shrink: 0;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-icon {
+  background: #4a9eff !important;
+  color: #fff !important;
+}
+
+.user-icon:hover {
+  background: #3a8ee5 !important;
+  transform: translateY(-1px);
+}
+
 .app-title {
   font-size: 18px;
   font-weight: 500;
   color: #fff;
+}
+
+.loading-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0e1621;
+  color: #fff;
+  font-size: 16px;
 }
 
 .header-actions {
