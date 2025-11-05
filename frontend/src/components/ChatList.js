@@ -196,6 +196,10 @@ function ChatList({
         
         {showFilterMenu && (
           <div className="filter-menu">
+            <div className="filter-option" onClick={clearAllFilters}>
+              <span>Все</span>
+              <span className="filter-count">{chats.length}</span>
+            </div>
             <div className="filter-option" onClick={() => applyFilter('unread')}>
               <span>Непрочитанные</span>
               <span className="filter-count">{countChatsForFilter('unread')}</span>
