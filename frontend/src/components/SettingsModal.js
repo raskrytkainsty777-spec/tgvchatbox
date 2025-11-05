@@ -461,7 +461,7 @@ function WelcomeMessagesTab({ messages, bots, onUpdate }) {
     }
   };
 
-  const handleCreate = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!text.trim() || selectedBots.length === 0) {
       alert('Выберите ботов и введите текст сообщения');
@@ -477,9 +477,10 @@ function WelcomeMessagesTab({ messages, bots, onUpdate }) {
       });
       setText('');
       setSelectedBots([]);
+      setEditingGroup(null);
       onUpdate();
     } catch (error) {
-      alert('Не удалось создать приветственное сообщение');
+      alert(editingGroup ? 'Не удалось обновить приветственное сообщение' : 'Не удалось создать приветственное сообщение');
     } finally {
       setLoading(false);
     }
