@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 @api_router.post("/bots", response_model=BotResponse)
 async def add_bot(bot_data: BotCreate):
-    \"\"\"Add a new Telegram bot\"\"\"
+    """Add a new Telegram bot"""
     try:
         bot_id = str(uuid.uuid4())
         bot_info = await telegram_manager.add_bot(bot_id, bot_data.token)
@@ -74,13 +74,13 @@ async def add_bot(bot_data: BotCreate):
 
 @api_router.get("/bots", response_model=List[BotResponse])
 async def get_bots():
-    \"\"\"Get all bots\"\"\"
+    """Get all bots"""
     bots = await db.bots.find({}, {"_id": 0}).to_list(100)
     return [BotResponse(**bot) for bot in bots]
 
 @api_router.delete("/bots/{bot_id}")
 async def delete_bot(bot_id: str):
-    \"\"\"Delete a bot\"\"\"
+    """Delete a bot"""
     try:
         await telegram_manager.remove_bot(bot_id)
         await db.bots.delete_one({"id": bot_id})
@@ -93,7 +93,7 @@ async def delete_bot(bot_id: str):
 
 @api_router.patch("/bots/{bot_id}/toggle")
 async def toggle_bot(bot_id: str):
-    \"\"\"Toggle bot active status\"\"\"
+    """Toggle bot active status"""
     bot = await db.bots.find_one({"id": bot_id})
     if not bot:
         raise HTTPException(status_code=404, detail="Bot not found")
@@ -109,7 +109,7 @@ async def toggle_bot(bot_id: str):
 
 @api_router.get("/chats", response_model=List[Chat])
 async def get_chats(bot_ids: Optional[str] = None, search: Optional[str] = None):
-    \"\"\"Get all chats with optional filtering\"\"\"
+    """Get all chats with optional filtering"""
     query = {}
     
     # Filter by bot IDs
@@ -130,7 +130,7 @@ async def get_chats(bot_ids: Optional[str] = None, search: Optional[str] = None)
 
 @api_router.get("/chats/{chat_id}", response_model=Chat)
 async def get_chat(chat_id: str):
-    \"\"\"Get single chat\"\"\"
+    """Get single chat"""
     chat = await db.chats.find_one({"id": chat_id}, {"_id": 0})
     if not chat:
         raise HTTPException(status_code=404, detail="Chat not found")
@@ -140,7 +140,7 @@ async def get_chat(chat_id: str):
 
 @api_router.get("/messages/{chat_id}", response_model=List[Message])
 async def get_messages(chat_id: str, limit: int = 100):
-    \"\"\"Get messages for a chat\"\"\"
+    """Get messages for a chat"""
     messages = await db.messages.find(
         {"chat_id": chat_id}, 
         {"_id": 0}
@@ -152,7 +152,7 @@ async def get_messages(chat_id: str, limit: int = 100):
 
 @api_router.post("/messages", response_model=Message)
 async def send_message(message_data: MessageCreate):
-    \"\"\"Send a message to user\"\"\"
+    """Send a message to user"""
     try:
         message = await telegram_manager.send_message(
             message_data.bot_id,
@@ -167,7 +167,7 @@ async def send_message(message_data: MessageCreate):
 
 @api_router.post("/messages/broadcast")
 async def broadcast_message(broadcast_data: BroadcastMessage):
-    \"\"\"Send message to multiple users\"\"\"
+    """Send message to multiple users"""
     try:
         result = await telegram_manager.broadcast_message(
             broadcast_data.bot_id,
@@ -187,7 +187,7 @@ async def send_file(
     caption: str = Form(""),
     file: UploadFile = File(...)
 ):
-    \"\"\"Upload and send file to user\"\"\"
+    """Upload and send file to user"""
     try:
         # Save file temporarily
         file_path = f"/tmp/{uuid.uuid4()}_{file.filename}"
@@ -208,7 +208,7 @@ async def send_file(
 
 @api_router.patch("/messages/read")
 async def mark_messages_read(request: MarkReadRequest):
-    \"\"\"Mark all messages in chat as read\"\"\"
+    """Mark all messages in chat as read"""
     await db.messages.update_many(
         {"chat_id": request.chat_id, "is_read": False},
         {"$set": {"is_read": True}}
@@ -221,7 +221,7 @@ async def mark_messages_read(request: MarkReadRequest):
 
 @api_router.get("/stats")
 async def get_stats():
-    \"\"\"Get statistics\"\"\"
+    """Get statistics"""
     total_bots = await db.bots.count_documents({})
     active_bots = await db.bots.count_documents({"is_active": True})
     total_chats = await db.chats.count_documents({})
@@ -256,7 +256,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
-    \"\"\"Initialize bots on startup\"\"\"
+    """Initialize bots on startup"""
     logger.info("Starting up... Loading existing bots")
     bots = await db.bots.find({"is_active": True}).to_list(100)
     for bot in bots:
@@ -268,7 +268,7 @@ async def startup_event():
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    \"\"\"Shutdown all bots\"\"\"
+    """Shutdown all bots"""
     for bot_id in list(telegram_manager.applications.keys()):
         try:
             await telegram_manager.remove_bot(bot_id)
