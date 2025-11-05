@@ -158,11 +158,34 @@ function CreateButtonView({ labels, buttons, onBack }) {
       return;
     }
 
+    // Format actions for API - convert string values to dict format
+    const formattedActions = actions.map(action => {
+      let formattedValue = action.value;
+      
+      // Convert string values to dict format based on action type
+      if (action.type === 'text' && typeof action.value === 'string') {
+        formattedValue = { text: action.value };
+      } else if (action.type === 'url' && typeof action.value === 'string') {
+        formattedValue = { url: action.value };
+      } else if (action.type === 'label' && typeof action.value === 'string') {
+        formattedValue = { label_id: action.value };
+      } else if (action.type === 'back') {
+        formattedValue = null;
+      }
+      // 'block' type already has dict format from BlockActionEditor
+      
+      return {
+        type: action.type,
+        value: formattedValue
+      };
+    });
+
     try {
-      await axios.post(`${API}/menu-buttons`, { name, actions });
+      await axios.post(`${API}/menu-buttons`, { name, actions: formattedActions });
       alert('Кнопка создана!');
       onBack();
     } catch (error) {
+      console.error('Failed to create button:', error);
       alert('Ошибка при создании кнопки');
     }
   };
