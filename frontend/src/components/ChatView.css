@@ -165,6 +165,7 @@
 
 .message-input {
   flex: 1;
+  max-width: 600px;
   background: #0e1621;
   border: 1px solid #242f3d;
   border-radius: 24px;
@@ -177,6 +178,49 @@
 
 .message-input:focus {
   border-color: #5288c1;
+}
+
+.quick-replies-menu {
+  position: absolute;
+  bottom: 80px;
+  left: 70px;
+  background: #17212b;
+  border: 1px solid #242f3d;
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 300px;
+  max-width: 500px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.quick-reply-option {
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid #0e1621;
+}
+
+.quick-reply-option:last-child {
+  border-bottom: none;
+}
+
+.quick-reply-option:hover {
+  background: #242f3d;
+}
+
+.qr-shortcut {
+  font-size: 13px;
+  color: #5288c1;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.qr-text {
+  font-size: 12px;
+  color: #8d969e;
 }
 
 .input-btn,
