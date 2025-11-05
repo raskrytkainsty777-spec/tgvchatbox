@@ -13,7 +13,11 @@ import uuid
 
 from models import (
     BotCreate, BotResponse, Chat, Message, MessageCreate, 
-    BroadcastMessage, MarkReadRequest
+    BroadcastMessage, MarkReadRequest,
+    Label, LabelCreate, LabelResponse,
+    QuickReply, QuickReplyCreate, QuickReplyResponse,
+    AutoReply, AutoReplyCreate, AutoReplyResponse,
+    SetLabelsRequest
 )
 from telegram_manager import get_telegram_manager
 
