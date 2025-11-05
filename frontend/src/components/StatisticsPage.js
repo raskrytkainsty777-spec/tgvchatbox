@@ -220,41 +220,12 @@ function StatisticsPage({ onBack }) {
       </div>
 
       <div className="stats-sections">
-        {/* Sales by Bot */}
-        <div className="stats-section">
-          <h2>Продажи по ботам</h2>
-          <div className="stats-table">
-            {!statistics?.sales_by_bot || statistics.sales_by_bot.length === 0 ? (
-              <div className="no-data">Нет данных</div>
-            ) : (
-              <table>
-                <thead>
-                  <tr>
-                    <th style={{width: '50%'}}>Бот</th>
-                    <th style={{width: '15%'}}>Кол-во</th>
-                    <th style={{width: '35%'}}>Сумма</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {statistics.sales_by_bot.map((bot, index) => (
-                    <tr key={index}>
-                      <td>@{bot.bot_username}</td>
-                      <td>{bot.count}</td>
-                      <td className="amount">{bot.total.toFixed(2)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </div>
-
         {/* Sales by Day */}
-        <div className="stats-section">
+        <div className="stats-section full-width">
           <h2>Продажи по дням</h2>
           <div className="stats-table">
-            {!statistics?.sales_by_day || statistics.sales_by_day.length === 0 ? (
-              <div className="no-data">Нет данных</div>
+            {!filteredStats?.sales_by_day || filteredStats.sales_by_day.length === 0 ? (
+              <div className="no-data">Нет данных за выбранный период</div>
             ) : (
               <table>
                 <thead>
@@ -265,9 +236,9 @@ function StatisticsPage({ onBack }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {statistics.sales_by_day.map((day, index) => (
+                  {filteredStats.sales_by_day.map((day, index) => (
                     <tr key={index}>
-                      <td>{day.date}</td>
+                      <td>{new Date(day.date).toLocaleDateString('ru-RU')}</td>
                       <td>{day.count}</td>
                       <td className="amount">{day.total.toFixed(2)}</td>
                     </tr>
