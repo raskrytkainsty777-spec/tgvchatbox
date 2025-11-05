@@ -545,7 +545,7 @@ class TelegramChatPanelTester:
                 
         # Test 6: Test with zero amount
         if self.existing_chats:
-            zero_amount_data = {"amount": 0.0}
+            zero_amount_data = {"chat_id": self.existing_chats[0]['id'], "amount": 0.0}
             response = self.make_request("POST", f"/chats/{self.existing_chats[0]['id']}/sale", zero_amount_data)
             if response and response.status_code >= 400:
                 self.log_result("Zero Amount", True, f"Correctly rejected zero amount: {response.status_code}")
