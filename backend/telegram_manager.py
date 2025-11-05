@@ -418,9 +418,53 @@ class TelegramBotManager:
                         logger.info(f"Label {label_id} added to chat {chat_id}")
                 
                 elif action_type == "block" and action_value:
-                    # Send block text (nested buttons not supported in command menu)
+                    # Send block text with nested buttons
                     text = action_value.get("text", "")
-                    await self.send_message(bot_id, user_id, text)
+                    nested_button_ids = action_value.get("button_ids", [])
+                    
+                    if nested_button_ids:
+                        from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+                        
+                        # Fetch nested buttons
+                        nested_buttons_cursor = self.db.menu_buttons.find({"id": {"$in": nested_button_ids}})
+                        nested_buttons = await nested_buttons_cursor.to_list(length=100)
+                        
+                        # Create keyboard - each button triggers its command
+                        keyboard = []
+                        for nb in nested_buttons:
+                            # Get command for this button
+                            nb_command = nb.get('command')
+                            if not nb_command:
+                                # Generate command from name if not specified
+                                import re
+                                nb_command = nb['name'].lower()
+                                nb_command = re.sub(r'[^a-z0-9а-я\s]', '', nb_command)
+                                translit_map = {
+                                    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
+                                    'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+                                    'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+                                    'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+                                    'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+                                }
+                                for cyr, lat in translit_map.items():
+                                    nb_command = nb_command.replace(cyr, lat)
+                                nb_command = nb_command.replace(' ', '_')
+                                nb_command = re.sub(r'[^a-z0-9_]', '', nb_command)
+                                if not nb_command or not nb_command[0].isalpha():
+                                    nb_command = 'btn_' + nb_command
+                                nb_command = nb_command[:32]
+                            
+                            # Create button that sends command as callback data
+                            callback_data = f"cmd_{nb['id']}"
+                            keyboard.append([InlineKeyboardButton(nb["name"], callback_data=callback_data)])
+                        
+                        reply_markup = InlineKeyboardMarkup(keyboard)
+                        
+                        bot = self.bots[bot_id]
+                        await bot.send_message(chat_id=user_id, text=text, reply_markup=reply_markup)
+                    else:
+                        # No nested buttons, just send text
+                        await self.send_message(bot_id, user_id, text)
                 
                 elif action_type == "back":
                     # Show available commands
