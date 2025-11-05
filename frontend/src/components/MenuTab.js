@@ -808,16 +808,23 @@ function ManageButtonsView({ labels, buttons, onBack }) {
     });
 
     try {
+      const buttonData = { 
+        name, 
+        command: command.trim() || null, // Send command if not empty
+        actions: formattedActions 
+      };
+      
       if (editingButton) {
         // Update existing button
-        await axios.put(`${API}/menu-buttons/${editingButton.id}`, { name, actions: formattedActions });
+        await axios.put(`${API}/menu-buttons/${editingButton.id}`, buttonData);
         alert('Кнопка обновлена!');
       } else {
         // Create new button
-        await axios.post(`${API}/menu-buttons`, { name, actions: formattedActions });
+        await axios.post(`${API}/menu-buttons`, buttonData);
         alert('Кнопка создана!');
       }
       setName('');
+      setCommand('');
       setActions([]);
       setShowCreateForm(false);
       setEditingButton(null);
