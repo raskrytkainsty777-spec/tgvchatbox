@@ -400,14 +400,6 @@ class TelegramBotManager:
             import traceback
             traceback.print_exc()
 
-            )
-            logger.info(f"Menu sent to user {user_id} for bot {bot_id}")
-            
-        except Exception as e:
-            logger.error(f"Failed to send bot menu: {e}")
-            import traceback
-            traceback.print_exc()
-
                         logger.info(f"Auto-reply sent to user {user_id} for keyword '{keyword}'")
                     except Exception as e:
                         logger.error(f"Failed to send auto-reply: {e}")
