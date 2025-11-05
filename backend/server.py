@@ -313,11 +313,27 @@ async def delete_label(label_id: str):
 
 @api_router.patch("/chats/labels")
 async def set_chat_labels(request: SetLabelsRequest):
-    """Set labels for chats"""
-    await db.chats.update_many(
-        {"id": {"$in": request.chat_ids}},
-        {"$set": {"label_ids": request.label_ids}}
-    )
+    """Set labels for chats - preserves system labels"""
+    # Get chats to preserve their system labels
+    chats = await db.chats.find({"id": {"$in": request.chat_ids}}).to_list(None)
+    
+    # Get system labels (like "Покупатели")
+    system_labels = await db.labels.find({"is_system": True}).to_list(None)
+    system_label_ids = [label["id"] for label in system_labels]
+    
+    # Update each chat, preserving system labels
+    for chat in chats:
+        existing_labels = chat.get("label_ids", [])
+        # Keep system labels that were already on the chat
+        preserved_system_labels = [lid for lid in existing_labels if lid in system_label_ids]
+        # Combine new labels with preserved system labels
+        final_labels = list(set(request.label_ids + preserved_system_labels))
+        
+        await db.chats.update_one(
+            {"id": chat["id"]},
+            {"$set": {"label_ids": final_labels}}
+        )
+    
     return {"success": True}
 
 # ============= QUICK REPLY ENDPOINTS =============
