@@ -7,7 +7,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 function MenuTab({ bots = [] }) {
-  const [view, setView] = useState('main'); // main, createButton, createMenu, assignMenu
+  const [view, setView] = useState('main'); // main, createButton, createMenu, assignMenu, manageButtons, manageMenus
   const [buttons, setButtons] = useState([]);
   const [menus, setMenus] = useState([]);
   const [assignments, setAssignments] = useState([]);
