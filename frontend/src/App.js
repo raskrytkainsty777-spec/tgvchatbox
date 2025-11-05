@@ -78,7 +78,13 @@ function App() {
   const loadBots = async () => {
     try {
       const response = await axios.get(`${API}/bots`);
-      const botsData = response.data;
+      let botsData = response.data;
+      
+      // Фильтровать ботов на основе прав пользователя
+      if (user && user.role === 'user' && user.bot_ids.length > 0) {
+        botsData = botsData.filter(bot => user.bot_ids.includes(bot.id));
+      }
+      
       setBots(botsData);
       
       // Автоматически выбрать все активные боты при первой загрузке
