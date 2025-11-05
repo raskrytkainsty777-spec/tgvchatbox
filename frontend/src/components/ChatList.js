@@ -50,6 +50,10 @@ function ChatList({
       return chats.filter(chat => 
         chat.label_ids && chat.label_ids.includes(labelId)
       ).length;
+    } else if (filterType === 'online') {
+      return chats.filter(chat => chat.bot_status !== 'blocked').length;
+    } else if (filterType === 'offline') {
+      return chats.filter(chat => chat.bot_status === 'blocked').length;
     }
     return 0;
   };
