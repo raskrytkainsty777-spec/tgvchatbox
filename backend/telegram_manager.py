@@ -518,34 +518,25 @@ class TelegramBotManager:
                         nested_buttons_cursor = self.db.menu_buttons.find({"id": {"$in": nested_button_ids}})
                         nested_buttons = await nested_buttons_cursor.to_list(length=100)
                         
-                        # Create keyboard - each button triggers its command
+                        # Create keyboard - check if button has URL action for direct link
                         keyboard = []
                         for nb in nested_buttons:
-                            # Get command for this button
-                            nb_command = nb.get('command')
-                            if not nb_command:
-                                # Generate command from name if not specified
-                                import re
-                                nb_command = nb['name'].lower()
-                                nb_command = re.sub(r'[^a-z0-9а-я\s]', '', nb_command)
-                                translit_map = {
-                                    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
-                                    'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
-                                    'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
-                                    'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
-                                    'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
-                                }
-                                for cyr, lat in translit_map.items():
-                                    nb_command = nb_command.replace(cyr, lat)
-                                nb_command = nb_command.replace(' ', '_')
-                                nb_command = re.sub(r'[^a-z0-9_]', '', nb_command)
-                                if not nb_command or not nb_command[0].isalpha():
-                                    nb_command = 'btn_' + nb_command
-                                nb_command = nb_command[:32]
+                            # Check if button has URL action (first action only for simplicity)
+                            has_url_action = False
+                            url_value = None
+                            if nb.get('actions'):
+                                first_action = nb['actions'][0]
+                                if first_action.get('type') == 'url' and first_action.get('value'):
+                                    has_url_action = True
+                                    url_value = first_action['value'].get('url', '')
                             
-                            # Create button that sends command as callback data
-                            callback_data = f"cmd_{nb['id']}"
-                            keyboard.append([InlineKeyboardButton(nb["name"], callback_data=callback_data)])
+                            if has_url_action and url_value:
+                                # Create button with direct URL link
+                                keyboard.append([InlineKeyboardButton(nb["name"], url=url_value)])
+                            else:
+                                # Create button with callback for other actions
+                                callback_data = f"cmd_{nb['id']}"
+                                keyboard.append([InlineKeyboardButton(nb["name"], callback_data=callback_data)])
                         
                         reply_markup = InlineKeyboardMarkup(keyboard)
                         
