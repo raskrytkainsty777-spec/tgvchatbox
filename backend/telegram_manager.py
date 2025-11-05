@@ -369,10 +369,60 @@ class TelegramBotManager:
             traceback.print_exc()
 
     async def _handle_button_press(self, update: Update, bot_id: str):
-        """Handle button press from inline keyboard (not used for command menu)"""
-        # This function is for inline keyboards, which we don't use anymore
-        # Keeping for potential future use
-        pass
+        """Handle button press from inline keyboard (for block actions)"""
+        query = update.callback_query
+        if not query:
+            return
+        
+        await query.answer()
+        
+        user_id = query.from_user.id
+        callback_data = query.data
+        
+        # Parse button id from callback data
+        if not callback_data.startswith("cmd_"):
+            return
+        
+        button_id = callback_data[4:]  # Remove "cmd_" prefix
+        
+        try:
+            # Get button details
+            button = await self.db.menu_buttons.find_one({"id": button_id})
+            if not button:
+                logger.error(f"Button {button_id} not found")
+                return
+            
+            # Execute the button's command
+            command = button.get('command')
+            if not command:
+                # Generate command from name
+                import re
+                command = button['name'].lower()
+                command = re.sub(r'[^a-z0-9а-я\s]', '', command)
+                translit_map = {
+                    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
+                    'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+                    'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+                    'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+                    'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+                }
+                for cyr, lat in translit_map.items():
+                    command = command.replace(cyr, lat)
+                command = command.replace(' ', '_')
+                command = re.sub(r'[^a-z0-9_]', '', command)
+                if not command or not command[0].isalpha():
+                    command = 'btn_' + command
+                command = command[:32]
+            
+            # Execute the button's actions using the menu command handler
+            await self._handle_menu_command(bot_id, user_id, command)
+            
+            logger.info(f"Inline button {button['name']} executed for user {user_id}")
+            
+        except Exception as e:
+            logger.error(f"Failed to handle button press: {e}")
+            import traceback
+            traceback.print_exc()
     
     async def _handle_menu_command(self, bot_id: str, user_id: int, command: str) -> bool:
         """Handle menu command and execute button actions"""
