@@ -30,7 +30,13 @@ class TelegramBotManager:
             async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await self._handle_incoming_message(update, bot_id)
             
+            # Add callback query handler for button presses
+            async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
+                await self._handle_button_press(update, bot_id)
+            
+            from telegram.ext import CallbackQueryHandler
             application.add_handler(MessageHandler(filters.ALL, handle_message))
+            application.add_handler(CallbackQueryHandler(handle_callback_query))
             
             # Start application in background
             await application.initialize()
