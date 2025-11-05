@@ -21,7 +21,8 @@ from models import (
     WelcomeMessage, WelcomeMessageCreate, WelcomeMessageResponse,
     MenuButton, MenuButtonCreate, MenuButtonResponse,
     BotMenu, BotMenuCreate, BotMenuResponse,
-    BotMenuAssignment, BotMenuAssignmentResponse
+    BotMenuAssignment, BotMenuAssignmentResponse,
+    SaleCreate, SaleResponse, SalesStatistics, ExportUsernamesRequest
 )
 from telegram_manager import get_telegram_manager
 
