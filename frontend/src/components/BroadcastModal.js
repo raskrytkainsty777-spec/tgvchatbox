@@ -50,6 +50,26 @@ function BroadcastModal({ bots, onClose, onSuccess }) {
     }
   };
 
+  const handleToggleIncludeLabel = (labelId) => {
+    setSelectedLabelIds(prev => {
+      if (prev.includes(labelId)) {
+        return prev.filter(id => id !== labelId);
+      } else {
+        return [...prev, labelId];
+      }
+    });
+  };
+
+  const handleToggleExcludeLabel = (labelId) => {
+    setExcludeLabelIds(prev => {
+      if (prev.includes(labelId)) {
+        return prev.filter(id => id !== labelId);
+      } else {
+        return [...prev, labelId];
+      }
+    });
+  };
+
   const handleSend = async (e) => {
     e.preventDefault();
     if (!message.trim() || selectedBots.length === 0) {
