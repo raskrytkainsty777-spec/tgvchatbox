@@ -23,7 +23,8 @@ from models import (
     MenuButton, MenuButtonCreate, MenuButtonResponse,
     BotMenu, BotMenuCreate, BotMenuResponse,
     BotMenuAssignment, BotMenuAssignmentResponse,
-    SaleCreate, SaleResponse, SalesStatistics, ExportUsernamesRequest
+    SaleCreate, SaleResponse, SalesStatistics, ExportUsernamesRequest,
+    Timer, TimerCreate, TimerResponse
 )
 from telegram_manager import get_telegram_manager
 
