@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiSearch, FiCheckSquare, FiSquare, FiFilter, FiSend, FiStar, FiDownload } from 'react-icons/fi';
+import { FiSearch, FiCheckSquare, FiSquare, FiFilter, FiSend, FiDollarSign, FiDownload } from 'react-icons/fi';
 import './ChatList.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
