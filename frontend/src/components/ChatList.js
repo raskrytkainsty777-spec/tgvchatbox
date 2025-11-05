@@ -467,6 +467,34 @@ function ChatList({
           }}
         />
       )}
+
+      {/* Sale Popup */}
+      {showSalePopup && (
+        <div className="modal-overlay" onClick={() => setShowSalePopup(false)}>
+          <div className="sale-popup" onClick={(e) => e.stopPropagation()}>
+            <h3>Сумма продажи</h3>
+            <p className="sale-chat-name">
+              {saleChat?.first_name || saleChat?.username || 'User'}
+            </p>
+            <input
+              type="number"
+              placeholder="Введите сумму"
+              value={saleAmount}
+              onChange={(e) => setSaleAmount(e.target.value)}
+              className="sale-input"
+              autoFocus
+            />
+            <div className="sale-actions">
+              <button onClick={() => setShowSalePopup(false)} className="cancel-btn">
+                Отмена
+              </button>
+              <button onClick={handleSaveSale} className="save-btn">
+                ОК
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
