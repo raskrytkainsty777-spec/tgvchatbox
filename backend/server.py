@@ -219,7 +219,8 @@ async def send_message(message_data: MessageCreate):
             message_data.bot_id,
             message_data.user_id,
             message_data.text,
-            message_data.file_id
+            message_data.file_id,
+            message_data.reply_to_message_id
         )
         return Message(**message)
     except Exception as e:
