@@ -136,6 +136,7 @@
   border-radius: 12px;
   padding: 20px;
   border: 1px solid #242f3d;
+  min-width: 0;
 }
 
 .stats-section h2 {
