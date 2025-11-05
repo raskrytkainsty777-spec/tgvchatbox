@@ -199,23 +199,60 @@ function BroadcastModal({ bots, onClose, onSuccess }) {
             </div>
           </div>
 
-          {/* 2. Получатели */}
+          {/* 2. Фильтры по меткам */}
           <div className="form-section">
-            <h3>2. По кому рассылать:</h3>
-            <select
-              value={recipientType}
-              onChange={(e) => setRecipientType(e.target.value)}
-              disabled={sending}
-              className="recipient-select"
-            >
-              <option value="all">По всем пользователям в боте</option>
-              <option value="label">По меткам</option>
-            </select>
+            <h3>2. Рассылать по меткам (включить):</h3>
+            <div className="labels-list">
+              {labels.length === 0 ? (
+                <p className="no-labels">Нет меток</p>
+              ) : (
+                labels.map(label => (
+                  <label key={label.id} className="label-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={selectedLabelIds.includes(label.id)}
+                      onChange={() => handleToggleIncludeLabel(label.id)}
+                      disabled={sending}
+                    />
+                    <span className="label-dot" style={{ backgroundColor: label.color }}></span>
+                    <span>{label.name}</span>
+                  </label>
+                ))
+              )}
+            </div>
+            <p className="hint">Не выбрано = рассылка по всем</p>
+          </div>
 
+          {/* 3. Исключить метки */}
+          <div className="form-section">
+            <h3>3. Не рассылать по меткам (исключить):</h3>
+            <div className="labels-list">
+              {labels.length === 0 ? (
+                <p className="no-labels">Нет меток</p>
+              ) : (
+                labels.map(label => (
+                  <label key={label.id} className="label-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={excludeLabelIds.includes(label.id)}
+                      onChange={() => handleToggleExcludeLabel(label.id)}
+                      disabled={sending}
+                    />
+                    <span className="label-dot" style={{ backgroundColor: label.color }}></span>
+                    <span>{label.name}</span>
+                  </label>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* 4. Сообщение (старая секция 2 становится 4) */}
+          <div className="form-section">
+            <h3>4. Текст сообщения:</h3>
             {recipientType === 'label' && (
               <select
-                value={selectedLabelId}
-                onChange={(e) => setSelectedLabelId(e.target.value)}
+                value={selectedLabelIds[0] || ''}
+                onChange={(e) => setSelectedLabelIds(e.target.value ? [e.target.value] : [])}
                 disabled={sending}
                 className="label-select"
               >
