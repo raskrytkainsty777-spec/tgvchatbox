@@ -166,8 +166,23 @@ function App() {
     setShowBotManager(false);
   };
 
-  const handleChatSelect = (chat) => {
+  const handleChatSelect = async (chat) => {
     setSelectedChat(chat);
+    
+    // Automatically mark messages as read when chat is opened
+    if (chat && chat.unread_count > 0) {
+      try {
+        await axios.patch(`${API}/messages/read`, {
+          chat_id: chat.id
+        });
+        
+        // Refresh chats to update unread count
+        loadChats();
+        loadStats();
+      } catch (error) {
+        console.error('Failed to mark messages as read:', error);
+      }
+    }
   };
 
   const handleToggleBotFilter = (botId) => {
