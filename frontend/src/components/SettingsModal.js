@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiX, FiPlus, FiTrash2, FiTag, FiZap, FiMessageCircle } from 'react-icons/fi';
+import { FiX, FiPlus, FiTrash2, FiTag, FiZap, FiMessageCircle, FiMenu } from 'react-icons/fi';
 import BotManager from './BotManager';
 import './SettingsModal.css';
 
