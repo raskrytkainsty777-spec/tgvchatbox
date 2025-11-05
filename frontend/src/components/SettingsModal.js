@@ -48,6 +48,15 @@ function SettingsModal({ bots, onClose, onBotUpdated }) {
     }
   };
 
+  const loadWelcomeMessages = async () => {
+    try {
+      const response = await axios.get(`${API}/welcome-messages`);
+      setWelcomeMessages(response.data);
+    } catch (error) {
+      console.error('Failed to load welcome messages:', error);
+    }
+  };
+
   return (
     <div className="modal-overlay" data-testid="settings-modal">
       <div className="modal settings-modal">
