@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiTrendingUp, FiDollarSign, FiUsers, FiArrowLeft } from 'react-icons/fi';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { FiTrendingUp, FiDollarSign, FiUsers, FiArrowLeft, FiCalendar } from 'react-icons/fi';
 import './StatisticsPage.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -9,10 +11,26 @@ const API = `${BACKEND_URL}/api`;
 function StatisticsPage({ onBack }) {
   const [statistics, setStatistics] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [bots, setBots] = useState([]);
+  const [selectedBots, setSelectedBots] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   useEffect(() => {
+    loadBots();
     loadStatistics();
   }, []);
+
+  const loadBots = async () => {
+    try {
+      const response = await axios.get(`${API}/bots`);
+      setBots(response.data);
+      // По умолчанию выбираем все боты
+      setSelectedBots(response.data.map(b => b.id));
+    } catch (error) {
+      console.error('Failed to load bots:', error);
+    }
+  };
 
   const loadStatistics = async () => {
     try {
@@ -24,6 +42,66 @@ function StatisticsPage({ onBack }) {
       setLoading(false);
     }
   };
+
+  const handleToggleBot = (botId) => {
+    setSelectedBots(prev => {
+      if (prev.includes(botId)) {
+        return prev.filter(id => id !== botId);
+      } else {
+        return [...prev, botId];
+      }
+    });
+  };
+
+  const handleSelectAllBots = () => {
+    if (selectedBots.length === bots.length) {
+      setSelectedBots([]);
+    } else {
+      setSelectedBots(bots.map(b => b.id));
+    }
+  };
+
+  // Фильтруем данные по выбранным ботам и датам
+  const getFilteredStatistics = () => {
+    if (!statistics) return null;
+
+    const filtered = {
+      total_sales: 0,
+      total_buyers: 0,
+      sales_by_bot: [],
+      sales_by_day: []
+    };
+
+    // Фильтруем по ботам
+    const botStats = statistics.sales_by_bot.filter(bot => {
+      return selectedBots.length === 0 || selectedBots.some(selectedId => {
+        const selectedBot = bots.find(b => b.id === selectedId);
+        return selectedBot && selectedBot.username === bot.bot_username;
+      });
+    });
+
+    // Фильтруем по датам
+    const dayStats = statistics.sales_by_day.filter(day => {
+      const dayDate = new Date(day.date);
+      if (startDate && dayDate < startDate) return false;
+      if (endDate) {
+        const endDateTime = new Date(endDate);
+        endDateTime.setHours(23, 59, 59, 999);
+        if (dayDate > endDateTime) return false;
+      }
+      return true;
+    });
+
+    // Вычисляем отфильтрованные итоги
+    filtered.sales_by_bot = botStats;
+    filtered.sales_by_day = dayStats;
+    filtered.total_sales = dayStats.reduce((sum, day) => sum + day.total, 0);
+    filtered.total_buyers = dayStats.reduce((sum, day) => sum + day.count, 0);
+
+    return filtered;
+  };
+
+  const filteredStats = getFilteredStatistics();
 
   if (loading) {
     return (
