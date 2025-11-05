@@ -17,7 +17,8 @@ from models import (
     Label, LabelCreate, LabelResponse,
     QuickReply, QuickReplyCreate, QuickReplyResponse,
     AutoReply, AutoReplyCreate, AutoReplyResponse,
-    SetLabelsRequest
+    SetLabelsRequest,
+    WelcomeMessage, WelcomeMessageCreate, WelcomeMessageResponse
 )
 from telegram_manager import get_telegram_manager
 
