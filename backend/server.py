@@ -767,8 +767,23 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize bots on startup"""
-    logger.info("Starting up... Loading existing bots")
+    """Initialize bots on startup and create system labels"""
+    logger.info("Starting up... Creating system labels")
+    
+    # Create "Покупатели" system label if it doesn't exist
+    buyers_label = await db.labels.find_one({"name": "Покупатели"})
+    if not buyers_label:
+        buyers_label = {
+            "id": str(uuid.uuid4()),
+            "name": "Покупатели",
+            "color": "#FFD700",  # Gold color
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "is_system": True
+        }
+        await db.labels.insert_one(buyers_label)
+        logger.info("Created system label: Покупатели")
+    
+    logger.info("Loading existing bots")
     bots = await db.bots.find({"is_active": True}).to_list(100)
     for bot in bots:
         try:
