@@ -693,6 +693,49 @@ async def create_or_update_sale(chat_id: str, sale: SaleCreate):
         logger.error(f"Error creating sale: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+
+@api_router.delete("/chats/{chat_id}/sale")
+async def remove_sale(chat_id: str):
+    """Remove sale from chat and remove 'Покупатели' label"""
+    try:
+        # Find "Покупатели" label
+        buyers_label = await db.labels.find_one({"name": "Покупатели"})
+        if not buyers_label:
+            raise HTTPException(status_code=404, detail="Buyers label not found")
+        
+        buyers_label_id = buyers_label["id"]
+        
+        # Get chat
+        chat = await db.chats.find_one({"id": chat_id})
+        if not chat:
+            raise HTTPException(status_code=404, detail="Chat not found")
+        
+        # Remove buyers label
+        label_ids = chat.get("label_ids", [])
+        if buyers_label_id in label_ids:
+            label_ids.remove(buyers_label_id)
+        
+        # Remove sale data
+        await db.chats.update_one(
+            {"id": chat_id},
+            {
+                "$set": {
+                    "sale_amount": None,
+                    "sale_date": None,
+                    "label_ids": label_ids,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error removing sale: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/statistics/sales", response_model=SalesStatistics)
 async def get_sales_statistics():
     """Get sales statistics by day and by bot"""
