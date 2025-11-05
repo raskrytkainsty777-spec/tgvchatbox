@@ -6,7 +6,7 @@ import './BotManager.css';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-function BotManager({ bots, onClose, onBotAdded, onBotDeleted }) {
+function BotManager({ bots, onClose, onBotAdded, onBotDeleted, embedded = false }) {
   const [token, setToken] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
