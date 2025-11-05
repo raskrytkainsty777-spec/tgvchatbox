@@ -315,7 +315,7 @@
   background: #242f3d;
 }
 
-.filter-option .filter-count {
+.filter-menu .filter-option .filter-count {
   background: #242f3d;
   color: #8d969e;
   font-size: 12px;
@@ -324,9 +324,10 @@
   border-radius: 12px;
   min-width: 24px;
   text-align: center;
+  position: static;
 }
 
-.filter-option:hover .filter-count {
+.filter-menu .filter-option:hover .filter-count {
   background: #2a3f5f;
   color: #5288c1;
 }
