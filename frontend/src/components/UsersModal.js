@@ -158,13 +158,15 @@ function UsersModal({ bots, onClose }) {
                         >
                           <FiEdit2 />
                         </button>
-                        <button
-                          className="action-button delete-button"
-                          onClick={() => handleDelete(user.id)}
-                          title="Удалить"
-                        >
-                          <FiTrash2 />
-                        </button>
+                        {user.role !== 'admin' && (
+                          <button
+                            className="action-button delete-button"
+                            onClick={() => handleDelete(user.id)}
+                            title="Удалить"
+                          >
+                            <FiTrash2 />
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))
