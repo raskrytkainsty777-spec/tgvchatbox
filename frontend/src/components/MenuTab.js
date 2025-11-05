@@ -832,9 +832,6 @@ function ManageButtonsView({ labels, buttons, onBack }) {
                 <div className="action-option" onClick={() => handleAddAction('block')}>
                   Отправить блок
                 </div>
-                <div className="action-option" onClick={() => handleAddAction('back')}>
-                  Назад (вернуться на предыдущий уровень)
-                </div>
               </div>
             )}
 
