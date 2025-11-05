@@ -343,6 +343,69 @@ async def delete_auto_reply(reply_id: str):
     await db.auto_replies.delete_one({"id": reply_id})
     return {"success": True}
 
+# ============= WELCOME MESSAGE ENDPOINTS =============
+
+@api_router.get("/welcome-messages", response_model=List[WelcomeMessageResponse])
+async def get_welcome_messages():
+    """Get all welcome messages"""
+    messages = await db.welcome_messages.find({}, {"_id": 0}).to_list(100)
+    return [WelcomeMessageResponse(**msg) for msg in messages]
+
+@api_router.post("/welcome-messages")
+async def create_welcome_message(message_data: WelcomeMessageCreate):
+    """Create welcome message for multiple bots"""
+    created_messages = []
+    for bot_id in message_data.bot_ids:
+        # Проверяем нет ли уже приветственного сообщения для этого бота
+        existing = await db.welcome_messages.find_one({"bot_id": bot_id})
+        if existing:
+            # Обновляем существующее
+            await db.welcome_messages.update_one(
+                {"bot_id": bot_id},
+                {"$set": {
+                    "text": message_data.text,
+                    "is_active": message_data.is_active
+                }}
+            )
+            created_messages.append({
+                "id": existing["id"],
+                "bot_id": bot_id,
+                "text": message_data.text,
+                "is_active": message_data.is_active,
+                "created_at": existing["created_at"]
+            })
+        else:
+            # Создаем новое
+            msg_doc = {
+                "id": str(uuid.uuid4()),
+                "bot_id": bot_id,
+                "text": message_data.text,
+                "is_active": message_data.is_active,
+                "created_at": datetime.now(timezone.utc)
+            }
+            await db.welcome_messages.insert_one(msg_doc)
+            created_messages.append(msg_doc)
+    
+    return {"success": True, "messages": created_messages}
+
+@api_router.patch("/welcome-messages/{message_id}")
+async def update_welcome_message(message_id: str, message_data: WelcomeMessageCreate):
+    """Update a welcome message"""
+    await db.welcome_messages.update_one(
+        {"id": message_id},
+        {"$set": {
+            "text": message_data.text,
+            "is_active": message_data.is_active
+        }}
+    )
+    return {"success": True}
+
+@api_router.delete("/welcome-messages/{message_id}")
+async def delete_welcome_message(message_id: str):
+    """Delete a welcome message"""
+    await db.welcome_messages.delete_one({"id": message_id})
+    return {"success": True}
+
 @api_router.get("/stats")
 async def get_stats():
     """Get statistics"""
