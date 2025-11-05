@@ -305,6 +305,13 @@ class TelegramBotManager:
                 chat_id=user_id,
                 text=f"📋 {menu['name']}",
                 reply_markup=reply_markup
+            )
+            logger.info(f"Menu sent to user {user_id} for bot {bot_id}")
+            
+        except Exception as e:
+            logger.error(f"Failed to send bot menu: {e}")
+            import traceback
+            traceback.print_exc()
 
     async def _handle_button_press(self, update: Update, bot_id: str):
         """Handle button press from inline keyboard"""
