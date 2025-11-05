@@ -211,3 +211,62 @@
   border-color: #f44336;
   color: #f44336;
 }
+
+/* Welcome Messages */
+.welcome-card {
+  flex-direction: row;
+}
+
+.welcome-info {
+  flex: 1;
+}
+
+.welcome-bots {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.bot-badge {
+  padding: 3px 8px;
+  background: rgba(82, 136, 193, 0.2);
+  border: 1px solid #5288c1;
+  border-radius: 12px;
+  color: #5288c1;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.welcome-text {
+  font-size: 13px;
+  color: #fff;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.welcome-status {
+  font-size: 12px;
+  color: #8d969e;
+}
+
+.select-all-btn {
+  background: transparent;
+  border: 1px solid #242f3d;
+  color: #8d969e;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.select-all-btn:hover {
+  border-color: #5288c1;
+  color: #fff;
+}
+
+.select-all-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
