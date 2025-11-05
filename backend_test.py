@@ -701,11 +701,12 @@ class TelegramChatPanelTester:
             
     def run_all_tests(self):
         """Run all tests in sequence"""
-        print("🚀 Starting Bot Menu System API Tests")
+        print("🚀 Starting Telegram Chat Panel API Tests")
         print(f"Backend URL: {self.base_url}")
         print("=" * 60)
         
         try:
+            # Menu System Tests (existing)
             self.test_get_existing_data()
             self.test_create_menu_buttons()
             self.test_get_menu_buttons()
@@ -714,6 +715,14 @@ class TelegramChatPanelTester:
             self.test_bot_menu_assignments()
             self.test_get_menu_assignments()
             self.test_error_cases()
+            
+            # Sales System Tests (new)
+            self.test_get_existing_chats()
+            self.test_system_label_creation()
+            self.test_create_sales()
+            self.test_buyers_label_assignment()
+            self.test_sales_statistics()
+            self.test_username_export()
             
         except Exception as e:
             print(f"❌ Test suite failed with error: {str(e)}")
@@ -740,6 +749,7 @@ class TelegramChatPanelTester:
                     
         print(f"\n📝 Created {len(self.created_buttons)} test buttons")
         print(f"📝 Created {len(self.created_menus)} test menus")
+        print(f"📝 Created {len(self.created_sales)} test sales")
         
         return failed_tests == 0
 
