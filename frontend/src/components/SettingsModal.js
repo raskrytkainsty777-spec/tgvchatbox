@@ -8,8 +8,9 @@ import './SettingsModal.css';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-function SettingsModal({ bots, onClose, onBotUpdated }) {
-  const [activeTab, setActiveTab] = useState('bots');
+function SettingsModal({ bots, onClose, onBotUpdated, userRole }) {
+  const isAdmin = userRole === 'admin';
+  const [activeTab, setActiveTab] = useState(isAdmin ? 'bots' : 'labels');
   const [labels, setLabels] = useState([]);
   const [quickReplies, setQuickReplies] = useState([]);
   const [autoReplies, setAutoReplies] = useState([]);
