@@ -277,21 +277,11 @@ function ChatView({ chat, onMessageSent }) {
           </button>
         </form>
       </div>
-
-      {/* Broadcast Modal */}
-      {showBroadcast && (
-        <BroadcastModal
-          botId={chat.bot_id}
-          onClose={() => setShowBroadcast(false)}
-          onSent={onMessageSent}
-        />
-      )}
     </div>
   );
 }
 
-// Broadcast Modal Component
-function BroadcastModal({ botId, onClose, onSent }) {
+export default ChatView;
   const [message, setMessage] = useState('');
   const [userIds, setUserIds] = useState('');
   const [sending, setSending] = useState(false);
