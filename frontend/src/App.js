@@ -248,6 +248,14 @@ function App() {
         />
       )}
 
+      {/* Users Modal */}
+      {showUsersModal && isAdmin && (
+        <UsersModal 
+          bots={bots}
+          onClose={() => setShowUsersModal(false)}
+        />
+      )}
+
       {/* Broadcast Modal */}
       {showBroadcastModal && (
         <BroadcastModal
