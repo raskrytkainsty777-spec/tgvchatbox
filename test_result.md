@@ -180,6 +180,30 @@ frontend:
       - working: true
         agent: "main"
         comment: "Removed incorrect eslint-disable-line comment that was causing compilation error"
+        
+  - task: "MenuTab UI Testing"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/MenuTab.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Comprehensive UI testing completed successfully. ✅ Navigation to Menu Tab working ✅ Menu creation (18 buttons available, successful creation with alert) ✅ Menu assignment (@apotestimka_bot, multiple menus available, successful assignment) ✅ Data persistence (statistics and button data persist correctly) ✅ UI/UX elements properly styled. Only issue: Button creation fails with 422 API error due to action value format mismatch (frontend sends string, API expects dict)."
+        
+  - task: "Button Creation API Format Fix"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/components/MenuTab.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "Button creation fails with 422 API error. Frontend sends action.value as string (e.g., 'Hello World') but API expects dictionary format (e.g., {'text': 'Hello World'}). Need to fix ActionEditor component to format action values correctly for different action types before sending to API."
 
 metadata:
   created_by: "main_agent"
