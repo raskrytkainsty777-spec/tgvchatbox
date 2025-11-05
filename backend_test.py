@@ -698,6 +698,426 @@ class TelegramChatPanelTester:
                     self.log_result("Export Empty Label", True, "Successfully exported (label has chats)")
                 else:
                     self.log_result("Export Empty Label", False, f"Unexpected response: {response.status_code if response else 'No response'}")
+
+    # ============= TIMER SYSTEM TESTS =============
+    
+    def test_create_timers(self):
+        """Test creating and updating timers"""
+        print("\n=== Testing Timer Creation/Update ===")
+        
+        if not self.existing_bots:
+            self.log_result("Create Timer", False, "No bots available for timer testing")
+            return
+            
+        # Test 1: Create new timer with future end_datetime
+        test_bot = self.existing_bots[0]
+        future_datetime = datetime.now(timezone.utc).replace(microsecond=0) + timedelta(days=5, hours=12, minutes=30)
+        
+        timer_data = {
+            "bot_id": test_bot['id'],
+            "end_datetime": future_datetime.isoformat(),
+            "text_before": "⏰ До акции:",
+            "text_after": "🎉 Акция завершена",
+            "is_active": True
+        }
+        
+        response = self.make_request("POST", "/timers", timer_data)
+        if response and response.status_code == 200:
+            timer_response = response.json()
+            self.log_result("Create New Timer", True, f"Created timer for bot {test_bot['username']}: ends {timer_response['end_datetime']}")
+            
+            # Verify response structure
+            required_fields = ["id", "bot_id", "end_datetime", "text_before", "text_after", "is_active", "created_at"]
+            if all(field in timer_response for field in required_fields):
+                self.log_result("Timer Response Structure", True, "All required fields present")
+            else:
+                missing = [field for field in required_fields if field not in timer_response]
+                self.log_result("Timer Response Structure", False, f"Missing fields: {missing}")
+                
+            # Verify default text values
+            if timer_response.get("text_before") == "⏰ До акции:":
+                self.log_result("Default Text Before", True, "Correct default text_before")
+            else:
+                self.log_result("Default Text Before", False, f"Expected '⏰ До акции:', got '{timer_response.get('text_before')}'")
+                
+            if timer_response.get("text_after") == "🎉 Акция завершена":
+                self.log_result("Default Text After", True, "Correct default text_after")
+            else:
+                self.log_result("Default Text After", False, f"Expected '🎉 Акция завершена', got '{timer_response.get('text_after')}'")
+                
+        else:
+            self.log_result("Create New Timer", False, f"Failed: {response.status_code if response else 'No response'}")
+            return
+            
+        # Test 2: Update existing timer (same bot_id should update, not create new)
+        updated_datetime = datetime.now(timezone.utc).replace(microsecond=0) + timedelta(days=3, hours=8)
+        update_timer_data = {
+            "bot_id": test_bot['id'],
+            "end_datetime": updated_datetime.isoformat(),
+            "text_before": "🔥 Горячая акция:",
+            "text_after": "😢 Акция закончилась",
+            "is_active": True
+        }
+        
+        response = self.make_request("POST", "/timers", update_timer_data)
+        if response and response.status_code == 200:
+            updated_timer = response.json()
+            self.log_result("Update Existing Timer", True, f"Updated timer: new end time {updated_timer['end_datetime']}")
+            
+            # Verify custom text values
+            if updated_timer.get("text_before") == "🔥 Горячая акция:":
+                self.log_result("Custom Text Before", True, "Custom text_before updated correctly")
+            else:
+                self.log_result("Custom Text Before", False, f"Expected '🔥 Горячая акция:', got '{updated_timer.get('text_before')}'")
+                
+            if updated_timer.get("text_after") == "😢 Акция закончилась":
+                self.log_result("Custom Text After", True, "Custom text_after updated correctly")
+            else:
+                self.log_result("Custom Text After", False, f"Expected '😢 Акция закончилась', got '{updated_timer.get('text_after')}'")
+        else:
+            self.log_result("Update Existing Timer", False, f"Failed: {response.status_code if response else 'No response'}")
+            
+        # Test 3: Create timer with is_active=false
+        if len(self.existing_bots) > 1:
+            inactive_bot = self.existing_bots[1]
+            inactive_timer_data = {
+                "bot_id": inactive_bot['id'],
+                "end_datetime": future_datetime.isoformat(),
+                "is_active": False
+            }
+            
+            response = self.make_request("POST", "/timers", inactive_timer_data)
+            if response and response.status_code == 200:
+                inactive_timer = response.json()
+                if inactive_timer.get("is_active") == False:
+                    self.log_result("Create Inactive Timer", True, f"Created inactive timer for bot {inactive_bot['username']}")
+                else:
+                    self.log_result("Create Inactive Timer", False, f"Expected is_active=False, got {inactive_timer.get('is_active')}")
+            else:
+                self.log_result("Create Inactive Timer", False, f"Failed: {response.status_code if response else 'No response'}")
+                
+        # Test 4: Create timer with past end_datetime (already expired)
+        past_datetime = datetime.now(timezone.utc).replace(microsecond=0) - timedelta(days=1)
+        past_timer_data = {
+            "bot_id": test_bot['id'],
+            "end_datetime": past_datetime.isoformat(),
+            "text_before": "⏰ До акции:",
+            "text_after": "🎉 Акция завершена",
+            "is_active": True
+        }
+        
+        response = self.make_request("POST", "/timers", past_timer_data)
+        if response and response.status_code == 200:
+            past_timer = response.json()
+            self.log_result("Create Expired Timer", True, f"Created timer with past end_datetime (allowed)")
+        else:
+            self.log_result("Create Expired Timer", False, f"Failed: {response.status_code if response else 'No response'}")
+            
+        # Test 5: Test with empty text_before and text_after
+        empty_text_data = {
+            "bot_id": test_bot['id'],
+            "end_datetime": future_datetime.isoformat(),
+            "text_before": "",
+            "text_after": "",
+            "is_active": True
+        }
+        
+        response = self.make_request("POST", "/timers", empty_text_data)
+        if response and response.status_code == 200:
+            empty_timer = response.json()
+            self.log_result("Empty Text Fields", True, "Timer created with empty text fields")
+        else:
+            self.log_result("Empty Text Fields", False, f"Failed: {response.status_code if response else 'No response'}")
+            
+        # Test 6: Test with invalid bot_id format
+        invalid_timer_data = {
+            "bot_id": "invalid-bot-id-format",
+            "end_datetime": future_datetime.isoformat(),
+            "is_active": True
+        }
+        
+        response = self.make_request("POST", "/timers", invalid_timer_data)
+        if response and response.status_code >= 400:
+            self.log_result("Invalid Bot ID Format", True, f"Correctly rejected invalid bot_id: {response.status_code}")
+        else:
+            self.log_result("Invalid Bot ID Format", False, f"Should reject invalid bot_id, got: {response.status_code if response else 'No response'}")
+            
+        # Test 7: Test with missing required fields
+        incomplete_timer_data = {
+            "bot_id": test_bot['id']
+            # Missing end_datetime
+        }
+        
+        response = self.make_request("POST", "/timers", incomplete_timer_data)
+        if response and response.status_code == 422:
+            self.log_result("Missing Required Fields", True, f"Correctly rejected incomplete data with validation error: {response.status_code}")
+        elif response and response.status_code >= 400:
+            self.log_result("Missing Required Fields", True, f"Correctly rejected incomplete data: {response.status_code}")
+        else:
+            self.log_result("Missing Required Fields", False, f"Should reject incomplete data, got: {response.status_code if response else 'No response'}")
+    
+    def test_get_timers(self):
+        """Test retrieving timers for specific bots"""
+        print("\n=== Testing Get Timers ===")
+        
+        if not self.existing_bots:
+            self.log_result("Get Timer", False, "No bots available for timer testing")
+            return
+            
+        # Test 1: Get timer for bot that should have a timer
+        test_bot = self.existing_bots[0]
+        response = self.make_request("GET", f"/timers/{test_bot['id']}")
+        if response and response.status_code == 200:
+            timer = response.json()
+            self.log_result("Get Existing Timer", True, f"Retrieved timer for bot {test_bot['username']}")
+            
+            # Verify response structure
+            required_fields = ["id", "bot_id", "end_datetime", "text_before", "text_after", "is_active", "created_at"]
+            if all(field in timer for field in required_fields):
+                self.log_result("Get Timer Response Structure", True, "All required fields present")
+            else:
+                missing = [field for field in required_fields if field not in timer]
+                self.log_result("Get Timer Response Structure", False, f"Missing fields: {missing}")
+                
+            # Verify bot_id matches
+            if timer.get("bot_id") == test_bot['id']:
+                self.log_result("Timer Bot ID Match", True, "Timer bot_id matches requested bot")
+            else:
+                self.log_result("Timer Bot ID Match", False, f"Expected bot_id {test_bot['id']}, got {timer.get('bot_id')}")
+                
+            # Verify datetime format
+            try:
+                end_datetime = datetime.fromisoformat(timer['end_datetime'].replace('Z', '+00:00'))
+                self.log_result("Timer Datetime Format", True, f"Valid datetime format: {timer['end_datetime']}")
+            except (ValueError, KeyError) as e:
+                self.log_result("Timer Datetime Format", False, f"Invalid datetime format: {e}")
+                
+        elif response and response.status_code == 404:
+            self.log_result("Get Existing Timer", True, "No timer found for bot (404 - expected if no timer created)")
+        else:
+            self.log_result("Get Existing Timer", False, f"Failed: {response.status_code if response else 'No response'}")
+            
+        # Test 2: Get timer for non-existent bot
+        response = self.make_request("GET", "/timers/non-existent-bot-id")
+        if response and response.status_code == 404:
+            self.log_result("Get Timer Non-Existent Bot", True, "Correctly returned 404 for non-existent bot")
+        else:
+            self.log_result("Get Timer Non-Existent Bot", False, f"Expected 404, got {response.status_code if response else 'No response'}")
+            
+        # Test 3: Get timer for bot with invalid ID format
+        response = self.make_request("GET", "/timers/invalid-format")
+        if response and response.status_code == 404:
+            self.log_result("Get Timer Invalid Format", True, "Correctly returned 404 for invalid bot ID format")
+        else:
+            self.log_result("Get Timer Invalid Format", False, f"Expected 404, got {response.status_code if response else 'No response'}")
+    
+    def test_delete_timers(self):
+        """Test deleting timers"""
+        print("\n=== Testing Timer Deletion ===")
+        
+        if not self.existing_bots:
+            self.log_result("Delete Timer", False, "No bots available for timer testing")
+            return
+            
+        # First, ensure we have a timer to delete by creating one
+        test_bot = self.existing_bots[0]
+        future_datetime = datetime.now(timezone.utc).replace(microsecond=0) + timedelta(days=1)
+        
+        timer_data = {
+            "bot_id": test_bot['id'],
+            "end_datetime": future_datetime.isoformat(),
+            "is_active": True
+        }
+        
+        create_response = self.make_request("POST", "/timers", timer_data)
+        if not (create_response and create_response.status_code == 200):
+            self.log_result("Setup Timer for Deletion", False, "Could not create timer for deletion test")
+            return
+            
+        # Test 1: Delete existing timer
+        response = self.make_request("DELETE", f"/timers/{test_bot['id']}")
+        if response and response.status_code == 200:
+            delete_result = response.json()
+            if delete_result.get("success") == True:
+                self.log_result("Delete Existing Timer", True, f"Successfully deleted timer for bot {test_bot['username']}")
+            else:
+                self.log_result("Delete Existing Timer", False, f"Delete response missing success field: {delete_result}")
+        else:
+            self.log_result("Delete Existing Timer", False, f"Failed: {response.status_code if response else 'No response'}")
+            
+        # Test 2: Verify timer is actually deleted by trying to get it
+        get_response = self.make_request("GET", f"/timers/{test_bot['id']}")
+        if get_response and get_response.status_code == 404:
+            self.log_result("Verify Timer Deletion", True, "Timer correctly deleted (404 on GET)")
+        else:
+            self.log_result("Verify Timer Deletion", False, f"Timer still exists after deletion: {get_response.status_code if get_response else 'No response'}")
+            
+        # Test 3: Delete non-existent timer
+        response = self.make_request("DELETE", f"/timers/{test_bot['id']}")
+        if response and response.status_code == 404:
+            self.log_result("Delete Non-Existent Timer", True, "Correctly returned 404 for non-existent timer")
+        else:
+            self.log_result("Delete Non-Existent Timer", False, f"Expected 404, got {response.status_code if response else 'No response'}")
+            
+        # Test 4: Delete timer for non-existent bot
+        response = self.make_request("DELETE", "/timers/non-existent-bot-id")
+        if response and response.status_code == 404:
+            self.log_result("Delete Timer Non-Existent Bot", True, "Correctly returned 404 for non-existent bot")
+        else:
+            self.log_result("Delete Timer Non-Existent Bot", False, f"Expected 404, got {response.status_code if response else 'No response'}")
+    
+    def test_timer_one_per_bot_constraint(self):
+        """Test that only one timer exists per bot (POST updates if exists)"""
+        print("\n=== Testing One Timer Per Bot Constraint ===")
+        
+        if not self.existing_bots:
+            self.log_result("One Timer Per Bot", False, "No bots available for timer testing")
+            return
+            
+        test_bot = self.existing_bots[0]
+        future_datetime1 = datetime.now(timezone.utc).replace(microsecond=0) + timedelta(days=2)
+        future_datetime2 = datetime.now(timezone.utc).replace(microsecond=0) + timedelta(days=4)
+        
+        # Create first timer
+        timer_data1 = {
+            "bot_id": test_bot['id'],
+            "end_datetime": future_datetime1.isoformat(),
+            "text_before": "First Timer",
+            "is_active": True
+        }
+        
+        response1 = self.make_request("POST", "/timers", timer_data1)
+        if not (response1 and response1.status_code == 200):
+            self.log_result("Create First Timer", False, "Could not create first timer")
+            return
+            
+        first_timer = response1.json()
+        first_timer_id = first_timer.get("id")
+        
+        # Create second timer for same bot (should update, not create new)
+        timer_data2 = {
+            "bot_id": test_bot['id'],
+            "end_datetime": future_datetime2.isoformat(),
+            "text_before": "Second Timer (Updated)",
+            "is_active": True
+        }
+        
+        response2 = self.make_request("POST", "/timers", timer_data2)
+        if response2 and response2.status_code == 200:
+            second_timer = response2.json()
+            second_timer_id = second_timer.get("id")
+            
+            # Check if it's the same timer ID (updated) or different (new)
+            if first_timer_id == second_timer_id:
+                self.log_result("Timer Update Same ID", True, f"Timer updated with same ID: {first_timer_id}")
+            else:
+                self.log_result("Timer Update Same ID", False, f"New timer created instead of update: {first_timer_id} -> {second_timer_id}")
+                
+            # Verify the content was updated
+            if second_timer.get("text_before") == "Second Timer (Updated)":
+                self.log_result("Timer Content Updated", True, "Timer content correctly updated")
+            else:
+                self.log_result("Timer Content Updated", False, f"Expected 'Second Timer (Updated)', got '{second_timer.get('text_before')}'")
+                
+            # Verify end_datetime was updated
+            if second_timer.get("end_datetime") == future_datetime2.isoformat():
+                self.log_result("Timer Datetime Updated", True, "Timer end_datetime correctly updated")
+            else:
+                self.log_result("Timer Datetime Updated", False, f"End datetime not updated correctly")
+                
+        else:
+            self.log_result("Create Second Timer", False, f"Failed to create/update second timer: {response2.status_code if response2 else 'No response'}")
+            
+        # Verify only one timer exists for this bot by getting it
+        get_response = self.make_request("GET", f"/timers/{test_bot['id']}")
+        if get_response and get_response.status_code == 200:
+            current_timer = get_response.json()
+            if current_timer.get("text_before") == "Second Timer (Updated)":
+                self.log_result("One Timer Per Bot Verified", True, "Only one timer exists with updated content")
+            else:
+                self.log_result("One Timer Per Bot Verified", False, f"Timer content doesn't match expected update: {current_timer.get('text_before')}")
+        else:
+            self.log_result("One Timer Per Bot Verified", False, f"Could not retrieve timer to verify: {get_response.status_code if get_response else 'No response'}")
+    
+    def test_timer_edge_cases(self):
+        """Test timer edge cases and error conditions"""
+        print("\n=== Testing Timer Edge Cases ===")
+        
+        if not self.existing_bots:
+            self.log_result("Timer Edge Cases", False, "No bots available for timer testing")
+            return
+            
+        test_bot = self.existing_bots[0]
+        
+        # Test 1: Timer with very long text fields
+        long_text = "🎉" * 100  # 100 emoji characters
+        long_timer_data = {
+            "bot_id": test_bot['id'],
+            "end_datetime": (datetime.now(timezone.utc) + timedelta(days=1)).isoformat(),
+            "text_before": long_text,
+            "text_after": long_text,
+            "is_active": True
+        }
+        
+        response = self.make_request("POST", "/timers", long_timer_data)
+        if response and response.status_code == 200:
+            self.log_result("Long Text Fields", True, "Timer created with long text fields")
+        else:
+            self.log_result("Long Text Fields", False, f"Failed with long text: {response.status_code if response else 'No response'}")
+            
+        # Test 2: Timer with special characters in text
+        special_timer_data = {
+            "bot_id": test_bot['id'],
+            "end_datetime": (datetime.now(timezone.utc) + timedelta(days=1)).isoformat(),
+            "text_before": "⏰🔥💥 До акции: <>&\"'",
+            "text_after": "🎉✨🎊 Акция завершена! @#$%^&*()",
+            "is_active": True
+        }
+        
+        response = self.make_request("POST", "/timers", special_timer_data)
+        if response and response.status_code == 200:
+            timer = response.json()
+            if timer.get("text_before") == "⏰🔥💥 До акции: <>&\"'":
+                self.log_result("Special Characters", True, "Timer created with special characters")
+            else:
+                self.log_result("Special Characters", False, f"Special characters not preserved: {timer.get('text_before')}")
+        else:
+            self.log_result("Special Characters", False, f"Failed with special characters: {response.status_code if response else 'No response'}")
+            
+        # Test 3: Timer with malformed datetime
+        malformed_timer_data = {
+            "bot_id": test_bot['id'],
+            "end_datetime": "not-a-datetime",
+            "is_active": True
+        }
+        
+        response = self.make_request("POST", "/timers", malformed_timer_data)
+        if response and response.status_code == 422:
+            self.log_result("Malformed Datetime", True, f"Correctly rejected malformed datetime: {response.status_code}")
+        elif response and response.status_code >= 400:
+            self.log_result("Malformed Datetime", True, f"Correctly rejected malformed datetime: {response.status_code}")
+        else:
+            self.log_result("Malformed Datetime", False, f"Should reject malformed datetime, got: {response.status_code if response else 'No response'}")
+            
+        # Test 4: Timer with null/None values
+        null_timer_data = {
+            "bot_id": test_bot['id'],
+            "end_datetime": (datetime.now(timezone.utc) + timedelta(days=1)).isoformat(),
+            "text_before": None,
+            "text_after": None,
+            "is_active": True
+        }
+        
+        response = self.make_request("POST", "/timers", null_timer_data)
+        if response and response.status_code == 200:
+            timer = response.json()
+            # Should use default values when None is provided
+            if timer.get("text_before") == "⏰ До акции:":
+                self.log_result("Null Text Fields", True, "Null text fields replaced with defaults")
+            else:
+                self.log_result("Null Text Fields", False, f"Null handling incorrect: {timer.get('text_before')}")
+        else:
+            self.log_result("Null Text Fields", False, f"Failed with null values: {response.status_code if response else 'No response'}")
             
     def run_all_tests(self):
         """Run all tests in sequence"""
