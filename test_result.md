@@ -531,3 +531,93 @@ agent_communication:
       - System label missing is_system=True flag (cosmetic)
       
       The Sales Tracking System backend is fully functional and ready for production use!
+
+backend:
+  - task: "Timer Backend Models & Endpoints"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/models.py, /app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created Timer model with bot_id, end_datetime, text_before, text_after, is_active fields. Fixed timezone import. Implemented POST /api/timers (create/update), GET /api/timers/{bot_id}, DELETE /api/timers/{bot_id}. One timer per bot. Ready for backend testing."
+        
+  - task: "Timer Telegram Integration"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/telegram_manager.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added _format_timer_text function to format countdown (e.g., '5д 12ч 30м'). Modified set_bot_commands to add timer as menu button with command 'timer'. Timer displays only if active and not expired. Timer automatically hides when expired. Ready for testing."
+
+frontend:
+  - task: "Timer Settings UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/SettingsModal.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added 'Таймер' tab to SettingsModal with FiClock icon. Created TimerTab component with bot selection, datetime-local input for end time, text_before/text_after inputs, is_active checkbox. Shows existing timer status. Create/Update/Delete buttons. UI verified via screenshot. Ready for testing."
+
+metadata:
+  created_by: "main_agent"
+  version: "3.0"
+  test_sequence: 3
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Timer Backend Models & Endpoints"
+    - "Timer Telegram Integration"
+    - "Timer Settings UI"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Bot Countdown Timer implementation completed:
+      
+      ✅ Backend:
+      - Timer model with timezone-aware datetime handling
+      - POST /api/timers: Create/update timer (one per bot)
+      - GET /api/timers/{bot_id}: Get timer for specific bot
+      - DELETE /api/timers/{bot_id}: Delete timer
+      - _format_timer_text function: Formats countdown as "5д 12ч 30м"
+      - set_bot_commands modified: Adds timer as "timer" command with countdown text
+      - Timer auto-hides when expired
+      
+      ✅ Frontend:
+      - New "Таймер" tab in Settings modal (7th tab)
+      - TimerTab component with:
+        * Bot selector dropdown
+        * datetime-local input for end time
+        * Text customization (before/after expiration)
+        * Active/inactive toggle
+        * Create/Update/Delete buttons
+        * Current timer status display
+      
+      ✅ UI Verified:
+      - Settings modal opens correctly
+      - Timer tab displays with proper layout
+      - All form fields visible and styled
+      
+      Ready for comprehensive testing:
+      1. Backend API testing (POST/GET/DELETE /api/timers)
+      2. Telegram integration testing (timer appears as menu button)
+      3. Frontend UI testing (create/edit/delete timer flows)
+      4. Timezone handling verification
+      
+      Note: datetime-local input uses browser's local timezone. User should input London time directly.
