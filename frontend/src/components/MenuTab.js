@@ -599,7 +599,7 @@ function CreateMenuView({ buttons, menus, onBack }) {
         )}
       </div>
 
-          <div style={{ display: 'flex', gap: '10px' }}>
+      <div style={{ display: 'flex', gap: '10px' }}>
             <button 
               className="btn-primary" 
               onClick={handleSave} 
