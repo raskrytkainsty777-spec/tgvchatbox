@@ -34,6 +34,7 @@ class Chat(BaseModel):
     label_ids: List[str] = []
     sale_amount: Optional[float] = None
     sale_date: Optional[datetime] = None
+    bot_status: str = "active"  # active or blocked
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
