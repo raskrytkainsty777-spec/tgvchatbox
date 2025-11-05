@@ -264,14 +264,6 @@
   min-width: 0;
 }
 
-.stats-section {
-  background: #17212b;
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid #242f3d;
-  min-width: 0;
-}
-
 .stats-section h2 {
   margin: 0 0 16px 0;
   font-size: 18px;
