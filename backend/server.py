@@ -1149,6 +1149,22 @@ async def login_by_token(token: str):
         created_at=datetime.fromisoformat(user["created_at"])
     )
 
+# Health check
+@api_router.get("/")
+async def root():
+    return {"message": "Telegram Chat Panel API", "status": "running"}
+
+# Include the router in the main app
+app.include_router(api_router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize bots on startup and create system labels"""
