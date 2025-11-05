@@ -138,7 +138,7 @@ class TelegramBotManager:
         if message.text:
             await self._check_auto_reply(bot_id, user.id, message.text)
     
-    async def send_message(self, bot_id: str, user_id: int, text: str, file_id: Optional[str] = None) -> dict:
+    async def send_message(self, bot_id: str, user_id: int, text: str, file_id: Optional[str] = None, reply_to_message_id: Optional[int] = None) -> dict:
         """Send message to user"""
         if bot_id not in self.bots:
             raise Exception("Bot not found")
@@ -148,9 +148,18 @@ class TelegramBotManager:
         
         try:
             if file_id:
-                sent_message = await bot.send_document(chat_id=user_id, document=file_id, caption=text or None)
+                sent_message = await bot.send_document(
+                    chat_id=user_id, 
+                    document=file_id, 
+                    caption=text or None,
+                    reply_to_message_id=reply_to_message_id
+                )
             else:
-                sent_message = await bot.send_message(chat_id=user_id, text=text)
+                sent_message = await bot.send_message(
+                    chat_id=user_id, 
+                    text=text,
+                    reply_to_message_id=reply_to_message_id
+                )
             
             # Save message to database
             message_data = {
