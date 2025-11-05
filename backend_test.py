@@ -24,6 +24,7 @@ class TelegramChatPanelTester:
         self.existing_chats = []
         self.buyers_label_id = None
         self.created_sales = []
+        self.created_timers = []
         
     def log_result(self, test_name, success, message, response_data=None):
         """Log test result"""
