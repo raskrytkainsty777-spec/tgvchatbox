@@ -133,6 +133,7 @@ function App() {
             onChatSelect={handleChatSelect}
             onSearchChange={setSearchQuery}
             onToggleBotFilter={handleToggleBotFilter}
+            onChatsUpdate={loadChats}
           />
         </div>
 
