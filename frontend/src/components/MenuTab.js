@@ -137,13 +137,13 @@ function MenuTab({ bots = [] }) {
 }
 
 // Main View with action buttons
-function MainView({ buttons, menus, onCreateButton, onCreateMenu, onAssignMenu, onManageButtons, onManageMenus }) {
+function MainView({ buttons, menus, onManageButtons, onCreateMenu, onAssignMenu }) {
   return (
     <div className="main-view">
       <h3>Управление меню ботов</h3>
       <div className="menu-actions">
-        <button className="btn-primary menu-action-btn" onClick={onCreateButton} data-testid="create-button-btn">
-          <FiPlus /> Создать кнопки
+        <button className="btn-primary menu-action-btn" onClick={onManageButtons} data-testid="manage-buttons-btn">
+          <FiEdit /> Создать кнопки
         </button>
         <button className="btn-primary menu-action-btn" onClick={onCreateMenu} data-testid="create-menu-btn">
           <FiPlus /> Создать меню
@@ -154,15 +154,13 @@ function MainView({ buttons, menus, onCreateButton, onCreateMenu, onAssignMenu, 
       </div>
 
       <div className="stats-section">
-        <div className="stat-card clickable" onClick={onManageButtons}>
+        <div className="stat-card">
           <div className="stat-number">{buttons.length}</div>
           <div className="stat-label">Кнопок создано</div>
-          <div className="stat-action">Нажмите для управления</div>
         </div>
-        <div className="stat-card clickable" onClick={onManageMenus}>
+        <div className="stat-card">
           <div className="stat-number">{menus.length}</div>
           <div className="stat-label">Меню создано</div>
-          <div className="stat-action">Нажмите для управления</div>
         </div>
       </div>
     </div>
