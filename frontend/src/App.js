@@ -57,11 +57,17 @@ function App() {
 
   const loadChats = useCallback(async () => {
     try {
+      // Если нет выбранных ботов - показываем пустой список
+      if (bots.length > 0 && selectedBots.length === 0) {
+        console.log('No bots selected - showing empty list');
+        setChats([]);
+        return;
+      }
+
       const params = {};
       
-      // Фильтр по ботам - применяется только если выбран хотя бы один бот
-      // Если все боты сняты - показываем все чаты
-      if (selectedBots.length > 0 && bots.length > 0) {
+      // Фильтр по ботам - ВСЕГДА передаем если есть выбранные боты
+      if (selectedBots.length > 0) {
         params.bot_ids = selectedBots.join(',');
       }
       
@@ -80,9 +86,9 @@ function App() {
         params.label_id = filterLabelId;
       }
       
-      console.log('Loading chats with params:', params); // Для отладки
+      console.log('Loading chats with params:', params);
       const response = await axios.get(`${API}/chats`, { params });
-      console.log(`Loaded ${response.data.length} chats`); // Для отладки
+      console.log(`Loaded ${response.data.length} chats`);
       setChats(response.data);
     } catch (error) {
       console.error('Failed to load chats:', error);
