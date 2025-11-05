@@ -313,6 +313,23 @@
 
 .filter-option:hover {
   background: #242f3d;
+
+.filter-count {
+  background: #242f3d;
+  color: #8d969e;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.filter-option:hover .filter-count {
+  background: #2a3f5f;
+  color: #5288c1;
+}
+
 }
 
 .filter-divider {
