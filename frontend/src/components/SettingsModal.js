@@ -71,12 +71,14 @@ function SettingsModal({ bots, onClose, onBotUpdated, userRole }) {
         </div>
 
         <div className="settings-tabs">
-          <button
-            className={`tab ${activeTab === 'bots' ? 'active' : ''}`}
-            onClick={() => setActiveTab('bots')}
-          >
-            Боты
-          </button>
+          {isAdmin && (
+            <button
+              className={`tab ${activeTab === 'bots' ? 'active' : ''}`}
+              onClick={() => setActiveTab('bots')}
+            >
+              Боты
+            </button>
+          )}
           <button
             className={`tab ${activeTab === 'labels' ? 'active' : ''}`}
             onClick={() => setActiveTab('labels')}
@@ -101,18 +103,22 @@ function SettingsModal({ bots, onClose, onBotUpdated, userRole }) {
           >
             <FiMessageCircle /> Приветствие
           </button>
-          <button
-            className={`tab ${activeTab === 'menu' ? 'active' : ''}`}
-            onClick={() => setActiveTab('menu')}
-          >
-            <FiMenu /> Меню
-          </button>
-          <button
-            className={`tab ${activeTab === 'timer' ? 'active' : ''}`}
-            onClick={() => setActiveTab('timer')}
-          >
-            <FiClock /> Таймер
-          </button>
+          {isAdmin && (
+            <>
+              <button
+                className={`tab ${activeTab === 'menu' ? 'active' : ''}`}
+                onClick={() => setActiveTab('menu')}
+              >
+                <FiMenu /> Меню
+              </button>
+              <button
+                className={`tab ${activeTab === 'timer' ? 'active' : ''}`}
+                onClick={() => setActiveTab('timer')}
+              >
+                <FiClock /> Таймер
+              </button>
+            </>
+          )}
         </div>
 
         <div className="settings-content">
