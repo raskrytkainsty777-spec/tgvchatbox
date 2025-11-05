@@ -144,10 +144,20 @@ body {
   cursor: not-allowed;
 }
 
-.btn-broadcast {
+.btn-broadcast,
+.btn-statistics {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.btn-statistics {
+  background: #FFD700;
+  color: #0e1621;
+}
+
+.btn-statistics:hover {
+  background: #FFC700;
 }
 
 .btn-secondary {
