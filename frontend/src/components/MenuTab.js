@@ -886,6 +886,7 @@ function ManageButtonsView({ labels, buttons, onBack }) {
     setEditingButton(null);
     setName('');
     setCommand('');
+    setLevel(1);
     setActions([]);
   };
 
