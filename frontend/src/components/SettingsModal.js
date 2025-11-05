@@ -113,6 +113,13 @@ function SettingsModal({ bots, onClose, onBotUpdated }) {
           {activeTab === 'auto' && (
             <AutoRepliesTab replies={autoReplies} onUpdate={loadAutoReplies} />
           )}
+          {activeTab === 'welcome' && (
+            <WelcomeMessagesTab 
+              messages={welcomeMessages} 
+              bots={bots}
+              onUpdate={loadWelcomeMessages} 
+            />
+          )}
         </div>
       </div>
     </div>
