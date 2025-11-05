@@ -599,14 +599,59 @@ function CreateMenuView({ buttons, menus, onBack }) {
         )}
       </div>
 
-      <button 
-        className="btn-primary btn-block" 
-        onClick={handleSave} 
-        data-testid="save-menu-btn"
-        disabled={selectedButtons.length === 0}
-      >
-        Сохранить меню
-      </button>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button 
+              className="btn-primary" 
+              onClick={handleSave} 
+              data-testid="save-menu-btn"
+              disabled={selectedButtons.length === 0}
+            >
+              {editingMenu ? 'Обновить меню' : 'Сохранить меню'}
+            </button>
+            <button 
+              className="btn-secondary" 
+              onClick={handleCancelEdit}
+            >
+              Отмена
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* List of existing menus */}
+      <h4 style={{ marginBottom: '15px', color: '#fff' }}>Созданные меню</h4>
+      {menus.length === 0 ? (
+        <div className="empty-state">Нет созданных меню</div>
+      ) : (
+        <div className="manage-list">
+          {menus.map(menu => (
+            <div key={menu.id} className="manage-item">
+              <div className="manage-item-info">
+                <div className="manage-item-name">{menu.name}</div>
+                <div className="manage-item-meta">
+                  {menu.button_ids.length} кнопок
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  className="btn-icon-small"
+                  onClick={() => handleEdit(menu)}
+                  title="Редактировать меню"
+                >
+                  <FiEdit />
+                </button>
+                <button
+                  className="btn-icon-small btn-delete"
+                  onClick={() => handleDelete(menu.id, menu.name)}
+                  title="Удалить меню"
+                >
+                  <FiTrash2 />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
