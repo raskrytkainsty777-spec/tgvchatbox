@@ -128,6 +128,7 @@ class TelegramBotManager:
             "text": message.text or "",
             "file_id": message.document.file_id if message.document else (message.photo[-1].file_id if message.photo else None),
             "file_type": "document" if message.document else ("photo" if message.photo else None),
+            "telegram_message_id": message.message_id,
             "is_from_bot": False,
             "is_read": False,
             "created_at": datetime.now(timezone.utc)
