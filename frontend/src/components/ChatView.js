@@ -248,12 +248,30 @@ function ChatView({ chat, onMessageSent }) {
           <input
             type="text"
             value={messageText}
-            onChange={(e) => setMessageText(e.target.value)}
-            placeholder="Напишите сообщение..."
+            onChange={handleMessageTextChange}
+            placeholder="Напишите сообщение... (/ для быстрых ответов)"
             disabled={sending}
             className="message-input"
             data-testid="message-input"
           />
+
+          {showQuickReplies && (
+            <div className="quick-replies-menu">
+              {quickReplies
+                .filter(qr => qr.shortcut.toLowerCase().startsWith(messageText.substring(1).toLowerCase()))
+                .map(reply => (
+                  <div
+                    key={reply.id}
+                    className="quick-reply-option"
+                    onClick={() => handleSelectQuickReply(reply)}
+                  >
+                    <div className="qr-shortcut">/{reply.shortcut}</div>
+                    <div className="qr-text">{reply.text.substring(0, 50)}...</div>
+                  </div>
+                ))
+              }
+            </div>
+          )}
 
           <button
             type="button"
