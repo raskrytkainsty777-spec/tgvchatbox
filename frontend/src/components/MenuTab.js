@@ -881,6 +881,7 @@ function ManageButtonsView({ labels, buttons, onBack }) {
     setShowCreateForm(false);
     setEditingButton(null);
     setName('');
+    setCommand('');
     setActions([]);
   };
 
