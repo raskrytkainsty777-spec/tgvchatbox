@@ -38,6 +38,18 @@ function ChatList({
     }
   };
 
+  // Count chats matching a specific filter
+  const countChatsForFilter = (filterType, labelId = null) => {
+    if (filterType === 'unread') {
+      return chats.filter(chat => chat.unread_count > 0).length;
+    } else if (filterType === 'label' && labelId) {
+      return chats.filter(chat => 
+        chat.label_ids && chat.label_ids.includes(labelId)
+      ).length;
+    }
+    return 0;
+  };
+
   const handleSelectChat = (chatId) => {
     setSelectedChats(prev => {
       if (prev.includes(chatId)) {
