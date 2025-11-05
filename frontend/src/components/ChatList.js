@@ -92,15 +92,9 @@ function ChatList({
     setFilter(type);
     setFilterLabelId(labelId);
     setShowFilterMenu(false);
-    // Фильтрация будет выполнена на родительском компоненте через пропсы
-    if (type === 'unread') {
-      onSearchChange(''); // reset search
-      // родительский компонент должен вызвать API с unread_only=true
-    } else if (type === 'label' && labelId) {
-      onSearchChange(''); // reset search
-      // родительский компонент должен вызвать API с label_id=labelId
-    } else {
-      // all - просто показать все
+    // Вызываем коллбэк для родительского компонента
+    if (onFilterChange) {
+      onFilterChange(type, labelId);
     }
   };
 
