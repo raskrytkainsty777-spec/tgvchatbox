@@ -36,7 +36,7 @@ function App() {
       loadStats();
     }, 10000);
     return () => clearInterval(interval);
-  }, [selectedBots, searchQuery, filterType, filterLabelId, loadChats]);
+  }, [selectedBots, searchQuery, filterType, filterLabelId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadBots = async () => {
     try {
