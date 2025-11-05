@@ -284,6 +284,23 @@ function ChatView({ chat, onMessageSent }) {
           </div>
         )}
         
+        {/* Reply/Edit Indicator */}
+        {(replyToMessage || editingMessage) && (
+          <div className="reply-edit-indicator">
+            <div className="indicator-content">
+              <strong>{editingMessage ? '✏️ Редактирование:' : '↩️ Ответ на:'}</strong>
+              <span>{(editingMessage || replyToMessage)?.text?.substring(0, 50) || 'Сообщение'}</span>
+            </div>
+            <button 
+              type="button" 
+              className="cancel-indicator"
+              onClick={editingMessage ? cancelEdit : cancelReply}
+            >
+              ✕
+            </button>
+          </div>
+        )}
+        
         <form onSubmit={handleSendMessage} className="message-input-form">
           <input
             type="file"
