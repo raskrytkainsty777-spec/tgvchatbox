@@ -229,7 +229,7 @@ function ChatList({
     <div className="chat-list">
       {/* Search Bar */}
       <div className="search-bar">
-        <div className="search-input-wrapper">
+        <div className="search-input-wrapper-compact">
           <FiSearch className="search-icon" />
           <input
             type="text"
@@ -239,6 +239,13 @@ function ChatList({
             data-testid="search-input"
           />
         </div>
+        <button
+          className="export-btn"
+          onClick={() => setShowExportMenu(!showExportMenu)}
+          title="Экспорт username"
+        >
+          <FiDownload />
+        </button>
         <button
           className={`filter-btn ${activeFilters.length > 0 ? 'active' : ''}`}
           onClick={() => setShowFilterMenu(!showFilterMenu)}
