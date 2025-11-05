@@ -102,6 +102,17 @@ function BotManager({ bots, onClose, onBotAdded, onBotDeleted, embedded = false 
           </div>
         </div>
       </div>
+  );
+
+  if (embedded) {
+    return content;
+  }
+
+  return (
+    <div className="modal-overlay" data-testid="bot-manager-modal">
+      <div className="modal bot-manager-modal">
+        {content}
+      </div>
     </div>
   );
 }
