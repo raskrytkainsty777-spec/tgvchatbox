@@ -558,8 +558,8 @@ function WelcomeMessagesTab({ messages, bots, onUpdate }) {
 
   return (
     <div className="tab-content">
-      <form onSubmit={handleCreate} className="create-form">
-        <h3>Создать приветственное сообщение</h3>
+      <form onSubmit={handleSubmit} className="create-form">
+        <h3>{editingGroup ? 'Редактировать приветственное сообщение' : 'Создать приветственное сообщение'}</h3>
         
         <div style={{ marginBottom: '15px' }}>
           <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#8d969e' }}>
