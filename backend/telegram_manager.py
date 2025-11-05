@@ -606,11 +606,25 @@ class TelegramBotManager:
                         nested_buttons_cursor = self.db.menu_buttons.find({"id": {"$in": nested_button_ids}})
                         nested_buttons = await nested_buttons_cursor.to_list(length=100)
                         
-                        # Create keyboard
+                        # Create keyboard - check if button has URL action for direct link
                         keyboard = []
                         for nb in nested_buttons:
-                            callback_data = f"btn_{nb['id']}"
-                            keyboard.append([InlineKeyboardButton(nb["name"], callback_data=callback_data)])
+                            # Check if button has URL action (first action only for simplicity)
+                            has_url_action = False
+                            url_value = None
+                            if nb.get('actions'):
+                                first_action = nb['actions'][0]
+                                if first_action.get('type') == 'url' and first_action.get('value'):
+                                    has_url_action = True
+                                    url_value = first_action['value'].get('url', '')
+                            
+                            if has_url_action and url_value:
+                                # Create button with direct URL link
+                                keyboard.append([InlineKeyboardButton(nb["name"], url=url_value)])
+                            else:
+                                # Create button with callback for other actions
+                                callback_data = f"cmd_{nb['id']}"
+                                keyboard.append([InlineKeyboardButton(nb["name"], callback_data=callback_data)])
                         
                         reply_markup = InlineKeyboardMarkup(keyboard)
                         
