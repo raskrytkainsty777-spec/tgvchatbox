@@ -189,35 +189,39 @@ function App() {
 
       {/* Main Content */}
       <div className="app-content">
-        {/* Sidebar */}
-        <div className="sidebar">
-          <ChatList 
-            chats={chats}
-            bots={bots}
-            selectedBots={selectedBots}
-            selectedChat={selectedChat}
-            searchQuery={searchQuery}
-            onChatSelect={handleChatSelect}
-            onSearchChange={setSearchQuery}
-            onToggleBotFilter={handleToggleBotFilter}
-            onChatsUpdate={loadChats}
-            onFilterChange={handleFilterChange}
-          />
-        </div>
+        {showStatistics ? (
+          <StatisticsPage onBack={() => setShowStatistics(false)} />
+        ) : (
+          <>
+            {/* Sidebar */}
+            <div className="sidebar">
+              <ChatList 
+                chats={chats}
+                bots={bots}
+                selectedBots={selectedBots}
+                selectedChat={selectedChat}
+                searchQuery={searchQuery}
+                onChatSelect={handleChatSelect}
+                onSearchChange={setSearchQuery}
+                onToggleBotFilter={handleToggleBotFilter}
+                onChatsUpdate={loadChats}
+                onFilterChange={handleFilterChange}
+              />
+            </div>
 
-        {/* Chat View */}
-        <div className="chat-area">
-          {selectedChat ? (
-            <ChatView 
-              chat={selectedChat}
-              onMessageSent={loadChats}
-            />
-          ) : (
-            <div className="no-chat-selected" data-testid="no-chat-selected">
-              <div className="placeholder">
-                <h2>Выберите чат</h2>
-                <p>Выберите чат из списка слева, чтобы начать общение</p>
-              </div>
+            {/* Chat View */}
+            <div className="chat-area">
+              {selectedChat ? (
+                <ChatView 
+                  chat={selectedChat}
+                  onMessageSent={loadChats}
+                />
+              ) : (
+                <div className="no-chat-selected" data-testid="no-chat-selected">
+                  <div className="placeholder">
+                    <h2>Выберите чат</h2>
+                    <p>Выберите чат из списка слева, чтобы начать общение</p>
+                  </div>
             </div>
           )}
         </div>
