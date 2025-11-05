@@ -271,6 +271,17 @@ function ChatList({
               <span>Непрочитанные</span>
               <span className="filter-count">{countChatsForFilter('unread')}</span>
             </div>
+            <div className="filter-divider">По статусу:</div>
+            <div className="filter-option" onClick={() => applyFilter('online')}>
+              <span className="status-dot online"></span>
+              <span>Онлайн</span>
+              <span className="filter-count">{countChatsForFilter('online')}</span>
+            </div>
+            <div className="filter-option" onClick={() => applyFilter('offline')}>
+              <span className="status-dot offline"></span>
+              <span>Оффлайн</span>
+              <span className="filter-count">{countChatsForFilter('offline')}</span>
+            </div>
             <div className="filter-divider">По меткам:</div>
             {labels.length === 0 ? (
               <div className="filter-option" style={{ color: '#8d969e', cursor: 'default' }}>
