@@ -172,6 +172,36 @@ function ChatList({
     }
   };
 
+  const handleStarClick = (chat, e) => {
+    e.stopPropagation();
+    setSaleChat(chat);
+    setSaleAmount(chat.sale_amount || '');
+    setShowSalePopup(true);
+  };
+
+  const handleSaveSale = async () => {
+    if (!saleAmount || parseFloat(saleAmount) <= 0) {
+      alert('Введите корректную сумму');
+      return;
+    }
+
+    try {
+      await axios.post(`${API}/chats/${saleChat.id}/sale`, {
+        chat_id: saleChat.id,
+        amount: parseFloat(saleAmount)
+      });
+      
+      setShowSalePopup(false);
+      setSaleChat(null);
+      setSaleAmount('');
+      onChatsUpdate(); // Refresh chats to show updated data
+      loadLabels(); // Refresh labels to show "Покупатели" if new
+    } catch (error) {
+      alert('Не удалось сохранить продажу');
+      console.error('Sale error:', error);
+    }
+  };
+
   return (
     <div className="chat-list">
       {/* Search Bar */}
