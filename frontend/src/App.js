@@ -51,18 +51,28 @@ function App() {
   const loadChats = async () => {
     try {
       const params = {};
+      
+      // Фильтр по ботам - ОБЯЗАТЕЛЬНО применяется
       if (selectedBots.length > 0) {
         params.bot_ids = selectedBots.join(',');
       }
+      
+      // Поиск
       if (searchQuery) {
         params.search = searchQuery;
       }
+      
+      // Фильтр непрочитанные
       if (filterType === 'unread') {
         params.unread_only = true;
       }
+      
+      // Фильтр по метке
       if (filterType === 'label' && filterLabelId) {
         params.label_id = filterLabelId;
       }
+      
+      console.log('Loading chats with params:', params); // Для отладки
       const response = await axios.get(`${API}/chats`, { params });
       setChats(response.data);
     } catch (error) {
@@ -71,6 +81,7 @@ function App() {
   };
 
   const handleFilterChange = (type, labelId = null) => {
+    console.log('Filter changed:', type, labelId); // Для отладки
     setFilterType(type);
     setFilterLabelId(labelId);
   };
