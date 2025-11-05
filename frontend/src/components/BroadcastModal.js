@@ -81,24 +81,40 @@ function BroadcastModal({ bots, onClose, onSuccess }) {
     setIsSending(true);
 
     try {
-      // Получить список чатов для отправки
-      let chatsToSend = [];
+      // Получить список всех чатов для выбранных ботов
+      let allChats = [];
       
       for (const botId of selectedBots) {
         const params = { bot_ids: botId };
-        
-        if (recipientType === 'label' && selectedLabelId) {
-          params.label_id = selectedLabelId;
-        }
-        
         const response = await axios.get(`${API}/chats`, { params });
-        chatsToSend = [...chatsToSend, ...response.data];
+        allChats = [...allChats, ...response.data];
       }
 
       // Удалить дубликаты
-      const uniqueChats = chatsToSend.filter((chat, index, self) =>
+      const uniqueChats = allChats.filter((chat, index, self) =>
         index === self.findIndex(c => c.id === chat.id)
       );
+
+      // Фильтрация по меткам
+      let filteredChats = uniqueChats;
+
+      // Включить только чаты с выбранными метками
+      if (selectedLabelIds.length > 0) {
+        filteredChats = filteredChats.filter(chat => {
+          const chatLabels = chat.label_ids || [];
+          return selectedLabelIds.some(labelId => chatLabels.includes(labelId));
+        });
+      }
+
+      // Исключить чаты с выбранными метками
+      if (excludeLabelIds.length > 0) {
+        filteredChats = filteredChats.filter(chat => {
+          const chatLabels = chat.label_ids || [];
+          return !excludeLabelIds.some(labelId => chatLabels.includes(labelId));
+        });
+      }
+
+      const uniqueFilteredChats = filteredChats;
 
       const total = uniqueChats.length;
       let sent = 0;
