@@ -1,0 +1,337 @@
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import EmojiPicker from 'emoji-picker-react';
+import { FiSend, FiPaperclip, FiSmile, FiUsers } from 'react-icons/fi';
+import './ChatView.css';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
+
+function ChatView({ chat, onMessageSent }) {
+  const [messages, setMessages] = useState([]);
+  const [messageText, setMessageText] = useState('');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showBroadcast, setShowBroadcast] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (chat) {
+      loadMessages();
+      markAsRead();
+    }
+  }, [chat?.id]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    if (!chat) return;
+    
+    const interval = setInterval(() => {
+      loadMessages();
+    }, 2000); // Обновление сообщений каждые 2 секунды
+    
+    return () => clearInterval(interval);
+  }, [chat?.id]);
+
+  const loadMessages = async () => {
+    try {
+      const response = await axios.get(`${API}/messages/${chat.id}`);
+      setMessages(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Failed to load messages:', error);
+      setLoading(false);
+    }
+  };
+
+  const markAsRead = async () => {
+    try {
+      await axios.patch(`${API}/messages/read`, { chat_id: chat.id });
+      onMessageSent();
+    } catch (error) {
+      console.error('Failed to mark as read:', error);
+    }
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!messageText.trim() || sending) return;
+
+    setSending(true);
+    try {
+      await axios.post(`${API}/messages`, {
+        bot_id: chat.bot_id,
+        user_id: chat.user_id,
+        text: messageText
+      });
+      setMessageText('');
+      setShowEmojiPicker(false);
+      await loadMessages();
+      onMessageSent();
+    } catch (error) {
+      alert('Не удалось отправить сообщение');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setSending(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('bot_id', chat.bot_id);
+      formData.append('user_id', chat.user_id);
+      formData.append('caption', messageText || '');
+
+      await axios.post(`${API}/messages/file`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      setMessageText('');
+      await loadMessages();
+      onMessageSent();
+    } catch (error) {
+      alert('Не удалось отправить файл');
+    } finally {
+      setSending(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleEmojiClick = (emojiData) => {
+    setMessageText(prev => prev + emojiData.emoji);
+  };
+
+  const formatMessageTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  if (!chat) return null;
+
+  return (
+    <div className="chat-view" data-testid="chat-view">
+      {/* Chat Header */}
+      <div className="chat-header-bar">
+        <div className="chat-header-info">
+          <div className="chat-header-avatar">
+            {(chat.first_name || chat.username || 'U').charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <div className="chat-header-name">
+              {chat.first_name || chat.username || 'User'}
+              {chat.last_name && ` ${chat.last_name}`}
+            </div>
+            <div className="chat-header-username">@{chat.username || 'unknown'}</div>
+          </div>
+        </div>
+        <button 
+          className="btn-icon"
+          onClick={() => setShowBroadcast(!showBroadcast)}
+          title="Массовая рассылка"
+          data-testid="broadcast-button"
+        >
+          <FiUsers size={20} />
+        </button>
+      </div>
+
+      {/* Messages Container */}
+      <div className="messages-container">
+        {loading ? (
+          <div className="loading-messages">Загрузка...</div>
+        ) : messages.length === 0 ? (
+          <div className="no-messages">Нет сообщений</div>
+        ) : (
+          <div className="messages-list">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`message ${message.is_from_bot ? 'outgoing' : 'incoming'}`}
+                data-testid={`message-${message.id}`}
+              >
+                <div className="message-bubble">
+                  {message.text && <div className="message-text">{message.text}</div>}
+                  {message.file_id && (
+                    <div className="message-file">
+                      📄 {message.file_type === 'photo' ? 'Фото' : 'Файл'}
+                    </div>
+                  )}
+                  <div className="message-time">{formatMessageTime(message.created_at)}</div>
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+        )}
+      </div>
+
+      {/* Message Input */}
+      <div className="message-input-container">
+        {showEmojiPicker && (
+          <div className="emoji-picker-wrapper">
+            <EmojiPicker 
+              onEmojiClick={handleEmojiClick}
+              theme="dark"
+              width="100%"
+              height="350px"
+            />
+          </div>
+        )}
+        
+        <form onSubmit={handleSendMessage} className="message-input-form">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            style={{ display: 'none' }}
+            data-testid="file-input"
+          />
+          
+          <button
+            type="button"
+            className="input-btn"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={sending}
+            data-testid="attach-file-button"
+          >
+            <FiPaperclip size={20} />
+          </button>
+
+          <input
+            type="text"
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+            placeholder="Напишите сообщение..."
+            disabled={sending}
+            className="message-input"
+            data-testid="message-input"
+          />
+
+          <button
+            type="button"
+            className="input-btn"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            disabled={sending}
+            data-testid="emoji-button"
+          >
+            <FiSmile size={20} />
+          </button>
+
+          <button
+            type="submit"
+            className="send-btn"
+            disabled={!messageText.trim() || sending}
+            data-testid="send-button"
+          >
+            <FiSend size={20} />
+          </button>
+        </form>
+      </div>
+
+      {/* Broadcast Modal */}
+      {showBroadcast && (
+        <BroadcastModal
+          botId={chat.bot_id}
+          onClose={() => setShowBroadcast(false)}
+          onSent={onMessageSent}
+        />
+      )}
+    </div>
+  );
+}
+
+// Broadcast Modal Component
+function BroadcastModal({ botId, onClose, onSent }) {
+  const [message, setMessage] = useState('');
+  const [userIds, setUserIds] = useState('');
+  const [sending, setSending] = useState(false);
+
+  const handleBroadcast = async (e) => {
+    e.preventDefault();
+    if (!message.trim() || !userIds.trim()) {
+      alert('Заполните все поля');
+      return;
+    }
+
+    setSending(true);
+    try {
+      const ids = userIds.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+      const response = await axios.post(`${API}/messages/broadcast`, {
+        bot_id: botId,
+        user_ids: ids,
+        text: message
+      });
+      alert(`Отправлено: ${response.data.success_count}/${response.data.total}`);
+      onSent();
+      onClose();
+    } catch (error) {
+      alert('Ошибка при рассылке');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay" data-testid="broadcast-modal">
+      <div className="modal">
+        <div className="modal-header">
+          <h2 className="modal-title">Массовая рассылка</h2>
+          <button className="modal-close" onClick={onClose}>×</button>
+        </div>
+        <form onSubmit={handleBroadcast}>
+          <div style={{ marginBottom: '15px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#8d969e' }}>
+              ID пользователей (через запятую):
+            </label>
+            <input
+              type="text"
+              value={userIds}
+              onChange={(e) => setUserIds(e.target.value)}
+              placeholder="123456, 789012, 345678"
+              disabled={sending}
+              data-testid="broadcast-user-ids"
+            />
+          </div>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#8d969e' }}>
+              Сообщение:
+            </label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Введите сообщение..."
+              rows="5"
+              disabled={sending}
+              data-testid="broadcast-message"
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button type="submit" className="btn-primary" disabled={sending} data-testid="send-broadcast">
+              {sending ? 'Отправка...' : 'Отправить'}
+            </button>
+            <button type="button" className="btn-secondary" onClick={onClose}>
+              Отмена
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default ChatView;
