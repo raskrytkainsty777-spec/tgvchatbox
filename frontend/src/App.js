@@ -172,9 +172,7 @@ function App() {
     // Automatically mark messages as read when chat is opened
     if (chat && chat.unread_count > 0) {
       try {
-        await axios.patch(`${API}/messages/read`, {
-          chat_id: chat.id
-        });
+        await axios.patch(`${API}/chats/${chat.id}/read`);
         
         // Refresh chats to update unread count
         loadChats();
