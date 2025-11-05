@@ -812,6 +812,7 @@ function ManageButtonsView({ labels, buttons, onBack }) {
       const buttonData = { 
         name, 
         command: command.trim() || null, // Send command if not empty
+        level: level,
         actions: formattedActions 
       };
       
@@ -826,6 +827,7 @@ function ManageButtonsView({ labels, buttons, onBack }) {
       }
       setName('');
       setCommand('');
+      setLevel(1);
       setActions([]);
       setShowCreateForm(false);
       setEditingButton(null);
