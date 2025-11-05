@@ -54,7 +54,7 @@ function App() {
     }
   };
 
-  const loadChats = async () => {
+  const loadChats = useCallback(async () => {
     try {
       const params = {};
       
@@ -86,7 +86,7 @@ function App() {
     } catch (error) {
       console.error('Failed to load chats:', error);
     }
-  };
+  }, [selectedBots, searchQuery, filterType, filterLabelId, bots.length]);
 
   const handleFilterChange = (type, labelId = null) => {
     console.log('Filter changed:', type, labelId); // Для отладки
