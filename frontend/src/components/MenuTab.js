@@ -105,6 +105,8 @@ function MenuTab({ bots = [] }) {
           onCreateButton={() => setView('createButton')}
           onCreateMenu={() => setView('createMenu')}
           onAssignMenu={() => setView('assignMenu')}
+          onManageButtons={() => setView('manageButtons')}
+          onManageMenus={() => setView('manageMenus')}
         />
       )}
 
@@ -128,6 +130,20 @@ function MenuTab({ bots = [] }) {
           bots={bots}
           menus={menus}
           assignments={assignments}
+          onBack={() => { setView('main'); loadAll(); }}
+        />
+      )}
+
+      {view === 'manageButtons' && (
+        <ManageButtonsView
+          buttons={buttons}
+          onBack={() => { setView('main'); loadAll(); }}
+        />
+      )}
+
+      {view === 'manageMenus' && (
+        <ManageMenusView
+          menus={menus}
           onBack={() => { setView('main'); loadAll(); }}
         />
       )}
