@@ -237,6 +237,42 @@
   text-align: center;
 }
 
+/* Export Button */
+.export-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: #8d969e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+.export-btn:hover {
+  background: #242f3d;
+  color: #fff;
+}
+
+/* Export Menu */
+.export-menu {
+  position: absolute;
+  right: 50px;
+  top: 45px;
+  background: #17212b;
+  border: 1px solid #242f3d;
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 250px;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
 /* Active Filters */
 .active-filters-bar {
   padding: 8px 16px;
