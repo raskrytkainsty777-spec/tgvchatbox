@@ -1107,9 +1107,16 @@ async def update_user(user_id: str, user_data: UserUpdate):
 @api_router.delete("/users/{user_id}")
 async def delete_user(user_id: str):
     """Delete user"""
-    result = await db.users.delete_one({"id": user_id})
-    if result.deleted_count == 0:
+    # Check if user exists and is admin
+    user = await db.users.find_one({"id": user_id})
+    if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    
+    # Prevent deletion of admin users
+    if user.get("role") == "admin":
+        raise HTTPException(status_code=403, detail="Cannot delete admin user")
+    
+    result = await db.users.delete_one({"id": user_id})
     return {"success": True}
 
 @api_router.post("/auth/login", response_model=UserResponse)
