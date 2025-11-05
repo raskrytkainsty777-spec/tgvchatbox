@@ -195,11 +195,16 @@ td {
   font-size: 14px;
 }
 
+td:last-child {
+  text-align: right;
+}
+
 td.amount {
   color: #4CAF50;
   font-weight: 600;
   font-family: monospace;
   font-size: 15px;
+  text-align: right;
 }
 
 /* Responsive */
