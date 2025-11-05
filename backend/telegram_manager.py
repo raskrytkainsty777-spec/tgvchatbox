@@ -252,6 +252,57 @@ class TelegramBotManager:
                     # Send auto-reply
                     try:
                         await self.send_message(bot_id, user_id, auto_reply["message"])
+
+    async def _send_bot_menu(self, bot_id: str, user_id: int):
+        """Send bot menu with inline keyboard buttons"""
+        try:
+            from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+            
+            # Get menu assignment for this bot
+            assignment = await self.db.bot_menu_assignments.find_one({"bot_id": bot_id})
+            if not assignment:
+                logger.info(f"No menu assigned to bot {bot_id}")
+                return
+            
+            # Get menu
+            menu = await self.db.bot_menus.find_one({"id": assignment["menu_id"]})
+            if not menu:
+                logger.error(f"Menu {assignment['menu_id']} not found")
+                return
+            
+            # Get buttons
+            button_ids = menu.get("button_ids", [])
+            if not button_ids:
+                logger.info(f"Menu {menu['name']} has no buttons")
+                return
+            
+            # Fetch button details
+            buttons_cursor = self.db.menu_buttons.find({"id": {"$in": button_ids}})
+            buttons = await buttons_cursor.to_list(length=100)
+            
+            # Create inline keyboard
+            keyboard = []
+            for button in buttons:
+                # Store button data for callback
+                callback_data = f"btn_{button['id']}"
+                keyboard.append([InlineKeyboardButton(button["name"], callback_data=callback_data)])
+            
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            
+            # Send menu
+            bot = self.bots[bot_id]
+            await bot.send_message(
+                chat_id=user_id,
+                text=f"📋 {menu['name']}",
+                reply_markup=reply_markup
+            )
+            logger.info(f"Menu sent to user {user_id} for bot {bot_id}")
+            
+        except Exception as e:
+            logger.error(f"Failed to send bot menu: {e}")
+            import traceback
+            traceback.print_exc()
+
                         logger.info(f"Auto-reply sent to user {user_id} for keyword '{keyword}'")
                     except Exception as e:
                         logger.error(f"Failed to send auto-reply: {e}")
