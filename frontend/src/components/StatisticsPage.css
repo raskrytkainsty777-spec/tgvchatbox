@@ -249,17 +249,11 @@
   background: rgba(82, 136, 193, 0.3) !important;
 }
 
-/* Stats Sections */
-.stats-sections {
-  padding: 0 24px 24px;
-}
-
-.stats-section.full-width {
-  background: #17212b;
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid #242f3d;
-  min-width: 0;
+/* Responsive */
+@media (max-width: 1024px) {
+  .stats-container {
+    grid-template-columns: 1fr;
+  }
 }
 
 .stats-section h2 {
