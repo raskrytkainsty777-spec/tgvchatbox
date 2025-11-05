@@ -25,15 +25,16 @@ function App() {
   useEffect(() => {
     loadBots();
     loadStats();
-    const interval = setInterval(() => {
-      loadChats();
-      loadStats();
-    }, 3000); // Обновление каждые 3 секунды
-    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     loadChats();
+    // Автообновление каждые 5 секунд
+    const interval = setInterval(() => {
+      loadChats();
+      loadStats();
+    }, 5000);
+    return () => clearInterval(interval);
   }, [selectedBots, searchQuery, filterType, filterLabelId]);
 
   const loadBots = async () => {
