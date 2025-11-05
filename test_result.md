@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Complete the bot menu system feature: create CSS for MenuTab component, fix frontend compilation error (missing import), and test the menu UI (create buttons, create menus, assign menus to bots)"
+user_problem_statement: "Implement sales tracking system: display filter counts, add star icon to chats for sale amount entry, create system label 'Покупатели', build statistics page with sales by bot/day, and add username export by labels"
 
 backend:
   - task: "Menu System Models"
