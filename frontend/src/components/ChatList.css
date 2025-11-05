@@ -218,7 +218,7 @@
   background: rgba(82, 136, 193, 0.1);
 }
 
-.filter-count {
+.filter-btn .filter-count {
   position: absolute;
   top: -2px;
   right: -2px;
