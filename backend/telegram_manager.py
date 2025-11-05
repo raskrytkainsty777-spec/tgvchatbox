@@ -340,26 +340,11 @@ class TelegramBotManager:
             traceback.print_exc()
 
     async def _handle_button_press(self, update: Update, bot_id: str):
-        """Handle button press from inline keyboard"""
-        query = update.callback_query
-        if not query:
-            return
-        
-        await query.answer()
-        
-        user_id = query.from_user.id
-        callback_data = query.data
-        
-        # Parse button id from callback data
-        if not callback_data.startswith("btn_"):
-            return
-        
-        button_id = callback_data[4:]  # Remove "btn_" prefix
-        
-        try:
-            # Get button details
-            button = await self.db.menu_buttons.find_one({"id": button_id})
-
+        """Handle button press from inline keyboard (not used for command menu)"""
+        # This function is for inline keyboards, which we don't use anymore
+        # Keeping for potential future use
+        pass
+    
     async def _handle_menu_command(self, bot_id: str, user_id: int, command: str) -> bool:
         """Handle menu command and execute button actions"""
         try:
