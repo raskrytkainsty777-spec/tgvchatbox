@@ -426,4 +426,169 @@ function AutoRepliesTab({ replies, onUpdate }) {
   );
 }
 
+function WelcomeMessagesTab({ messages, bots, onUpdate }) {
+  const [selectedBots, setSelectedBots] = useState([]);
+  const [text, setText] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleToggleBot = (botId) => {
+    setSelectedBots(prev => {
+      if (prev.includes(botId)) {
+        return prev.filter(id => id !== botId);
+      } else {
+        return [...prev, botId];
+      }
+    });
+  };
+
+  const handleSelectAllBots = () => {
+    if (selectedBots.length === bots.length) {
+      setSelectedBots([]);
+    } else {
+      setSelectedBots(bots.map(b => b.id));
+    }
+  };
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    if (!text.trim() || selectedBots.length === 0) {
+      alert('Выберите ботов и введите текст сообщения');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post(`${API}/welcome-messages`, {
+        bot_ids: selectedBots,
+        text: text,
+        is_active: true
+      });
+      setText('');
+      setSelectedBots([]);
+      onUpdate();
+    } catch (error) {
+      alert('Не удалось создать приветственное сообщение');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Удалить приветственное сообщение?')) return;
+    try {
+      await axios.delete(`${API}/welcome-messages/${id}`);
+      onUpdate();
+    } catch (error) {
+      alert('Не удалось удалить');
+    }
+  };
+
+  // Группируем сообщения по тексту
+  const groupedMessages = messages.reduce((acc, msg) => {
+    const existing = acc.find(g => g.text === msg.text);
+    if (existing) {
+      existing.bot_ids.push(msg.bot_id);
+      existing.ids.push(msg.id);
+    } else {
+      acc.push({
+        text: msg.text,
+        bot_ids: [msg.bot_id],
+        ids: [msg.id],
+        is_active: msg.is_active
+      });
+    }
+    return acc;
+  }, []);
+
+  const getBotUsername = (botId) => {
+    const bot = bots.find(b => b.id === botId);
+    return bot ? bot.username : 'Unknown';
+  };
+
+  return (
+    <div className="tab-content">
+      <form onSubmit={handleCreate} className="create-form">
+        <h3>Создать приветственное сообщение</h3>
+        
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#8d969e' }}>
+            Выберите ботов:
+          </label>
+          <button
+            type="button"
+            className="select-all-btn"
+            onClick={handleSelectAllBots}
+            disabled={loading}
+            style={{ marginBottom: '10px' }}
+          >
+            {selectedBots.length === bots.length ? '☑' : '☐'} Выбрать все
+          </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {bots.map(bot => (
+              <label key={bot.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={selectedBots.includes(bot.id)}
+                  onChange={() => handleToggleBot(bot.id)}
+                  disabled={loading}
+                  style={{ cursor: 'pointer' }}
+                />
+                <span style={{ color: '#fff' }}>@{bot.username}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Привет! 👋 Я бот-помощник. Чем могу помочь?"
+          rows="4"
+          disabled={loading}
+        />
+        <button type="submit" className="btn-primary" disabled={loading || !text.trim() || selectedBots.length === 0}>
+          <FiPlus /> {loading ? 'Создание...' : 'Добавить'}
+        </button>
+        <p className="hint">Это сообщение будет отправляться пользователю при команде /start</p>
+      </form>
+
+      <div className="items-list">
+        <h3>Приветственные сообщения ({groupedMessages.length})</h3>
+        {groupedMessages.length === 0 ? (
+          <div className="empty-state">Нет приветственных сообщений</div>
+        ) : (
+          <div className="items-grid">
+            {groupedMessages.map((group, index) => (
+              <div key={index} className="item-card welcome-card">
+                <div className="welcome-info">
+                  <div className="welcome-bots">
+                    {group.bot_ids.map(botId => (
+                      <span key={botId} className="bot-badge">
+                        @{getBotUsername(botId)}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="welcome-text">{group.text}</div>
+                  <div className="welcome-status">
+                    {group.is_active ? '🟢 Активно' : '🔴 Неактивно'}
+                  </div>
+                </div>
+                <button
+                  className="btn-icon-small btn-delete"
+                  onClick={() => {
+                    // Удаляем все сообщения этой группы
+                    group.ids.forEach(id => handleDelete(id));
+                  }}
+                >
+                  <FiTrash2 />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default SettingsModal;
