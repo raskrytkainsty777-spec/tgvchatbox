@@ -289,6 +289,28 @@ function ChatList({
             )}
           </div>
         )}
+        
+        {showExportMenu && (
+          <div className="export-menu">
+            <div className="filter-divider">Экспорт username по меткам:</div>
+            {labels.length === 0 ? (
+              <div className="filter-option" style={{ color: '#8d969e', cursor: 'default' }}>
+                Нет меток
+              </div>
+            ) : (
+              labels.map(label => (
+                <div
+                  key={label.id}
+                  className="filter-option"
+                  onClick={() => handleExportUsernames(label.id)}
+                >
+                  <span className="label-dot" style={{ backgroundColor: label.color }}></span>
+                  <span>{label.name}</span>
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
 
       {/* Active Filters */}
