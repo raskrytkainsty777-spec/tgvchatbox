@@ -429,6 +429,24 @@ async def create_menu_button(button_data: MenuButtonCreate):
     await db.menu_buttons.insert_one(button_doc)
     return MenuButtonResponse(**button_doc)
 
+
+@api_router.put("/menu-buttons/{button_id}", response_model=MenuButtonResponse)
+async def update_menu_button(button_id: str, button_data: MenuButtonCreate):
+    """Update an existing menu button"""
+    button_dict = button_data.dict()
+    button_dict["id"] = button_id
+    
+    result = await db.menu_buttons.update_one(
+        {"id": button_id},
+        {"$set": button_dict}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Button not found")
+    
+    button_doc = await db.menu_buttons.find_one({"id": button_id}, {"_id": 0})
+    return MenuButtonResponse(**button_doc)
+
 @api_router.delete("/menu-buttons/{button_id}")
 async def delete_menu_button(button_id: str):
     """Delete a menu button"""
