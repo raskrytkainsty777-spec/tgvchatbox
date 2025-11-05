@@ -336,3 +336,112 @@ agent_communication:
       ✅ No Console Errors: Clean execution with no JavaScript errors
       
       The Button Creation API Format Fix is now fully operational and the Bot Menu System is 100% functional!
+
+
+  - task: "Sales System Backend Models & API"
+    implemented: true
+    working: true
+    file: "/app/backend/models.py, /app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Added sale_amount and sale_date fields to Chat model. Created SaleCreate, SaleResponse, SalesStatistics, ExportUsernamesRequest models. Implemented POST /api/chats/{chat_id}/sale for creating/updating sales with auto-assignment of 'Покупатели' label. Implemented GET /api/statistics/sales for sales statistics grouped by bot and day. Implemented GET /api/labels/{label_id}/export-usernames for username export to TXT. System label 'Покупатели' auto-created on startup. Ready for testing."
+
+frontend:
+  - task: "Filter Counts Display"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ChatList.js, /app/frontend/src/components/ChatList.css"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Added countChatsForFilter function to calculate chat counts for 'All', 'Unread', and each label. Fixed CSS specificity issue with .filter-count selectors (btn vs menu). Added 'Все' filter option with total chat count. All filter options now display counts correctly."
+        
+  - task: "Sale Star Icon & Popup"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ChatList.js, /app/frontend/src/components/ChatList.css"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Added FiStar icon to each chat item. Created sale popup with amount input field. Implemented handleStarClick and handleSaveSale functions. Star displays as outline when no sale, filled (gold) when sale exists. Sale amount displayed below star. Clicking star opens popup pre-filled with existing amount (if any). System label 'Покупатели' auto-assigned on save. Popup styled with Telegram Desktop theme."
+        
+  - task: "Statistics Page"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/StatisticsPage.js, /app/frontend/src/components/StatisticsPage.css, /app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Created StatisticsPage component with 3 overview cards (total sales, total buyers, average check). Added two tables: Sales by Bot and Sales by Day with horizontal scroll. Integrated into App.js with gold 'Статистика' button in header. Tables display bot/date, count, and amount columns. Responsive design with Telegram Desktop styling. Back button returns to main chat view."
+        
+  - task: "Username Export Feature"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ChatList.js, /app/frontend/src/components/ChatList.css"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Added FiDownload export button next to filter button. Reduced search input width to 60% to make room. Created export menu showing all labels with color dots. Implemented handleExportUsernames function to download TXT file. Export menu styled consistently with filter menu. Export triggers file download with label-specific filename."
+
+metadata:
+  created_by: "main_agent"
+  version: "2.0"
+  test_sequence: 2
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Sales System Backend API"
+    - "Frontend Sales Features"
+    - "Statistics Page"
+    - "Username Export"
+  stuck_tasks: []
+  test_all: true
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Sales tracking system implementation completed successfully:
+      
+      ✅ Backend:
+      - Chat model extended with sale_amount and sale_date fields
+      - POST /api/chats/{chat_id}/sale endpoint for creating/updating sales
+      - GET /api/statistics/sales endpoint with grouping by bot and day
+      - GET /api/labels/{label_id}/export-usernames endpoint for TXT export
+      - System label "Покупатели" (gold color) auto-created on startup
+      
+      ✅ Frontend:
+      - Filter counts displayed for All, Unread, and each label
+      - Star icon (outline/filled) on each chat with sale amount display
+      - Sale popup for amount entry/editing
+      - Statistics page with overview cards and detailed tables
+      - Export button with label selection menu
+      - Search input reduced to 60% width for better layout
+      - All features styled with Telegram Desktop theme
+      
+      Verified with screenshots:
+      - Filter counts showing correctly (All: 3, Unread: 2, Покупатели: 2)
+      - Star icons working (outline → filled gold on click, amount displayed)
+      - Sale popup functional (input validation, save/cancel)
+      - Statistics showing: Total 5000.50, 2 buyers, avg 2500.25
+      - Tables scrollable horizontally to view all columns
+      - Export menu showing all labels
+      
+      Ready for comprehensive backend and frontend testing.
