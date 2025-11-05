@@ -668,4 +668,191 @@ function WelcomeMessagesTab({ messages, bots, onUpdate }) {
   );
 }
 
+function TimerTab({ bots }) {
+  const [selectedBot, setSelectedBot] = useState('');
+  const [endDateTime, setEndDateTime] = useState(null);
+  const [textBefore, setTextBefore] = useState('⏰ До акции:');
+  const [textAfter, setTextAfter] = useState('🎉 Акция завершена');
+  const [isActive, setIsActive] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [existingTimer, setExistingTimer] = useState(null);
+
+  useEffect(() => {
+    if (selectedBot) {
+      loadTimer(selectedBot);
+    }
+  }, [selectedBot]);
+
+  const loadTimer = async (botId) => {
+    try {
+      const response = await axios.get(`${API}/timers/${botId}`);
+      const timer = response.data;
+      setExistingTimer(timer);
+      setEndDateTime(new Date(timer.end_datetime));
+      setTextBefore(timer.text_before);
+      setTextAfter(timer.text_after);
+      setIsActive(timer.is_active);
+    } catch (error) {
+      if (error.response?.status === 404) {
+        // No timer exists
+        setExistingTimer(null);
+        setEndDateTime(null);
+        setTextBefore('⏰ До акции:');
+        setTextAfter('🎉 Акция завершена');
+        setIsActive(true);
+      } else {
+        console.error('Failed to load timer:', error);
+      }
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedBot || !endDateTime) {
+      alert('Выберите бота и установите дату/время окончания');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post(`${API}/timers`, {
+        bot_id: selectedBot,
+        end_datetime: endDateTime.toISOString(),
+        text_before: textBefore,
+        text_after: textAfter,
+        is_active: isActive
+      });
+      alert('Таймер сохранён!');
+      loadTimer(selectedBot);
+    } catch (error) {
+      console.error('Failed to save timer:', error);
+      alert('Не удалось сохранить таймер');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedBot || !window.confirm('Удалить таймер?')) return;
+    
+    try {
+      await axios.delete(`${API}/timers/${selectedBot}`);
+      alert('Таймер удалён!');
+      setExistingTimer(null);
+      setEndDateTime(null);
+      setTextBefore('⏰ До акции:');
+      setTextAfter('🎉 Акция завершена');
+      setIsActive(true);
+    } catch (error) {
+      console.error('Failed to delete timer:', error);
+      alert('Не удалось удалить таймер');
+    }
+  };
+
+  return (
+    <div className="tab-content">
+      <h3>Таймер обратного отсчёта</h3>
+      <p style={{ marginBottom: '20px', color: '#999' }}>
+        Таймер будет отображаться как кнопка в меню бота с обратным отсчётом времени.
+      </p>
+
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Выберите бота</label>
+          <select 
+            value={selectedBot} 
+            onChange={(e) => setSelectedBot(e.target.value)}
+            required
+          >
+            <option value="">-- Выберите бота --</option>
+            {bots.map(bot => (
+              <option key={bot.id} value={bot.id}>
+                @{bot.username}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {selectedBot && (
+          <>
+            <div className="form-group">
+              <label>Дата и время окончания (London Time)</label>
+              <input
+                type="datetime-local"
+                value={endDateTime ? endDateTime.toISOString().slice(0, 16) : ''}
+                onChange={(e) => setEndDateTime(new Date(e.target.value))}
+                required
+              />
+              <small style={{ color: '#999', display: 'block', marginTop: '5px' }}>
+                Укажите время в лондонском часовом поясе
+              </small>
+            </div>
+
+            <div className="form-group">
+              <label>Текст до окончания</label>
+              <input
+                type="text"
+                value={textBefore}
+                onChange={(e) => setTextBefore(e.target.value)}
+                placeholder="⏰ До акции:"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Текст после окончания</label>
+              <input
+                type="text"
+                value={textAfter}
+                onChange={(e) => setTextAfter(e.target.value)}
+                placeholder="🎉 Акция завершена"
+              />
+            </div>
+
+            <div className="form-group">
+              <label style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <input
+                  type="checkbox"
+                  checked={isActive}
+                  onChange={(e) => setIsActive(e.target.checked)}
+                />
+                Активен
+              </label>
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button 
+                type="submit" 
+                className="btn-primary"
+                disabled={loading}
+              >
+                {loading ? 'Сохранение...' : existingTimer ? 'Обновить таймер' : 'Создать таймер'}
+              </button>
+              
+              {existingTimer && (
+                <button 
+                  type="button" 
+                  className="btn-delete"
+                  onClick={handleDelete}
+                >
+                  Удалить таймер
+                </button>
+              )}
+            </div>
+
+            {existingTimer && (
+              <div style={{ marginTop: '20px', padding: '15px', background: '#2a2a2a', borderRadius: '8px' }}>
+                <h4 style={{ marginTop: 0 }}>Текущий статус таймера</h4>
+                <p><strong>Активен:</strong> {existingTimer.is_active ? 'Да' : 'Нет'}</p>
+                <p><strong>Окончание:</strong> {new Date(existingTimer.end_datetime).toLocaleString('ru-RU')}</p>
+                <p><strong>Текст до окончания:</strong> {existingTimer.text_before}</p>
+                <p><strong>Текст после:</strong> {existingTimer.text_after}</p>
+              </div>
+            )}
+          </>
+        )}
+      </form>
+    </div>
+  );
+}
+
 export default SettingsModal;
