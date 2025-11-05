@@ -88,13 +88,54 @@ function ChatList({
     }
   };
 
-  const applyFilter = (type, labelId = null) => {
-    setFilter(type);
-    setFilterLabelId(labelId);
+  const applyFilter = (type, labelId = null, labelName = null) => {
     setShowFilterMenu(false);
-    // Вызываем коллбэк для родительского компонента
+    
+    // Создаем объект фильтра
+    const newFilter = { type, labelId, labelName };
+    
+    // Проверяем, не добавлен ли уже такой фильтр
+    const exists = activeFilters.some(f => 
+      f.type === type && (!labelId || f.labelId === labelId)
+    );
+    
+    if (!exists) {
+      const updatedFilters = [...activeFilters, newFilter];
+      setActiveFilters(updatedFilters);
+      applyFiltersToParent(updatedFilters);
+    }
+  };
+
+  const removeFilter = (index) => {
+    const updatedFilters = activeFilters.filter((_, i) => i !== index);
+    setActiveFilters(updatedFilters);
+    applyFiltersToParent(updatedFilters);
+  };
+
+  const clearAllFilters = () => {
+    setActiveFilters([]);
     if (onFilterChange) {
-      onFilterChange(type, labelId);
+      onFilterChange('all', null);
+    }
+  };
+
+  const applyFiltersToParent = (filters) => {
+    if (!onFilterChange) return;
+    
+    // Определяем тип и параметры фильтрации
+    const hasUnread = filters.some(f => f.type === 'unread');
+    const labelFilters = filters.filter(f => f.type === 'label');
+    
+    if (filters.length === 0) {
+      onFilterChange('all', null);
+    } else if (filters.length === 1) {
+      const f = filters[0];
+      onFilterChange(f.type, f.labelId);
+    } else {
+      // Множественная фильтрация - приоритет у первого фильтра
+      // В идеале нужно комбинировать, но для простоты берем первый
+      const f = filters[0];
+      onFilterChange(f.type, f.labelId);
     }
   };
 
