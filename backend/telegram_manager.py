@@ -210,6 +210,29 @@ class TelegramBotManager:
             "failed_count": failed_count,
             "total": len(user_ids)
         }
+    
+    async def _check_auto_reply(self, bot_id: str, user_id: int, text: str):
+        """Check if message triggers auto-reply"""
+        # Get active auto-replies
+        auto_replies = await self.db.auto_replies.find({"is_active": True}).to_list(100)
+        
+        # Normalize text
+        text_lower = text.lower()
+        words = text_lower.split()
+        
+        for auto_reply in auto_replies:
+            keywords = [kw.lower() for kw in auto_reply.get("keywords", [])]
+            
+            # Check if any keyword matches
+            for keyword in keywords:
+                if keyword in words:
+                    # Send auto-reply
+                    try:
+                        await self.send_message(bot_id, user_id, auto_reply["message"])
+                        logger.info(f"Auto-reply sent to user {user_id} for keyword '{keyword}'")
+                    except Exception as e:
+                        logger.error(f"Failed to send auto-reply: {e}")
+                    break  # Only one auto-reply per message
 
 # Global instance
 telegram_manager: Optional[TelegramBotManager] = None
