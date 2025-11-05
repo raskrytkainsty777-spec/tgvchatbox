@@ -884,13 +884,22 @@ function ManageButtonsView({ labels, buttons, onBack }) {
                   {button.actions.length} действий
                 </div>
               </div>
-              <button
-                className="btn-icon-small btn-delete"
-                onClick={() => handleDelete(button.id, button.name)}
-                title="Удалить кнопку"
-              >
-                <FiTrash2 />
-              </button>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  className="btn-icon-small"
+                  onClick={() => handleEdit(button)}
+                  title="Редактировать кнопку"
+                >
+                  <FiEdit />
+                </button>
+                <button
+                  className="btn-icon-small btn-delete"
+                  onClick={() => handleDelete(button.id, button.name)}
+                  title="Удалить кнопку"
+                >
+                  <FiTrash2 />
+                </button>
+              </div>
             </div>
           ))}
         </div>
