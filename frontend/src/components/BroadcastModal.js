@@ -116,12 +116,19 @@ function BroadcastModal({ bots, onClose, onSuccess }) {
 
       const uniqueFilteredChats = filteredChats;
 
-      const total = uniqueChats.length;
+      const total = uniqueFilteredChats.length;
       let sent = 0;
       const statuses = [];
 
+      if (total === 0) {
+        alert('Нет получателей, соответствующих выбранным фильтрам');
+        setSending(false);
+        setIsSending(false);
+        return;
+      }
+
       // Отправка по одному
-      for (const chat of uniqueChats) {
+      for (const chat of uniqueFilteredChats) {
         try {
           await axios.post(`${API}/messages`, {
             bot_id: chat.bot_id,
