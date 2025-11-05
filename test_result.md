@@ -584,8 +584,6 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Timer Backend Models & Endpoints"
-    - "Timer Telegram Integration"
     - "Timer Settings UI"
   stuck_tasks: []
   test_all: false
