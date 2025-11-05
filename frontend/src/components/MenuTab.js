@@ -537,15 +537,6 @@ function CreateMenuView({ buttons, menus, onBack }) {
                     </button>
                   </div>
                 ))}
-                
-                {/* System Back Button */}
-                <div className="selected-button-item" style={{ background: '#151e29', borderColor: '#2a3f5f' }}>
-                  <span className="button-order">#{selectedButtons.length + 1}</span>
-                  <span className="button-name" style={{ flex: 1 }}>⬅️ Назад (системная кнопка)</span>
-                  <span style={{ fontSize: '11px', color: '#5288c1', padding: '3px 8px', background: 'rgba(82, 136, 193, 0.1)', borderRadius: '6px' }}>
-                    Авто
-                  </span>
-                </div>
               </div>
             )}
           </>
