@@ -127,6 +127,9 @@ function SettingsModal({ bots, onClose, onBotUpdated }) {
               onUpdate={loadWelcomeMessages} 
             />
           )}
+          {activeTab === 'menu' && (
+            <MenuTab bots={bots} />
+          )}
         </div>
       </div>
     </div>
