@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import EmojiPicker from 'emoji-picker-react';
-import { FiSend, FiPaperclip, FiSmile, FiUsers } from 'react-icons/fi';
+import { FiSend, FiPaperclip, FiSmile } from 'react-icons/fi';
 import './ChatView.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -11,7 +11,6 @@ function ChatView({ chat, onMessageSent }) {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [showBroadcast, setShowBroadcast] = useState(false);
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
   const [quickReplies, setQuickReplies] = useState([]);
