@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import './App.css';
 import SettingsModal from './components/SettingsModal';
 import ChatList from './components/ChatList';
