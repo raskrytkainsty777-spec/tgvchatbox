@@ -392,30 +392,61 @@ class TelegramBotManager:
                 logger.error(f"Button {button_id} not found")
                 return
             
-            # Execute the button's command
-            command = button.get('command')
-            if not command:
-                # Generate command from name
-                import re
-                command = button['name'].lower()
-                command = re.sub(r'[^a-z0-9а-я\s]', '', command)
-                translit_map = {
-                    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
-                    'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
-                    'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
-                    'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
-                    'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
-                }
-                for cyr, lat in translit_map.items():
-                    command = command.replace(cyr, lat)
-                command = command.replace(' ', '_')
-                command = re.sub(r'[^a-z0-9_]', '', command)
-                if not command or not command[0].isalpha():
-                    command = 'btn_' + command
-                command = command[:32]
+            chat_id = f"{bot_id}_{user_id}"
             
-            # Execute the button's actions using the menu command handler
-            await self._handle_menu_command(bot_id, user_id, command)
+            # Execute button actions directly (same logic as _handle_menu_command)
+            for action in button.get("actions", []):
+                action_type = action.get("type")
+                action_value = action.get("value")
+                
+                if action_type == "text" and action_value:
+                    # Send text message
+                    text = action_value.get("text", "")
+                    await self.send_message(bot_id, user_id, text)
+                
+                elif action_type == "url" and action_value:
+                    # Send URL as text
+                    url = action_value.get("url", "")
+                    await self.send_message(bot_id, user_id, f"🔗 {url}")
+                
+                elif action_type == "label" and action_value:
+                    # Add label to chat
+                    label_id = action_value.get("label_id")
+                    if label_id:
+                        await self.db.chats.update_one(
+                            {"id": chat_id},
+                            {"$addToSet": {"label_ids": label_id}}
+                        )
+                        logger.info(f"Label {label_id} added to chat {chat_id}")
+                
+                elif action_type == "block" and action_value:
+                    # Send block text with nested buttons (recursive)
+                    text = action_value.get("text", "")
+                    nested_button_ids = action_value.get("button_ids", [])
+                    
+                    if nested_button_ids:
+                        from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+                        
+                        # Fetch nested buttons
+                        nested_buttons_cursor = self.db.menu_buttons.find({"id": {"$in": nested_button_ids}})
+                        nested_buttons = await nested_buttons_cursor.to_list(length=100)
+                        
+                        # Create keyboard
+                        keyboard = []
+                        for nb in nested_buttons:
+                            callback_data = f"cmd_{nb['id']}"
+                            keyboard.append([InlineKeyboardButton(nb["name"], callback_data=callback_data)])
+                        
+                        reply_markup = InlineKeyboardMarkup(keyboard)
+                        
+                        bot = self.bots[bot_id]
+                        await bot.send_message(chat_id=user_id, text=text, reply_markup=reply_markup)
+                    else:
+                        await self.send_message(bot_id, user_id, text)
+                
+                elif action_type == "back":
+                    # Show available commands
+                    await self.send_message(bot_id, user_id, "Используйте меню бота (☰) для выбора команды")
             
             logger.info(f"Inline button {button['name']} executed for user {user_id}")
             
