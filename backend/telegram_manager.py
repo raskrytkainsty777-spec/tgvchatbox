@@ -309,27 +309,34 @@ class TelegramBotManager:
             
             # Create bot commands (max 100 commands, max 32 chars for command, max 256 for description)
             commands = []
+            import re
+            
             for button in buttons:
-                # Create command from button name (only latin letters, digits, underscores)
-                # Convert Cyrillic to Latin transliteration
-                import re
-                command_text = button['name'].lower()
-                # Remove all non-alphanumeric except spaces
-                command_text = re.sub(r'[^a-z0-9а-я\s]', '', command_text)
-                # Transliterate Cyrillic to Latin (simple mapping)
-                translit_map = {
-                    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
-                    'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
-                    'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
-                    'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
-                    'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
-                }
-                for cyr, lat in translit_map.items():
-                    command_text = command_text.replace(cyr, lat)
-                # Replace spaces with underscores
-                command_text = command_text.replace(' ', '_')
-                # Remove any remaining non-latin/digit/underscore chars
-                command_text = re.sub(r'[^a-z0-9_]', '', command_text)
+                # Use custom command if provided, otherwise generate from name
+                if button.get('command'):
+                    command_text = button['command'].lower()
+                    # Clean command: only latin letters, digits, underscores
+                    command_text = re.sub(r'[^a-z0-9_]', '', command_text)
+                else:
+                    # Auto-generate from button name
+                    command_text = button['name'].lower()
+                    # Remove all non-alphanumeric except spaces
+                    command_text = re.sub(r'[^a-z0-9а-я\s]', '', command_text)
+                    # Transliterate Cyrillic to Latin (simple mapping)
+                    translit_map = {
+                        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
+                        'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+                        'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+                        'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+                        'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+                    }
+                    for cyr, lat in translit_map.items():
+                        command_text = command_text.replace(cyr, lat)
+                    # Replace spaces with underscores
+                    command_text = command_text.replace(' ', '_')
+                    # Remove any remaining non-latin/digit/underscore chars
+                    command_text = re.sub(r'[^a-z0-9_]', '', command_text)
+                
                 # Ensure it starts with a letter and max 32 chars
                 if not command_text or not command_text[0].isalpha():
                     command_text = 'btn_' + command_text
