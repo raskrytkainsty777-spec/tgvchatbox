@@ -762,6 +762,7 @@ function ManageButtonsView({ labels, buttons, onBack }) {
   const [editingButton, setEditingButton] = useState(null);
   const [name, setName] = useState('');
   const [command, setCommand] = useState('');
+  const [level, setLevel] = useState(1);
   const [actions, setActions] = useState([]);
   const [showActionMenu, setShowActionMenu] = useState(false);
 
