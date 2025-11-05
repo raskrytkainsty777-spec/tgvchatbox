@@ -554,6 +554,11 @@ async def assign_menu_to_bot(assignment: BotMenuAssignment):
 async def remove_bot_menu_assignment(bot_id: str):
     """Remove menu assignment from bot"""
     await db.bot_menu_assignments.delete_many({"bot_id": bot_id})
+    
+    # Clear bot commands in Telegram
+    telegram_mgr = get_telegram_manager(db)
+    await telegram_mgr.set_bot_commands(bot_id)
+    
     return {"success": True}
 
 @api_router.get("/stats")
