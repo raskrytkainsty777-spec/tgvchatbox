@@ -444,6 +444,25 @@ class TelegramBotManager:
                     self.command_button_map = {}
                 self.command_button_map[f"{bot_id}_{command_text}"] = button['id']
             
+            # Add timer as menu button if active
+            timer = await self.db.timers.find_one({"bot_id": bot_id, "is_active": True})
+            if timer:
+                try:
+                    end_datetime = datetime.fromisoformat(timer["end_datetime"])
+                    timer_text = self._format_timer_text(
+                        end_datetime, 
+                        timer.get("text_before", "⏰ До акции:"),
+                        timer.get("text_after", "🎉 Акция завершена")
+                    )
+                    
+                    # Only add timer if it hasn't expired (if expired, timer_text = text_after, but we hide it)
+                    now = datetime.now(timezone.utc)
+                    if timer_text and now < end_datetime:
+                        commands.append(BotCommand(command="timer", description=timer_text))
+                        logger.info(f"Added timer command: {timer_text}")
+                except Exception as e:
+                    logger.error(f"Error adding timer to commands: {e}")
+            
             # Set commands in Telegram
             bot = self.bots[bot_id]
             await bot.set_my_commands(commands)
