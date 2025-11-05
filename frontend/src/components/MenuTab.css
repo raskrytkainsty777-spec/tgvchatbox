@@ -426,6 +426,70 @@
   transition: all 0.2s;
 }
 
+/* Clickable Stat Cards */
+.stat-card.clickable {
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.stat-card.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(82, 136, 193, 0.3);
+  border-color: #5288c1;
+}
+
+.stat-action {
+  font-size: 11px;
+  color: #5288c1;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* Manage Views */
+.manage-buttons-view,
+.manage-menus-view {
+  padding: 20px;
+}
+
+.manage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.manage-item {
+  background: #0e1621;
+  border: 1px solid #242f3d;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+}
+
+.manage-item:hover {
+  border-color: #5288c1;
+  background: #151e29;
+}
+
+.manage-item-info {
+  flex: 1;
+}
+
+.manage-item-name {
+  font-size: 15px;
+  color: #fff;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.manage-item-meta {
+  font-size: 13px;
+  color: #8d969e;
+}
+
+
 .action-editor:hover {
   border-color: #5288c1;
 }
