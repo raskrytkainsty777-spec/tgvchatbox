@@ -56,6 +56,7 @@ class MessageCreate(BaseModel):
     user_id: int
     text: str
     file_id: Optional[str] = None
+    reply_to_message_id: Optional[int] = None
 
 class BroadcastMessage(BaseModel):
     bot_id: str
