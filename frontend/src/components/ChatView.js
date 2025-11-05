@@ -253,6 +253,7 @@ function ChatView({ chat, onMessageSent }) {
                 key={message.id}
                 className={`message ${message.is_from_bot ? 'outgoing' : 'incoming'}`}
                 data-testid={`message-${message.id}`}
+                onContextMenu={(e) => handleContextMenu(e, message)}
               >
                 <div className="message-bubble">
                   {message.text && <div className="message-text">{message.text}</div>}
