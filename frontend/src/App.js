@@ -89,9 +89,10 @@ function App() {
   }, [selectedBots, searchQuery, filterType, filterLabelId, bots.length]);
 
   const handleFilterChange = (type, labelId = null) => {
-    console.log('Filter changed:', type, labelId); // Для отладки
+    console.log('handleFilterChange called:', { type, labelId }); // Для отладки
     setFilterType(type);
     setFilterLabelId(labelId);
+    // loadChats вызовется автоматически через useEffect
   };
 
   const loadStats = async () => {
