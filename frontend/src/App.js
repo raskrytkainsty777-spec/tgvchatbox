@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import '@/App.css';
+import './App.css';
 import SettingsModal from './components/SettingsModal';
 import ChatList from './components/ChatList';
 import ChatView from './components/ChatView';
