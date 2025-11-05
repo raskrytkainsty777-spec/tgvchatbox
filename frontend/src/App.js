@@ -28,6 +28,35 @@ function App() {
   useEffect(() => {
     loadBots();
     loadStats();
+    
+    // Initialize WebSocket connection
+    const socket = io(BACKEND_URL, {
+      transports: ['websocket', 'polling']
+    });
+    
+    socket.on('connect', () => {
+      console.log('WebSocket connected');
+    });
+    
+    socket.on('chat_status_update', (data) => {
+      console.log('Chat status update received:', data);
+      // Update chat status in state
+      setChats(prevChats => 
+        prevChats.map(chat => 
+          chat.id === data.chat_id 
+            ? { ...chat, bot_status: data.bot_status }
+            : chat
+        )
+      );
+    });
+    
+    socket.on('disconnect', () => {
+      console.log('WebSocket disconnected');
+    });
+    
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   useEffect(() => {
