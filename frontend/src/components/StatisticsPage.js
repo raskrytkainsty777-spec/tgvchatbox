@@ -65,6 +65,16 @@ function StatisticsPage({ onBack }) {
   const getFilteredStatistics = () => {
     if (!statistics) return null;
 
+    // Если не выбран ни один бот, возвращаем нули
+    if (selectedBots.length === 0) {
+      return {
+        total_sales: 0,
+        total_buyers: 0,
+        sales_by_bot: [],
+        sales_by_day: []
+      };
+    }
+
     const filtered = {
       total_sales: 0,
       total_buyers: 0,
@@ -73,17 +83,23 @@ function StatisticsPage({ onBack }) {
     };
 
     // Фильтруем по ботам
-    const botStats = statistics.sales_by_bot.filter(bot => {
-      return selectedBots.length === 0 || selectedBots.some(selectedId => {
-        const selectedBot = bots.find(b => b.id === selectedId);
-        return selectedBot && selectedBot.username === bot.bot_username;
-      });
-    });
+    const selectedBotUsernames = selectedBots.map(id => {
+      const bot = bots.find(b => b.id === id);
+      return bot ? bot.username : null;
+    }).filter(Boolean);
+
+    const botStats = statistics.sales_by_bot.filter(bot => 
+      selectedBotUsernames.includes(bot.bot_username)
+    );
 
     // Фильтруем по датам
     const dayStats = statistics.sales_by_day.filter(day => {
       const dayDate = new Date(day.date);
-      if (startDate && dayDate < startDate) return false;
+      if (startDate) {
+        const startDateTime = new Date(startDate);
+        startDateTime.setHours(0, 0, 0, 0);
+        if (dayDate < startDateTime) return false;
+      }
       if (endDate) {
         const endDateTime = new Date(endDate);
         endDateTime.setHours(23, 59, 59, 999);
@@ -101,6 +117,7 @@ function StatisticsPage({ onBack }) {
     return filtered;
   };
 
+  // Пересчитываем при изменении фильтров
   const filteredStats = getFilteredStatistics();
 
   if (loading) {
