@@ -223,6 +223,112 @@ async def mark_messages_read(request: MarkReadRequest):
     )
     return {"success": True}
 
+# ============= LABEL ENDPOINTS =============
+
+@api_router.get("/labels", response_model=List[LabelResponse])
+async def get_labels():
+    """Get all labels"""
+    labels = await db.labels.find({}, {"_id": 0}).to_list(100)
+    return [LabelResponse(**label) for label in labels]
+
+@api_router.post("/labels", response_model=LabelResponse)
+async def create_label(label_data: LabelCreate):
+    """Create a new label"""
+    label_doc = {
+        "id": str(uuid.uuid4()),
+        "name": label_data.name,
+        "color": label_data.color,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.labels.insert_one(label_doc)
+    return LabelResponse(**label_doc)
+
+@api_router.delete("/labels/{label_id}")
+async def delete_label(label_id: str):
+    """Delete a label"""
+    await db.labels.delete_one({"id": label_id})
+    # Remove label from all chats
+    await db.chats.update_many(
+        {},
+        {"$pull": {"label_ids": label_id}}
+    )
+    return {"success": True}
+
+@api_router.patch("/chats/labels")
+async def set_chat_labels(request: SetLabelsRequest):
+    """Set labels for chats"""
+    await db.chats.update_many(
+        {"id": {"$in": request.chat_ids}},
+        {"$set": {"label_ids": request.label_ids}}
+    )
+    return {"success": True}
+
+# ============= QUICK REPLY ENDPOINTS =============
+
+@api_router.get("/quick-replies", response_model=List[QuickReplyResponse])
+async def get_quick_replies():
+    """Get all quick replies"""
+    replies = await db.quick_replies.find({}, {"_id": 0}).to_list(100)
+    return [QuickReplyResponse(**reply) for reply in replies]
+
+@api_router.post("/quick-replies", response_model=QuickReplyResponse)
+async def create_quick_reply(reply_data: QuickReplyCreate):
+    """Create a new quick reply"""
+    reply_doc = {
+        "id": str(uuid.uuid4()),
+        "shortcut": reply_data.shortcut,
+        "text": reply_data.text,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.quick_replies.insert_one(reply_doc)
+    return QuickReplyResponse(**reply_doc)
+
+@api_router.delete("/quick-replies/{reply_id}")
+async def delete_quick_reply(reply_id: str):
+    """Delete a quick reply"""
+    await db.quick_replies.delete_one({"id": reply_id})
+    return {"success": True}
+
+# ============= AUTO REPLY ENDPOINTS =============
+
+@api_router.get("/auto-replies", response_model=List[AutoReplyResponse])
+async def get_auto_replies():
+    """Get all auto replies"""
+    replies = await db.auto_replies.find({}, {"_id": 0}).to_list(100)
+    return [AutoReplyResponse(**reply) for reply in replies]
+
+@api_router.post("/auto-replies", response_model=AutoReplyResponse)
+async def create_auto_reply(reply_data: AutoReplyCreate):
+    """Create a new auto reply"""
+    reply_doc = {
+        "id": str(uuid.uuid4()),
+        "keywords": reply_data.keywords,
+        "message": reply_data.message,
+        "is_active": reply_data.is_active,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.auto_replies.insert_one(reply_doc)
+    return AutoReplyResponse(**reply_doc)
+
+@api_router.patch("/auto-replies/{reply_id}")
+async def update_auto_reply(reply_id: str, reply_data: AutoReplyCreate):
+    """Update an auto reply"""
+    await db.auto_replies.update_one(
+        {"id": reply_id},
+        {"$set": {
+            "keywords": reply_data.keywords,
+            "message": reply_data.message,
+            "is_active": reply_data.is_active
+        }}
+    )
+    return {"success": True}
+
+@api_router.delete("/auto-replies/{reply_id}")
+async def delete_auto_reply(reply_id: str):
+    """Delete an auto reply"""
+    await db.auto_replies.delete_one({"id": reply_id})
+    return {"success": True}
+
 @api_router.get("/stats")
 async def get_stats():
     """Get statistics"""
