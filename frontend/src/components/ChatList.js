@@ -188,28 +188,36 @@ function ChatList({
     e.stopPropagation();
     setSaleChat(chat);
     setSaleAmount(chat.sale_amount || '');
+    setRemoveSale(false);
     setShowSalePopup(true);
   };
 
   const handleSaveSale = async () => {
-    if (!saleAmount || parseFloat(saleAmount) <= 0) {
-      alert('Введите корректную сумму');
-      return;
-    }
-
     try {
-      await axios.post(`${API}/chats/${saleChat.id}/sale`, {
-        chat_id: saleChat.id,
-        amount: parseFloat(saleAmount)
-      });
+      if (removeSale) {
+        // Remove sale
+        await axios.delete(`${API}/chats/${saleChat.id}/sale`);
+      } else {
+        // Add or update sale
+        if (!saleAmount || parseFloat(saleAmount) <= 0) {
+          alert('Введите корректную сумму');
+          return;
+        }
+        
+        await axios.post(`${API}/chats/${saleChat.id}/sale`, {
+          chat_id: saleChat.id,
+          amount: parseFloat(saleAmount)
+        });
+      }
       
       setShowSalePopup(false);
       setSaleChat(null);
       setSaleAmount('');
+      setRemoveSale(false);
       onChatsUpdate(); // Refresh chats to show updated data
       loadLabels(); // Refresh labels to show "Покупатели" if new
     } catch (error) {
-      alert('Не удалось сохранить продажу');
+      alert(removeSale ? 'Не удалось снять продажу' : 'Не удалось сохранить продажу');
       console.error('Sale error:', error);
     }
   };
