@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '@/App.css';
-import BotManager from './components/BotManager';
+import SettingsModal from './components/SettingsModal';
 import ChatList from './components/ChatList';
 import ChatView from './components/ChatView';
 import { FiSettings } from 'react-icons/fi';
