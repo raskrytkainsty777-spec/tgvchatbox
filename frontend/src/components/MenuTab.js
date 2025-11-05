@@ -609,35 +609,43 @@ function AssignMenuView({ bots, menus, assignments, onBack }) {
         </button>
       </div>
 
-      {menus.length === 0 ? (
-        <div className="empty-state">Сначала создайте меню</div>
+      {recentMenus.length === 0 ? (
+        <div className="empty-state">
+          {menus.length === 0 
+            ? 'Сначала создайте меню' 
+            : 'Нет новых меню. Показываются только меню, созданные за последние 24 часа.'}
+        </div>
       ) : (
-        <div className="bot-menu-list">
-          {bots.map(bot => (
-            <div key={bot.id} className="bot-menu-card">
-              <div className="bot-info">
-                <div className="bot-name">@{bot.username}</div>
-              </div>
-              <div className="menu-selector">
-                <select
-                  value={botMenus[bot.id] || ''}
-                  onChange={(e) => handleMenuChange(bot.id, e.target.value)}
-                  className="menu-select"
-                >
-                  <option value="">Выберите меню</option>
-                  {menus.map(menu => (
-                    <option key={menu.id} value={menu.id}>{menu.name}</option>
-                  ))}
-                </select>
-                <button
-                  className="btn-primary btn-sm"
-                  onClick={() => handleSave(bot.id)}
-                  disabled={!botMenus[bot.id]}
-                  data-testid={`save-bot-menu-${bot.id}`}
-                >
-                  Сохранить
-                </button>
-              </div>
+        <>
+          <div style={{ fontSize: '13px', color: '#8d969e', marginBottom: '15px', padding: '0 5px' }}>
+            Показаны меню за последние 24 часа ({recentMenus.length})
+          </div>
+          <div className="bot-menu-list">
+            {bots.map(bot => (
+              <div key={bot.id} className="bot-menu-card">
+                <div className="bot-info">
+                  <div className="bot-name">@{bot.username}</div>
+                </div>
+                <div className="menu-selector">
+                  <select
+                    value={botMenus[bot.id] || ''}
+                    onChange={(e) => handleMenuChange(bot.id, e.target.value)}
+                    className="menu-select"
+                  >
+                    <option value="">Выберите меню</option>
+                    {recentMenus.map(menu => (
+                      <option key={menu.id} value={menu.id}>{menu.name}</option>
+                    ))}
+                  </select>
+                  <button
+                    className="btn-primary btn-sm"
+                    onClick={() => handleSave(bot.id)}
+                    disabled={!botMenus[bot.id]}
+                    data-testid={`save-bot-menu-${bot.id}`}
+                  >
+                    Сохранить
+                  </button>
+                </div>
             </div>
           ))}
         </div>
