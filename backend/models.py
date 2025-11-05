@@ -189,4 +189,26 @@ class BotMenuAssignment(BaseModel):
 class BotMenuAssignmentResponse(BaseModel):
     bot_id: str
     menu_id: str
+
+
+# ============= SALES MODELS =============
+
+class SaleCreate(BaseModel):
+    chat_id: str
+    amount: float
+
+class SaleResponse(BaseModel):
+    chat_id: str
+    amount: float
+    sale_date: datetime
+
+class SalesStatistics(BaseModel):
+    total_sales: float
+    total_buyers: int
+    sales_by_bot: List[dict]  # [{"bot_username": str, "total": float, "count": int}]
+    sales_by_day: List[dict]  # [{"date": str, "total": float, "count": int}]
+
+class ExportUsernamesRequest(BaseModel):
+    label_id: Optional[str] = None
+
     menu_name: Optional[str] = None
