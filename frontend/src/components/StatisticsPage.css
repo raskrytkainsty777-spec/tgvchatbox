@@ -148,6 +148,7 @@
 
 .stats-table {
   overflow-x: auto;
+  min-width: 0;
 }
 
 .no-data {
