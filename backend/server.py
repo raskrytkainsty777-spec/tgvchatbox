@@ -581,6 +581,174 @@ async def get_stats():
         "total_unread": unread_count[0]["total"] if unread_count else 0
     }
 
+
+
+# ============= SALES ENDPOINTS =============
+
+@api_router.post("/chats/{chat_id}/sale", response_model=SaleResponse)
+async def create_or_update_sale(chat_id: str, sale: SaleCreate):
+    """Create or update sale for a chat and assign 'Покупатели' label"""
+    try:
+        # Find or create "Покупатели" label
+        buyers_label = await db.labels.find_one({"name": "Покупатели"})
+        if not buyers_label:
+            buyers_label = {
+                "id": str(uuid.uuid4()),
+                "name": "Покупатели",
+                "color": "#FFD700",  # Gold color
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "is_system": True
+            }
+            await db.labels.insert_one(buyers_label)
+        
+        buyers_label_id = buyers_label["id"]
+        
+        # Update chat with sale info
+        sale_date = datetime.now(timezone.utc)
+        chat = await db.chats.find_one({"id": chat_id})
+        
+        if not chat:
+            raise HTTPException(status_code=404, detail="Chat not found")
+        
+        # Add buyers label if not already present
+        label_ids = chat.get("label_ids", [])
+        if buyers_label_id not in label_ids:
+            label_ids.append(buyers_label_id)
+        
+        await db.chats.update_one(
+            {"id": chat_id},
+            {
+                "$set": {
+                    "sale_amount": sale.amount,
+                    "sale_date": sale_date.isoformat(),
+                    "label_ids": label_ids,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        return SaleResponse(
+            chat_id=chat_id,
+            amount=sale.amount,
+            sale_date=sale_date
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating sale: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/statistics/sales", response_model=SalesStatistics)
+async def get_sales_statistics():
+    """Get sales statistics by day and by bot"""
+    try:
+        # Get all chats with sales
+        chats_with_sales = await db.chats.find(
+            {"sale_amount": {"$ne": None}}
+        ).to_list(None)
+        
+        total_sales = sum(chat.get("sale_amount", 0) for chat in chats_with_sales)
+        total_buyers = len(chats_with_sales)
+        
+        # Group by bot
+        sales_by_bot = {}
+        for chat in chats_with_sales:
+            bot_id = chat["bot_id"]
+            amount = chat.get("sale_amount", 0)
+            
+            # Get bot info
+            if bot_id not in sales_by_bot:
+                bot = await db.bots.find_one({"id": bot_id})
+                bot_username = bot.get("username", "Unknown") if bot else "Unknown"
+                sales_by_bot[bot_id] = {
+                    "bot_username": bot_username,
+                    "total": 0,
+                    "count": 0
+                }
+            
+            sales_by_bot[bot_id]["total"] += amount
+            sales_by_bot[bot_id]["count"] += 1
+        
+        # Group by day
+        sales_by_day = {}
+        for chat in chats_with_sales:
+            sale_date_str = chat.get("sale_date")
+            if sale_date_str:
+                # Parse date and format as YYYY-MM-DD
+                sale_date = datetime.fromisoformat(sale_date_str)
+                date_key = sale_date.strftime("%Y-%m-%d")
+                
+                if date_key not in sales_by_day:
+                    sales_by_day[date_key] = {"date": date_key, "total": 0, "count": 0}
+                
+                sales_by_day[date_key]["total"] += chat.get("sale_amount", 0)
+                sales_by_day[date_key]["count"] += 1
+        
+        # Convert to lists and sort
+        sales_by_bot_list = sorted(
+            list(sales_by_bot.values()),
+            key=lambda x: x["total"],
+            reverse=True
+        )
+        
+        sales_by_day_list = sorted(
+            list(sales_by_day.values()),
+            key=lambda x: x["date"],
+            reverse=True
+        )
+        
+        return SalesStatistics(
+            total_sales=total_sales,
+            total_buyers=total_buyers,
+            sales_by_bot=sales_by_bot_list,
+            sales_by_day=sales_by_day_list
+        )
+    except Exception as e:
+        logger.error(f"Error getting sales statistics: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/labels/{label_id}/export-usernames")
+async def export_usernames_by_label(label_id: str):
+    """Export usernames of users with specific label to TXT file"""
+    try:
+        # Get label
+        label = await db.labels.find_one({"id": label_id})
+        if not label:
+            raise HTTPException(status_code=404, detail="Label not found")
+        
+        # Get all chats with this label
+        chats = await db.chats.find(
+            {"label_ids": label_id}
+        ).to_list(None)
+        
+        if not chats:
+            raise HTTPException(status_code=404, detail="No chats found with this label")
+        
+        # Create TXT content
+        usernames = []
+        for chat in chats:
+            username = chat.get("username", "")
+            if username:
+                usernames.append(f"@{username}")
+        
+        txt_content = "\n".join(usernames)
+        
+        # Save to temp file
+        temp_file = f"/tmp/usernames_{label_id}_{uuid.uuid4()}.txt"
+        async with aiofiles.open(temp_file, mode='w', encoding='utf-8') as f:
+            await f.write(txt_content)
+        
+        return FileResponse(
+            temp_file,
+            media_type='text/plain',
+            filename=f"{label['name']}_usernames.txt"
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error exporting usernames: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Health check
 @api_router.get("/")
 async def root():
