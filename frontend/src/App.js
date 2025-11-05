@@ -4,7 +4,8 @@ import './App.css';
 import SettingsModal from './components/SettingsModal';
 import ChatList from './components/ChatList';
 import ChatView from './components/ChatView';
-import { FiSettings, FiSend } from 'react-icons/fi';
+import StatisticsPage from './components/StatisticsPage';
+import { FiSettings, FiSend, FiBarChart2 } from 'react-icons/fi';
 import BroadcastModal from './components/BroadcastModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
