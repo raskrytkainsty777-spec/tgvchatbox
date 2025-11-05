@@ -216,7 +216,7 @@ class TelegramBotManager:
         }
     
     async def _send_welcome_message(self, bot_id: str, user_id: int):
-        """Send welcome message if configured for this bot"""
+        """Send welcome message and menu if configured for this bot"""
         try:
             # Get welcome message for this bot
             welcome_msg = await self.db.welcome_messages.find_one({
@@ -228,6 +228,9 @@ class TelegramBotManager:
                 # Send welcome message
                 await self.send_message(bot_id, user_id, welcome_msg["text"])
                 logger.info(f"Welcome message sent to user {user_id} for bot {bot_id}")
+            
+            # Send menu if assigned to this bot
+            await self._send_bot_menu(bot_id, user_id)
         except Exception as e:
             logger.error(f"Failed to send welcome message: {e}")
     
