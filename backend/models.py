@@ -152,11 +152,13 @@ class MenuButton(BaseModel):
 
 class MenuButtonCreate(BaseModel):
     name: str
+    command: Optional[str] = None  # Command name (e.g., "buy", "start_order")
     actions: List[ButtonAction] = []
 
 class MenuButtonResponse(BaseModel):
     id: str
     name: str
+    command: Optional[str] = None
     actions: List[ButtonAction]
     created_at: datetime
 
