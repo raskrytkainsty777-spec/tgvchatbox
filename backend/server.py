@@ -38,8 +38,19 @@ db = client[os.environ['DB_NAME']]
 # Telegram manager
 telegram_manager = get_telegram_manager(db)
 
+# Create Socket.IO server
+sio = socketio.AsyncServer(
+    async_mode='asgi',
+    cors_allowed_origins='*',
+    logger=False,
+    engineio_logger=False
+)
+
 # Create the main app
 app = FastAPI()
+
+# Wrap app with Socket.IO
+socket_app = socketio.ASGIApp(sio, app)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
