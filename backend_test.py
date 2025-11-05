@@ -1145,6 +1145,13 @@ class TelegramChatPanelTester:
             self.test_sales_statistics()
             self.test_username_export()
             
+            # Timer System Tests (new)
+            self.test_create_timers()
+            self.test_get_timers()
+            self.test_delete_timers()
+            self.test_timer_one_per_bot_constraint()
+            self.test_timer_edge_cases()
+            
         except Exception as e:
             print(f"❌ Test suite failed with error: {str(e)}")
             
