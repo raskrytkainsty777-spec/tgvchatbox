@@ -423,6 +423,8 @@ function BlockActionEditor({ value, buttons, onUpdate }) {
 
 // Create Menu View
 function CreateMenuView({ buttons, menus, onBack }) {
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingMenu, setEditingMenu] = useState(null);
   const [name, setName] = useState('');
   const [selectedButtons, setSelectedButtons] = useState([]);
   const [currentButtonId, setCurrentButtonId] = useState('');
