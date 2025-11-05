@@ -133,13 +133,9 @@ function ChatView({ chat, onMessageSent }) {
     const text = e.target.value;
     setMessageText(text);
     
-    // Check for quick reply trigger
-    if (text.startsWith('/') && text.length > 1) {
-      const command = text.substring(1).toLowerCase();
-      const filtered = quickReplies.filter(qr => 
-        qr.shortcut.toLowerCase().startsWith(command)
-      );
-      setShowQuickReplies(filtered.length > 0);
+    // Check for quick reply trigger - показать ВСЕ при /
+    if (text.startsWith('/')) {
+      setShowQuickReplies(quickReplies.length > 0);
     } else {
       setShowQuickReplies(false);
     }
