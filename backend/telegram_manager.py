@@ -77,6 +77,13 @@ class TelegramBotManager:
         # Проверяем команду /start
         if message.text and message.text.strip().lower() == '/start':
             await self._send_welcome_message(bot_id, user.id)
+            return
+        
+        # Check if message is a menu command
+        if message.text and message.text.startswith('/'):
+            command = message.text[1:].split()[0].lower()  # Remove / and get first word
+            if await self._handle_menu_command(bot_id, user.id, command):
+                return  # Command was handled, don't process as regular message
         
         # Save or update chat
         chat_id = f"{bot_id}_{user.id}"
