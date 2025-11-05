@@ -701,6 +701,27 @@ function AssignMenuView({ bots, menus, assignments, onBack }) {
     }
   };
 
+  const handleRefreshCommands = async (botId) => {
+    // Get current assignment for this bot
+    const assignment = assignments.find(a => a.bot_id === botId);
+    if (!assignment) {
+      alert('У этого бота нет назначенного меню');
+      return;
+    }
+
+    try {
+      // Re-assign the same menu to refresh commands
+      await axios.post(`${API}/bot-menu-assignments`, { 
+        bot_id: botId, 
+        menu_id: assignment.menu_id 
+      });
+      alert('✅ Команды обновлены!\n\nТеперь:\n1. Закройте и откройте бота\n2. Или подождите 30 секунд');
+    } catch (error) {
+      console.error('Failed to refresh commands:', error);
+      alert('Ошибка при обновлении команд');
+    }
+  };
+
   return (
     <div className="assign-menu-view">
       <div className="view-header">
