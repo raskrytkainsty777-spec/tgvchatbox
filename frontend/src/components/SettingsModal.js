@@ -441,6 +441,7 @@ function WelcomeMessagesTab({ messages, bots, onUpdate }) {
   const [selectedBots, setSelectedBots] = useState([]);
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
+  const [editingGroup, setEditingGroup] = useState(null);
 
   const handleToggleBot = (botId) => {
     setSelectedBots(prev => {
