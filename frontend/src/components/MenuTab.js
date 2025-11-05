@@ -706,16 +706,50 @@ function ManageButtonsView({ labels, buttons, onBack }) {
     });
 
     try {
-      await axios.post(`${API}/menu-buttons`, { name, actions: formattedActions });
-      alert('Кнопка создана!');
+      if (editingButton) {
+        // Update existing button
+        await axios.put(`${API}/menu-buttons/${editingButton.id}`, { name, actions: formattedActions });
+        alert('Кнопка обновлена!');
+      } else {
+        // Create new button
+        await axios.post(`${API}/menu-buttons`, { name, actions: formattedActions });
+        alert('Кнопка создана!');
+      }
       setName('');
       setActions([]);
       setShowCreateForm(false);
+      setEditingButton(null);
       onBack();
     } catch (error) {
-      console.error('Failed to create button:', error);
-      alert('Ошибка при создании кнопки');
+      console.error('Failed to save button:', error);
+      alert('Ошибка при сохранении кнопки');
     }
+  };
+
+  const handleEdit = (button) => {
+    setEditingButton(button);
+    setName(button.name);
+    
+    // Parse actions back to editable format
+    const parsedActions = button.actions.map(action => {
+      let value = action.value;
+      
+      if (action.type === 'text' && action.value?.text) {
+        value = action.value.text;
+      } else if (action.type === 'url' && action.value?.url) {
+        value = action.value.url;
+      } else if (action.type === 'label' && action.value?.label_id) {
+        value = action.value.label_id;
+      }
+      
+      return {
+        type: action.type,
+        value: value
+      };
+    });
+    
+    setActions(parsedActions);
+    setShowCreateForm(true);
   };
 
   const handleDelete = async (buttonId, buttonName) => {
@@ -731,6 +765,13 @@ function ManageButtonsView({ labels, buttons, onBack }) {
       console.error('Failed to delete button:', error);
       alert('Ошибка при удалении кнопки');
     }
+  };
+
+  const handleCancelEdit = () => {
+    setShowCreateForm(false);
+    setEditingButton(null);
+    setName('');
+    setActions([]);
   };
 
   return (
