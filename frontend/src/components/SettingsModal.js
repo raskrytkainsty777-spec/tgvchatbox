@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiX, FiPlus, FiTrash2, FiTag, FiZap, FiMessageCircle, FiMenu } from 'react-icons/fi';
 import BotManager from './BotManager';
+import MenuTab from './MenuTab';
 import './SettingsModal.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
