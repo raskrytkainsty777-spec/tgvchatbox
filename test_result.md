@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implement sales tracking system: display filter counts, add star icon to chats for sale amount entry, create system label 'Покупатели', build statistics page with sales by bot/day, and add username export by labels"
+user_problem_statement: "Implement bot countdown timer feature: add timer configuration UI in settings, display timer as menu button in Telegram with countdown text (e.g., '⏰ До акции: 5д 12ч 30м'), hide when expired, support London timezone"
 
 backend:
   - task: "Menu System Models"
