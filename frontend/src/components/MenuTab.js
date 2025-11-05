@@ -515,31 +515,44 @@ function CreateMenuView({ buttons, menus, onBack }) {
   return (
     <div className="create-menu-view">
       <div className="view-header">
-        <h3>Создать меню</h3>
+        <h3>Создать меню ({menus.length})</h3>
         <button className="btn-secondary" onClick={onBack}>
           <FiX /> Назад
         </button>
       </div>
 
-      <div className="form-group">
-        <label>Название меню:</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Например: Главное меню"
-          data-testid="menu-name-input"
-        />
-      </div>
+      {/* Create/Edit Menu Form */}
+      {!showCreateForm ? (
+        <button 
+          className="btn-primary btn-block" 
+          onClick={() => setShowCreateForm(true)}
+          style={{ marginBottom: '20px' }}
+        >
+          <FiPlus /> Добавить новое меню
+        </button>
+      ) : (
+        <div className="create-form" style={{ marginBottom: '20px' }}>
+          <h4>{editingMenu ? 'Редактировать меню' : 'Новое меню'}</h4>
+          
+          <div className="form-group">
+            <label>Название меню:</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Например: Главное меню"
+              data-testid="menu-name-input"
+            />
+          </div>
 
-      <div className="form-group">
-        <div className="section-header">
-          <label>Кнопки меню:</label>
-        </div>
-        
-        {buttons.length === 0 ? (
-          <div className="empty-state">Сначала создайте кнопки в разделе "Создать кнопки"</div>
-        ) : (
+          <div className="form-group">
+            <div className="section-header">
+              <label>Кнопки меню:</label>
+            </div>
+            
+            {buttons.length === 0 ? (
+              <div className="empty-state">Сначала создайте кнопки в разделе "Создать кнопки"</div>
+            ) : (
           <>
             <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
               <select
