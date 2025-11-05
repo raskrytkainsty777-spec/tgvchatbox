@@ -169,14 +169,6 @@ function ChatView({ chat, onMessageSent }) {
             <div className="chat-header-username">@{chat.username || 'unknown'}</div>
           </div>
         </div>
-        <button 
-          className="btn-icon"
-          onClick={() => setShowBroadcast(!showBroadcast)}
-          title="Массовая рассылка"
-          data-testid="broadcast-button"
-        >
-          <FiUsers size={20} />
-        </button>
       </div>
 
       {/* Messages Container */}
