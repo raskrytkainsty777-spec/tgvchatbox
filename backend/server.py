@@ -543,6 +543,11 @@ async def assign_menu_to_bot(assignment: BotMenuAssignment):
         "menu_id": assignment.menu_id
     }
     await db.bot_menu_assignments.insert_one(assignment_doc)
+    
+    # Update bot commands in Telegram
+    telegram_mgr = get_telegram_manager(db)
+    await telegram_mgr.set_bot_commands(assignment.bot_id)
+    
     return {"success": True}
 
 @api_router.delete("/bot-menu-assignments/{bot_id}")
