@@ -754,6 +754,6 @@ class TelegramChatPanelTester:
         return failed_tests == 0
 
 if __name__ == "__main__":
-    tester = MenuSystemTester()
+    tester = TelegramChatPanelTester()
     success = tester.run_all_tests()
     sys.exit(0 if success else 1)
