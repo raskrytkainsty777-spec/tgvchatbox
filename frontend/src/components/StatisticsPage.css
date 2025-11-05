@@ -117,12 +117,21 @@
   font-weight: 700;
 }
 
-/* Filters Section */
-.stats-filters {
+/* Stats Container - Two Columns */
+.stats-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: 320px 1fr;
   gap: 24px;
   padding: 0 24px 24px;
+  height: calc(100vh - 120px);
+}
+
+/* Left Sidebar - Filters */
+.stats-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: fit-content;
 }
 
 .filter-section {
@@ -137,6 +146,13 @@
   font-size: 16px;
   color: #fff;
   font-weight: 600;
+}
+
+/* Right Content - Statistics */
+.stats-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 /* Bots Filter */
