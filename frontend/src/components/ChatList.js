@@ -453,22 +453,28 @@ function ChatList({
                   className="chat-item-content"
                   onClick={() => onChatSelect(chat)}
                 >
-                  <div 
-                    className={`chat-avatar ${chat.sale_amount ? 'buyer-avatar' : 'clickable-avatar'}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleStarClick(chat, e);
-                    }}
-                    title={chat.sale_amount ? `Продажа: ${chat.sale_amount}` : 'Добавить продажу'}
-                  >
-                    {chat.sale_amount ? (
-                      <div className="buyer-info">
-                        <FiDollarSign className="dollar-icon" />
-                        <div className="buyer-amount">{chat.sale_amount}</div>
-                      </div>
-                    ) : (
-                      (chat.first_name || chat.username || 'U').charAt(0).toUpperCase()
-                    )}
+                  <div className="avatar-container">
+                    <div 
+                      className={`chat-avatar ${chat.sale_amount ? 'buyer-avatar' : 'clickable-avatar'}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleStarClick(chat, e);
+                      }}
+                      title={chat.sale_amount ? `Продажа: ${chat.sale_amount}` : 'Добавить продажу'}
+                    >
+                      {chat.sale_amount ? (
+                        <div className="buyer-info">
+                          <FiDollarSign className="dollar-icon" />
+                          <div className="buyer-amount">{chat.sale_amount}</div>
+                        </div>
+                      ) : (
+                        (chat.first_name || chat.username || 'U').charAt(0).toUpperCase()
+                      )}
+                    </div>
+                    <div 
+                      className={`status-indicator ${chat.bot_status === 'blocked' ? 'offline' : 'online'}`}
+                      title={chat.bot_status === 'blocked' ? 'Остановил бота' : 'Активный'}
+                    />
                   </div>
                   <div className="chat-content">
                     <div className="chat-header">
