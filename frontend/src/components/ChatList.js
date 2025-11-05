@@ -27,6 +27,7 @@ function ChatList({
   const [showSalePopup, setShowSalePopup] = useState(false);
   const [saleChat, setSaleChat] = useState(null);
   const [saleAmount, setSaleAmount] = useState('');
+  const [showExportMenu, setShowExportMenu] = useState(false);
 
   useEffect(() => {
     loadLabels();
