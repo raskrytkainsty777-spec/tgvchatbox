@@ -92,6 +92,12 @@ function SettingsModal({ bots, onClose, onBotUpdated }) {
           >
             <FiMessageCircle /> Автоответы
           </button>
+          <button
+            className={`tab ${activeTab === 'welcome' ? 'active' : ''}`}
+            onClick={() => setActiveTab('welcome')}
+          >
+            <FiMessageCircle /> Приветствие
+          </button>
         </div>
 
         <div className="settings-content">
