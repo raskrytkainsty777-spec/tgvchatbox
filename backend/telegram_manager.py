@@ -330,6 +330,35 @@ class TelegramBotManager:
         # Commands are set when bot is added/updated
         pass
     
+    def _format_timer_text(self, end_datetime: datetime, text_before: str, text_after: str) -> Optional[str]:
+        """Format timer text for display in bot menu"""
+        try:
+            now = datetime.now(timezone.utc)
+            
+            # Check if timer has expired
+            if now >= end_datetime:
+                return text_after
+            
+            # Calculate remaining time
+            delta = end_datetime - now
+            days = delta.days
+            hours, remainder = divmod(delta.seconds, 3600)
+            minutes, _ = divmod(remainder, 60)
+            
+            # Format: "⏰ До акции: 5д 12ч 30м"
+            time_parts = []
+            if days > 0:
+                time_parts.append(f"{days}д")
+            if hours > 0 or days > 0:
+                time_parts.append(f"{hours}ч")
+            time_parts.append(f"{minutes}м")
+            
+            time_str = " ".join(time_parts)
+            return f"{text_before} {time_str}"
+        except Exception as e:
+            logger.error(f"Error formatting timer: {e}")
+            return None
+    
     async def set_bot_commands(self, bot_id: str):
         """Set bot menu commands in Telegram"""
         try:
