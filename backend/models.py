@@ -243,4 +243,39 @@ class TimerResponse(BaseModel):
     created_at: datetime
 
 
+# ============= USER MODELS =============
+
+class User(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    username: str
+    password: str  # Plain text password (no encryption per user request)
+    access_token: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    bot_ids: List[str] = []  # List of bot IDs user has access to
+    role: str = "user"  # "admin" or "user"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
+    bot_ids: List[str] = []
+    role: str = "user"
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    password: Optional[str] = None
+    bot_ids: Optional[List[str]] = None
+
+class UserResponse(BaseModel):
+    id: str
+    username: str
+    access_token: str
+    bot_ids: List[str]
+    role: str
+    created_at: datetime
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
     menu_name: Optional[str] = None
