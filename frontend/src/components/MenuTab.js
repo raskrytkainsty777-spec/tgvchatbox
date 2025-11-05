@@ -49,7 +49,7 @@ function MenuTab({ bots = [] }) {
   const loadMenus = async () => {
     try {
       const response = await axios.get(`${API}/bot-menus`);
-      setMenus(response.data);
+      setMenus(response.data || []);
     } catch (error) {
       console.error('Failed to load menus:', error);
     }
@@ -58,7 +58,7 @@ function MenuTab({ bots = [] }) {
   const loadAssignments = async () => {
     try {
       const response = await axios.get(`${API}/bot-menu-assignments`);
-      setAssignments(response.data);
+      setAssignments(response.data || []);
     } catch (error) {
       console.error('Failed to load assignments:', error);
     }
@@ -67,11 +67,34 @@ function MenuTab({ bots = [] }) {
   const loadLabels = async () => {
     try {
       const response = await axios.get(`${API}/labels`);
-      setLabels(response.data);
+      setLabels(response.data || []);
     } catch (error) {
       console.error('Failed to load labels:', error);
     }
   };
+
+  if (error) {
+    return (
+      <div className="menu-tab">
+        <div className="error-state">
+          <p>{error}</p>
+          <button className="btn-primary" onClick={loadAll}>
+            Попробовать снова
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="menu-tab">
+        <div className="loading-state">
+          Загрузка...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="menu-tab">
