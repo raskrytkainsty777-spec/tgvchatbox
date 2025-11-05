@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Get backend URL from frontend env
-BACKEND_URL = "https://menu-bot-panel.preview.emergentagent.com/api"
+BACKEND_URL = "https://telegram-panel-2.preview.emergentagent.com/api"
 
 class TelegramChatPanelTester:
     def __init__(self):

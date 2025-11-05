@@ -1,98 +1,74 @@
 <analysis>
-The AI engineer successfully built a Telegram Chat Panel application, incrementally adding complex features such as chat filtering, mass messaging, quick/auto-replies, and welcome messages. The primary focus of this trajectory involved implementing a comprehensive Bot Menu System. This feature, introduced as new models and API endpoints in the backend, and a dedicated  component in the frontend, underwent multiple iterations and debugging cycles.
-
-The development process was highly iterative, driven by user feedback. Initial implementation involved creating the basic UI and backend logic for menus and buttons. Subsequent stages focused on:
-1.  **Debugging**: Resolving various frontend errors (ESLint,  not defined), backend syntax issues (), and ensuring correct data serialization/deserialization.
-2.  **Feature Enhancement**: Adding button and menu editing capabilities, refining the back button functionality, implementing manual command naming, improving the send block action to support direct URL links and nested inline buttons, and adding a refresh commands button to handle Telegram's command caching.
-3.  **Refinement**: Adjusting the UI flow as per user's expectations for menu and button creation/management, and finally, adding chat count displays for filters.
-
-The engineer demonstrated strong problem-solving, methodically diagnosing issues (e.g., , incorrect data fields) through logs and code inspection, and implementing precise fixes while keeping the Telegram Desktop design aesthetic in mind. The final action involves addressing the filter count visibility.
+The AI engineer significantly expanded a Telegram Chat Panel application. Initially, filter count display was debugged and fixed. Subsequently, a comprehensive sales tracking system was implemented, involving backend model/endpoint creation for sales, a Buyers system label, and frontend UI for sales input (dollar icon on avatars, sum display), statistics (cards, filters by bot/date range), and username export. Chat list item density was improved by switching to colored dot labels and integrating sale data directly into user avatars. Real-time chat status (online/offline) was added using WebSockets, with corresponding backend  handlers and frontend status indicators/filters. Menu button level filtering was corrected, and welcome message editing was enabled. Finally, message context menus (reply, edit, delete) were integrated, and the development of a bot countdown timer was initiated, currently focusing on backend models and endpoints. The work has been iterative, with continuous frontend and backend adjustments.
 </analysis>
 
 <product_requirements>
-The user initially requested a Telegram Chat Panel for bot and chat management, with core features including:
-1.  **Bot Management**: Loading bots via authorization token.
-2.  **Chat Display**: Viewing chats sorted by new-to-old, with unread counts.
-3.  **Chat Interaction**: Viewing/sending messages (individual/mass), managing chats, sending files/emojis.
-4.  **Chat Filtering**: Filtering by unread, labels, and searching by keywords.
-5.  **Customization**:
-    *   **Labels**: Create/manage labels (name, color) and apply them to chats.
-    *   **Quick Replies**: Create quick replies accessible via  in chat.
-    *   **Auto-replies**: Configure keyword-based auto-replies.
-    *   **Mass Messaging**: Send messages to selected targets with progress tracking.
-    *   **Welcome Message**: Send a message upon bot start.
-6.  **Bot Menu System**: Create custom interactive menus with buttons. Buttons can: tag chat, open URL, send text, send text blocks with nested buttons, or navigate back. A single menu assigned per bot.
-The design should mimic Telegram Desktop.
-Recent requests focused on refining the Bot Menu System: deletion of test data, button editing, making back a system action (later reverted to a user action), displaying existing menus for editing, ensuring menu commands appear in Telegram's bot menu (not inline), handling send block to correctly display nested buttons and directly open URLs, and adding a refresh commands button. The latest request is to display chat counts next to filters.
+The application is a Telegram Chat Panel for bot and chat management, initially supporting bot loading, chat display, messaging (individual/mass), filtering (unread, labels, search), and customization (labels, quick/auto-replies, welcome messages, bot menu system). Recent focus expanded to:
+1.  **Sales Tracking**: Star icon on chat items to input sales amount, automatically apply Buyers label. Sales statistics (total, by bot, by day), and export usernames by label.
+2.  **UI Refinement**: Make chat list items more minimalistic (compact, with dollar icon for sales/sum in avatar, colored dots for labels). Truncate long message previews.
+3.  **Real-time Chat Status**: Display active/blocked bot status (green/red dot) and filter chats by status, with updates via WebSockets.
+4.  **Bot Menu System Enhancement**: Delete test menu buttons. Fix second-level menu buttons from appearing in Telegram's native command menu.
+5.  **Welcome Message Editing**: Add functionality to edit existing welcome messages.
+6.  **Mass Messaging Refinement**: In mass sending, add options to include/exclude recipients by labels.
+7.  **System Labels Protection**: Prevent Buyers system label from being removed normally, allowing removal only via a remove sale checkbox in the sales popup.
+8.  **Message Context Menu**: Implement right-click context menus for messages: client messages (reply), bot messages (reply, edit, delete).
+9.  **Bot Timer**: Implement a countdown timer in the bot menu, configurable from settings with an end date/time (London time).
 </product_requirements>
 
 <key_technical_concepts>
--   **Backend**: FastAPI, MongoDB (using UUIDs),  library.
--   **Frontend**: React, Tailwind CSS,  for API calls, / for state/lifecycle management.
--   **Infrastructure**: Docker, Docker Compose, Supervisor.
--   **Telegram Bot API**: BotCommand, InlineKeyboardMarkup, CallbackQuery.
+-   **Backend**: FastAPI, MongoDB (using UUIDs), , .
+-   **Frontend**: React, , , , /.
+-   **Infrastructure**: Docker, Supervisor, Kubernetes (API prefixing).
+-   **Telegram Bot API**: BotCommand, InlineKeyboardMarkup, CallbackQuery,  updates.
 </key_technical_concepts>
 
 <code_architecture>
-The project features a standard full-stack setup:
+The project has a full-stack architecture:
 
 
 
--   : Defines data schemas for , , , , , , , , , , and .
-    -   **Changes**:  model updated to include an optional  field (string) and  field (integer).
--   : FastAPI application defining all API endpoints.
-    -   **Changes**: Added endpoints for Menu and MenuButton CRUD operations (, , ). A  endpoint for  and  was added for full updates. The  and   endpoints were modified to call  in  to update Telegram's bot commands.
--   : Manages Telegram Bot API interactions.
-    -   **Changes**:
-        -   : Modified to call  to display the initial menu. (Later, this was changed to set bot commands instead).
-        -   New  function: Initially sent inline menu messages; later refactored to  to set Telegram's native bot commands.
-        -   New : Handles inline keyboard callbacks (for nested buttons in block actions and direct URL buttons).
-        -   New : Processes native bot commands (e.g., , ).
-        -   : Creates/updates Telegram bot commands based on defined menus and their buttons, using the new  field or auto-generating from the button name.
-        -   Logic for block action updated to render nested buttons as inline keyboards.
-        -   Logic for URL action updated to render as a direct URL button.
-        -   Multiple syntax and error handling fixes were applied throughout the file to resolve runtime issues.
--   : Main React component, global state management.
-    -   **Changes**: Removed  to fix ESLint error. Fixed  dependencies.
+-   : Defines data schemas.
+    -   **Changes**:  updated with , , . New models: , , , , , .  and  updated with  and .
+-   : FastAPI application.
+    -   **Changes**: Added imports for new models and . Implemented endpoints for sales (, , , ). Added system label Покупатели creation on startup. Modified  to protect system labels. Added  integration,  function. Added endpoints for message  and . Updated  to handle replies. Started adding timer endpoints.
+-   : Telegram Bot API interactions.
+    -   **Changes**: Modified  to filter by . Added  handler () for bot status and WebSocket emission. Updated  to save . Updated  to support . Added  and  functions.
+-   : Main React component.
+    -   **Changes**: Added  state and button. Integrated  for real-time . Updated  to include  parameter for filtering.
 -   : Displays chat list.
-    -   **Changes**: Added logic to calculate and display chat counts next to filter options (All, Unread, Labels).
+    -   **Changes**: Filter counts for All, Online, Offline. Implemented  icon, sale amount display, and  (with remove sale checkbox). Updated label display to colored dots with tooltips. Added status indicator (). Truncated last message text. Added export button/menu.
 -   : Styling for .
-    -   **Changes**: Added styles for  and adjusted  for flexible layout.
+    -   **Changes**: Styles for filter counts, , , , , , search bar adjustments, and sale checkbox.
 -   : Modal for bot settings.
-    -   **Changes**: Imported  component.
--   : New component for bot menu system UI.
-    -   **Changes**:
-        -   Initial creation and styling.
-        -   Added loading and error states for data fetching.
-        -   Refactored  to include creation, display, editing, and deletion of buttons.
-        -    modified to allow selecting existing buttons from a dropdown, and to display/edit/delete created menus.
-        -    was introduced to manage menu assignments to bots and now includes a Refresh Commands button.
-        -   Added  input field and  dropdown for button creation/editing.
-        -   Logic for action editor updated to handle  as  for block actions.
-        -   Numerous UI adjustments and bug fixes to match user expectations (e.g., initial button/menu count display, back button logic adjustments).
+    -   **Changes**: Added welcome message editing functionality (states, edit/save/cancel buttons, form logic). Imported , .
+-    (NEW): For sales statistics.
+    -   **Changes**: Integrated  for date range. Added bot selection checkboxes. Client-side filtering logic. Updated JSX for layout (left filters, right summary cards). Removed Sales by Day table.
+-    (NEW): Styling for .
+    -   **Changes**: Styles for statistics page layout, filters, date pickers, summary cards.
+-   : Displays chat messages.
+    -   **Changes**: Removed  and related logic. Added context menu functionality for messages (, , , ), including UI for context menu and message input indicators.
 -   : Styling for .
-    -   **Changes**: Extensive additions for menu/button creation forms, lists, action editors, loading/error states, and button styles to mimic Telegram Desktop.
+    -   **Changes**: Styles for context menu, reply/edit indicators.
+-   : For mass messaging.
+    -   **Changes**: Added label-based filtering (include/exclude) for recipients. Removed old  logic.
+-   : Styling for .
+    -   **Changes**: Styles for label filter sections.
 </code_architecture>
 
 <pending_tasks>
--   Ensure that the chat filter counts are correctly displayed on the frontend. The last action was attempting to screenshot the UI to verify this.
+-   Complete the implementation of the bot countdown timer feature (frontend UI for activation/setting duration, displaying in bot menu).
+-   Address any remaining styling or functional issues with the context menu for messages.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was working on displaying chat counts next to the filter options (All, Unread, Labels) in the  component.
+Immediately before this summary request, the AI engineer was implementing the bot countdown timer feature. The work involved:
+-   **Backend Model Creation**: A new  model was added to  to store timer details like , , and .
+-   **Backend Endpoints Initiation**: Endpoints for managing timers (creating, getting, patching) were being added to . Specifically, imports for  and  were added, and the  and  endpoints were being defined before the sales endpoints.
+-   **Telegram Manager Integration (Started)**: The  file was being examined to integrate timer display into the bot's commands or menu, with the initial step being to locate the  function for modification.
 
-**Details of work done:**
--   ****:
-    -   A new function was added to calculate the number of chats for each filter category (all, unread, by specific labels).
-    -   The component's JSX was updated to display these calculated counts alongside the filter names in the filter menu.
--   ****:
-    -   New CSS rules were added for  to style the displayed numbers.
-    -   The existing  style was adjusted to use a flex layout, allowing the filter name and its count to be aligned horizontally.
-    -    compiled successfully, indicating no syntax errors in the recent frontend changes.
-
-The last action recorded was an attempt to take a screenshot of the frontend after these changes were applied to visually verify that the filter menu with the counts was correctly displayed. However, the screenshot did not show the filter menu open, so a re-attempt with a precise click was being planned.
+The goal is to allow users to set a specific countdown timer for their bots, which will be displayed in the bot's Telegram menu and expire on a given date/time (London time). This task is in its early stages, with backend data structures and API routes being laid out.
 </current_work>
 
 <optional_next_step>
-Take a screenshot after clicking on the filter button in  to verify the filter counts are displayed correctly.
+Continue implementing the bot countdown timer by adding frontend UI for timer activation and display.
 </optional_next_step>
