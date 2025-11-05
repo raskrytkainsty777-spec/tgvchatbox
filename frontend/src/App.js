@@ -36,7 +36,7 @@ function App() {
       loadStats();
     }, 10000);
     return () => clearInterval(interval);
-  }, [selectedBots, searchQuery, filterType, filterLabelId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedBots, searchQuery, filterType, filterLabelId]);
 
   const loadBots = async () => {
     try {
