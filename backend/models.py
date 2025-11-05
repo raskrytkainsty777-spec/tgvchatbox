@@ -46,6 +46,7 @@ class Message(BaseModel):
     text: str
     file_id: Optional[str] = None
     file_type: Optional[str] = None
+    telegram_message_id: Optional[int] = None
     is_from_bot: bool
     is_read: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
