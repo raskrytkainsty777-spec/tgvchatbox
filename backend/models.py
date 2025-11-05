@@ -31,6 +31,7 @@ class Chat(BaseModel):
     last_message: str
     last_message_time: datetime
     unread_count: int = 0
+    label_ids: List[str] = []
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
