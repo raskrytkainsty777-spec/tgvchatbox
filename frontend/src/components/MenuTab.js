@@ -458,12 +458,53 @@ function CreateMenuView({ buttons, menus, onBack }) {
     }
 
     try {
-      await axios.post(`${API}/bot-menus`, { name, button_ids: selectedButtons });
-      alert('Меню создано!');
+      if (editingMenu) {
+        // Update existing menu
+        await axios.put(`${API}/bot-menus/${editingMenu.id}`, { name, button_ids: selectedButtons });
+        alert('Меню обновлено!');
+      } else {
+        // Create new menu
+        await axios.post(`${API}/bot-menus`, { name, button_ids: selectedButtons });
+        alert('Меню создано!');
+      }
+      setName('');
+      setSelectedButtons([]);
+      setShowCreateForm(false);
+      setEditingMenu(null);
       onBack();
     } catch (error) {
-      alert('Ошибка при создании меню');
+      console.error('Failed to save menu:', error);
+      alert('Ошибка при сохранении меню');
     }
+  };
+
+  const handleEdit = (menu) => {
+    setEditingMenu(menu);
+    setName(menu.name);
+    setSelectedButtons(menu.button_ids);
+    setShowCreateForm(true);
+  };
+
+  const handleDelete = async (menuId, menuName) => {
+    if (!window.confirm(`Удалить меню "${menuName}"?`)) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${API}/bot-menus/${menuId}`);
+      alert('Меню удалено!');
+      onBack();
+    } catch (error) {
+      console.error('Failed to delete menu:', error);
+      alert('Ошибка при удалении меню');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setShowCreateForm(false);
+    setEditingMenu(null);
+    setName('');
+    setSelectedButtons([]);
   };
 
   const getButtonName = (buttonId) => {
