@@ -597,9 +597,16 @@ function WelcomeMessagesTab({ messages, bots, onUpdate }) {
           rows="4"
           disabled={loading}
         />
-        <button type="submit" className="btn-primary" disabled={loading || !text.trim() || selectedBots.length === 0}>
-          <FiPlus /> {loading ? 'Создание...' : 'Добавить'}
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button type="submit" className="btn-primary" disabled={loading || !text.trim() || selectedBots.length === 0}>
+            {editingGroup ? <FiCheck /> : <FiPlus />} {loading ? (editingGroup ? 'Сохранение...' : 'Создание...') : (editingGroup ? 'Сохранить' : 'Добавить')}
+          </button>
+          {editingGroup && (
+            <button type="button" className="btn-secondary" onClick={handleCancelEdit}>
+              Отмена
+            </button>
+          )}
+        </div>
         <p className="hint">Это сообщение будет отправляться пользователю при команде /start</p>
       </form>
 
