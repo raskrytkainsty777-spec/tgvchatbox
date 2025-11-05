@@ -215,6 +215,22 @@ class TelegramBotManager:
             "total": len(user_ids)
         }
     
+    async def _send_welcome_message(self, bot_id: str, user_id: int):
+        """Send welcome message if configured for this bot"""
+        try:
+            # Get welcome message for this bot
+            welcome_msg = await self.db.welcome_messages.find_one({
+                "bot_id": bot_id,
+                "is_active": True
+            })
+            
+            if welcome_msg:
+                # Send welcome message
+                await self.send_message(bot_id, user_id, welcome_msg["text"])
+                logger.info(f"Welcome message sent to user {user_id} for bot {bot_id}")
+        except Exception as e:
+            logger.error(f"Failed to send welcome message: {e}")
+    
     async def _check_auto_reply(self, bot_id: str, user_id: int, text: str):
         """Check if message triggers auto-reply"""
         # Get active auto-replies
