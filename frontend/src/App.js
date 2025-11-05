@@ -17,6 +17,9 @@ function App() {
   const [showBotManager, setShowBotManager] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [stats, setStats] = useState(null);
+  const [filterType, setFilterType] = useState('all'); // all, unread, label
+  const [filterLabelId, setFilterLabelId] = useState(null);
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false);
 
   useEffect(() => {
     loadBots();
