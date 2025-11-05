@@ -984,22 +984,6 @@ async def export_usernames_by_label(label_id: str):
         logger.error(f"Error exporting usernames: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Health check
-@api_router.get("/")
-async def root():
-    return {"message": "Telegram Chat Panel API", "status": "running"}
-
-# Include the router in the main app
-app.include_router(api_router)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 # ============= USER MANAGEMENT ENDPOINTS =============
 
 @api_router.post("/users", response_model=UserResponse)
