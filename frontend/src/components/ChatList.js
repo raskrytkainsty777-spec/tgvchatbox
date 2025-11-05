@@ -203,6 +203,28 @@ function ChatList({
     }
   };
 
+  const handleExportUsernames = async (labelId) => {
+    try {
+      const response = await axios.get(`${API}/labels/${labelId}/export-usernames`, {
+        responseType: 'blob'
+      });
+      
+      // Create download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `usernames_${labelId}.txt`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      
+      setShowExportMenu(false);
+    } catch (error) {
+      alert('Не удалось экспортировать username');
+      console.error('Export error:', error);
+    }
+  };
+
   return (
     <div className="chat-list">
       {/* Search Bar */}
