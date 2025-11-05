@@ -193,6 +193,43 @@ class TelegramBotManager:
             logger.error(f"Failed to send message: {e}")
             raise Exception(f"Failed to send message: {str(e)}")
     
+
+    
+    async def edit_message(self, bot_id: str, user_id: int, telegram_message_id: int, text: str):
+        """Edit a message"""
+        if bot_id not in self.bots:
+            raise Exception("Bot not found")
+        
+        bot = self.bots[bot_id]
+        
+        try:
+            await bot.edit_message_text(
+                chat_id=user_id,
+                message_id=telegram_message_id,
+                text=text
+            )
+            logger.info(f"Edited message {telegram_message_id} for user {user_id}")
+        except Exception as e:
+            logger.error(f"Failed to edit message: {e}")
+            raise
+    
+    async def delete_message(self, bot_id: str, user_id: int, telegram_message_id: int):
+        """Delete a message"""
+        if bot_id not in self.bots:
+            raise Exception("Bot not found")
+        
+        bot = self.bots[bot_id]
+        
+        try:
+            await bot.delete_message(
+                chat_id=user_id,
+                message_id=telegram_message_id
+            )
+            logger.info(f"Deleted message {telegram_message_id} for user {user_id}")
+        except Exception as e:
+            logger.error(f"Failed to delete message: {e}")
+            raise
+
     async def send_file(self, bot_id: str, user_id: int, file_path: str, caption: str = "") -> dict:
         """Send file to user"""
         if bot_id not in self.bots:
