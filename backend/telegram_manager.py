@@ -110,6 +110,10 @@ class TelegramBotManager:
             "created_at": datetime.now(timezone.utc)
         }
         await self.db.messages.insert_one(message_data)
+        
+        # Check for auto-replies
+        if message.text:
+            await self._check_auto_reply(bot_id, user.id, message.text)
     
     async def send_message(self, bot_id: str, user_id: int, text: str, file_id: Optional[str] = None) -> dict:
         """Send message to user"""
