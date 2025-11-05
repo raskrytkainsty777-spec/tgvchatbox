@@ -165,44 +165,73 @@ function ChatList({
     <div className="chat-list">
       {/* Search Bar */}
       <div className="search-bar">
-        <FiSearch className="search-icon" />
-        <input
-          type="text"
-          placeholder="Поиск..."
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          data-testid="search-input"
-        />
+        <div className="search-input-wrapper">
+          <FiSearch className="search-icon" />
+          <input
+            type="text"
+            placeholder="Поиск..."
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            data-testid="search-input"
+          />
+        </div>
         <button
-          className="filter-btn"
+          className={`filter-btn ${activeFilters.length > 0 ? 'active' : ''}`}
           onClick={() => setShowFilterMenu(!showFilterMenu)}
           data-testid="filter-button"
         >
           <FiFilter />
+          {activeFilters.length > 0 && (
+            <span className="filter-count">{activeFilters.length}</span>
+          )}
         </button>
         
         {showFilterMenu && (
           <div className="filter-menu">
-            <div className="filter-option" onClick={() => applyFilter('all')}>
-              Все диалоги
-            </div>
             <div className="filter-option" onClick={() => applyFilter('unread')}>
               Непрочитанные
             </div>
             <div className="filter-divider">По меткам:</div>
-            {labels.map(label => (
-              <div
-                key={label.id}
-                className="filter-option"
-                onClick={() => applyFilter('label', label.id)}
-              >
-                <span className="label-dot" style={{ backgroundColor: label.color }}></span>
-                {label.name}
+            {labels.length === 0 ? (
+              <div className="filter-option" style={{ color: '#8d969e', cursor: 'default' }}>
+                Нет меток
               </div>
-            ))}
+            ) : (
+              labels.map(label => (
+                <div
+                  key={label.id}
+                  className="filter-option"
+                  onClick={() => applyFilter('label', label.id, label.name)}
+                >
+                  <span className="label-dot" style={{ backgroundColor: label.color }}></span>
+                  {label.name}
+                </div>
+              ))
+            )}
           </div>
         )}
       </div>
+
+      {/* Active Filters */}
+      {activeFilters.length > 0 && (
+        <div className="active-filters-bar">
+          {activeFilters.map((filter, index) => (
+            <div key={index} className="filter-chip">
+              {filter.type === 'unread' && 'Непрочитанные'}
+              {filter.type === 'label' && filter.labelName}
+              <button
+                className="filter-chip-remove"
+                onClick={() => removeFilter(index)}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+          <button className="clear-filters-btn" onClick={clearAllFilters}>
+            Очистить все
+          </button>
+        </div>
+      )}
 
       {/* Bot Filters */}
       {bots.length > 0 && (
