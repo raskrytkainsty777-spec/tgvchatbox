@@ -113,11 +113,11 @@ function App() {
 
   const handleToggleBotFilter = (botId) => {
     setSelectedBots(prev => {
-      if (prev.includes(botId)) {
-        return prev.filter(id => id !== botId);
-      } else {
-        return [...prev, botId];
-      }
+      const newSelection = prev.includes(botId) 
+        ? prev.filter(id => id !== botId)
+        : [...prev, botId];
+      console.log('Bot filter toggled. Selected bots:', newSelection); // Отладка
+      return newSelection;
     });
   };
 
