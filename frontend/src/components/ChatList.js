@@ -316,7 +316,11 @@ function ChatList({
 
         {chats.length === 0 ? (
           <div className="empty-chats">
-            <p>Нет чатов</p>
+            <p>
+              {selectedBots.length === 0 
+                ? 'Выберите хотя бы одного бота' 
+                : 'Нет чатов'}
+            </p>
           </div>
         ) : (
           chats.map(chat => {
