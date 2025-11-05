@@ -245,6 +245,7 @@ function App() {
           bots={bots}
           onClose={() => setShowBotManager(false)}
           onBotUpdated={handleBotAdded}
+          userRole={user?.role}
         />
       )}
 
