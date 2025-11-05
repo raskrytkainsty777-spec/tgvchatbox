@@ -33,7 +33,7 @@ function App() {
 
   useEffect(() => {
     loadChats();
-  }, [selectedBots, searchQuery]);
+  }, [selectedBots, searchQuery, filterType, filterLabelId]);
 
   const loadBots = async () => {
     try {
