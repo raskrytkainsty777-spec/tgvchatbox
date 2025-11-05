@@ -181,3 +181,206 @@
   flex-shrink: 0;
   margin-left: 8px;
 }
+
+/* Filter Button */
+.filter-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: #8d969e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin-left: 8px;
+}
+
+.filter-btn:hover {
+  background: #242f3d;
+  color: #fff;
+}
+
+.filter-menu {
+  position: absolute;
+  right: 10px;
+  top: 55px;
+  background: #17212b;
+  border: 1px solid #242f3d;
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 200px;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.filter-option {
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-option:hover {
+  background: #242f3d;
+}
+
+.filter-divider {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: #8d969e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.label-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+/* Selection Bar */
+.selection-bar {
+  padding: 12px 16px;
+  background: #2b5278;
+  border-bottom: 1px solid #0e1621;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.selection-info {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.selection-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.label-menu {
+  position: absolute;
+  right: 16px;
+  top: 50px;
+  background: #17212b;
+  border: 1px solid #242f3d;
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 180px;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.label-option {
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.label-option:hover {
+  background: #242f3d;
+}
+
+.label-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.label-divider {
+  height: 1px;
+  background: #242f3d;
+  margin: 8px 0;
+}
+
+/* Select All Bar */
+.select-all-bar {
+  padding: 8px 16px;
+  background: #17212b;
+  border-bottom: 1px solid #0e1621;
+}
+
+.select-all-btn {
+  background: transparent;
+  border: none;
+  color: #8d969e;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s;
+}
+
+.select-all-btn:hover {
+  color: #fff;
+}
+
+/* Chat Item with Checkbox */
+.chat-item {
+  display: flex;
+  align-items: center;
+}
+
+.chat-checkbox {
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.chat-item-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px 12px 0;
+  cursor: pointer;
+  border-bottom: 1px solid #0e1621;
+}
+
+.chat-labels {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.chat-label {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 500;
+}
