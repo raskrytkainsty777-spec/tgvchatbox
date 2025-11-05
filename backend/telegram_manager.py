@@ -585,9 +585,13 @@ class TelegramBotManager:
                     await self.send_message(bot_id, user_id, text)
                 
                 elif action_type == "url" and action_value:
-                    # Send URL as text (user can click it)
+                    # Send URL as inline button (opens link directly)
+                    from telegram import InlineKeyboardButton, InlineKeyboardMarkup
                     url = action_value.get("url", "")
-                    await self.send_message(bot_id, user_id, f"🔗 {url}")
+                    keyboard = [[InlineKeyboardButton("🔗 Открыть ссылку", url=url)]]
+                    reply_markup = InlineKeyboardMarkup(keyboard)
+                    bot = self.bots[bot_id]
+                    await bot.send_message(chat_id=user_id, text="Нажмите на кнопку, чтобы перейти по ссылке:", reply_markup=reply_markup)
                 
                 elif action_type == "label" and action_value:
                     # Add label to chat
