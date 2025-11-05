@@ -14,6 +14,8 @@ function ChatView({ chat, onMessageSent }) {
   const [showBroadcast, setShowBroadcast] = useState(false);
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [quickReplies, setQuickReplies] = useState([]);
+  const [showQuickReplies, setShowQuickReplies] = useState(false);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
