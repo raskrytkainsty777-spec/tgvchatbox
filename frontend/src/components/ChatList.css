@@ -204,12 +204,32 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
-  margin-left: 8px;
+  flex-shrink: 0;
+  position: relative;
 }
 
 .filter-btn:hover {
   background: #242f3d;
   color: #fff;
+}
+
+.filter-btn.active {
+  color: #5288c1;
+  background: rgba(82, 136, 193, 0.1);
+}
+
+.filter-count {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #5288c1;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 10px;
+  min-width: 16px;
+  text-align: center;
 }
 
 .filter-menu {
