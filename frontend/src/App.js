@@ -2,11 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import './App.css';
+import { useAuth } from './AuthContext';
+import LoginPage from './LoginPage';
 import SettingsModal from './components/SettingsModal';
 import ChatList from './components/ChatList';
 import ChatView from './components/ChatView';
 import StatisticsPage from './components/StatisticsPage';
-import { FiSettings, FiSend, FiBarChart2 } from 'react-icons/fi';
+import UsersModal from './components/UsersModal';
+import { FiSettings, FiSend, FiBarChart2, FiUser } from 'react-icons/fi';
 import BroadcastModal from './components/BroadcastModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
