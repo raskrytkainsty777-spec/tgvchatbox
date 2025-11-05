@@ -82,17 +82,28 @@ function ChatView({ chat, onMessageSent }) {
 
     setSending(true);
     try {
-      await axios.post(`${API}/messages`, {
-        bot_id: chat.bot_id,
-        user_id: chat.user_id,
-        text: messageText
-      });
+      if (editingMessage) {
+        // Edit message
+        await axios.patch(`${API}/messages/${editingMessage.id}`, {
+          text: messageText
+        });
+        setEditingMessage(null);
+      } else {
+        // Send new message (with optional reply)
+        await axios.post(`${API}/messages`, {
+          bot_id: chat.bot_id,
+          user_id: chat.user_id,
+          text: messageText,
+          reply_to_message_id: replyToMessage?.telegram_message_id || null
+        });
+        setReplyToMessage(null);
+      }
       setMessageText('');
       setShowEmojiPicker(false);
       await loadMessages();
       onMessageSent();
     } catch (error) {
-      alert('Не удалось отправить сообщение');
+      alert(editingMessage ? 'Не удалось изменить сообщение' : 'Не удалось отправить сообщение');
     } finally {
       setSending(false);
     }
