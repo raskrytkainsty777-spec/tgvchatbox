@@ -10,11 +10,19 @@
   background: #17212b;
   border-bottom: 1px solid #0e1621;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-input-wrapper {
+  flex: 1;
+  position: relative;
 }
 
 .search-icon {
   position: absolute;
-  left: 28px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: #8d969e;
@@ -22,6 +30,7 @@
 }
 
 .search-bar input {
+  width: 100%;
   padding-left: 40px;
   font-size: 14px;
 }
