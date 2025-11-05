@@ -62,6 +62,28 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
+# ============= WEBSOCKET EVENTS =============
+
+@sio.event
+async def connect(sid, environ):
+    """Client connected"""
+    logger.info(f"Client connected: {sid}")
+
+@sio.event
+async def disconnect(sid):
+    """Client disconnected"""
+    logger.info(f"Client disconnected: {sid}")
+
+async def broadcast_chat_status(chat_id: str, bot_status: str):
+    """Broadcast chat status change to all connected clients"""
+    await sio.emit('chat_status_update', {
+        'chat_id': chat_id,
+        'bot_status': bot_status
+    })
+    logger.info(f"Broadcasted status update: chat_id={chat_id}, status={bot_status}")
+
+
 # ============= BOT ENDPOINTS =============
 
 @api_router.post("/bots", response_model=BotResponse)
