@@ -57,8 +57,9 @@ function App() {
     try {
       const params = {};
       
-      // Фильтр по ботам - ОБЯЗАТЕЛЬНО применяется
-      if (selectedBots.length > 0) {
+      // Фильтр по ботам - применяется только если выбран хотя бы один бот
+      // Если все боты сняты - показываем все чаты
+      if (selectedBots.length > 0 && bots.length > 0) {
         params.bot_ids = selectedBots.join(',');
       }
       
@@ -79,6 +80,7 @@ function App() {
       
       console.log('Loading chats with params:', params); // Для отладки
       const response = await axios.get(`${API}/chats`, { params });
+      console.log(`Loaded ${response.data.length} chats`); // Для отладки
       setChats(response.data);
     } catch (error) {
       console.error('Failed to load chats:', error);
