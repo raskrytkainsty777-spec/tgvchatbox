@@ -285,6 +285,7 @@ function App() {
                 onToggleBotFilter={handleToggleBotFilter}
                 onChatsUpdate={loadChats}
                 onFilterChange={handleFilterChange}
+                userRole={user?.role}
               />
             </div>
 
