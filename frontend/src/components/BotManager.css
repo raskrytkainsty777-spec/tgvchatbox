@@ -1,0 +1,130 @@
+.bot-manager-modal {
+  max-width: 600px;
+}
+
+.add-bot-form {
+  margin-bottom: 30px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #242f3d;
+}
+
+.add-bot-form h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.add-bot-form input {
+  margin-bottom: 15px;
+}
+
+.error-message {
+  background: rgba(229, 57, 53, 0.1);
+  border: 1px solid #e53935;
+  color: #e53935;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+.btn-block {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.bots-list h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #8d969e;
+  font-size: 14px;
+}
+
+.bots-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.bot-card {
+  background: #0e1621;
+  border: 1px solid #242f3d;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+}
+
+.bot-card:hover {
+  border-color: #5288c1;
+}
+
+.bot-info {
+  flex: 1;
+}
+
+.bot-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.bot-meta {
+  font-size: 13px;
+  color: #8d969e;
+  margin-bottom: 6px;
+}
+
+.bot-status {
+  font-size: 12px;
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.bot-status.active {
+  background: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+}
+
+.bot-status.inactive {
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+}
+
+.btn-icon-small {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  color: #8d969e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-icon-small:hover {
+  background: #242f3d;
+  color: #fff;
+}
+
+.btn-delete:hover {
+  background: rgba(229, 57, 53, 0.1);
+  color: #e53935;
+}
