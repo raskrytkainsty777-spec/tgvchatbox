@@ -400,11 +400,6 @@ class TelegramBotManager:
             import traceback
             traceback.print_exc()
 
-                        logger.info(f"Auto-reply sent to user {user_id} for keyword '{keyword}'")
-                    except Exception as e:
-                        logger.error(f"Failed to send auto-reply: {e}")
-                    break  # Only one auto-reply per message
-
 # Global instance
 telegram_manager: Optional[TelegramBotManager] = None
 
