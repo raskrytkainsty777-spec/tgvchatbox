@@ -194,8 +194,8 @@ frontend:
         comment: "Comprehensive UI testing completed successfully. ✅ Navigation to Menu Tab working ✅ Menu creation (18 buttons available, successful creation with alert) ✅ Menu assignment (@apotestimka_bot, multiple menus available, successful assignment) ✅ Data persistence (statistics and button data persist correctly) ✅ UI/UX elements properly styled. Only issue: Button creation fails with 422 API error due to action value format mismatch (frontend sends string, API expects dict)."
         
   - task: "Button Creation API Format Fix"
-    implemented: false
-    working: false
+    implemented: true
+    working: "NA"
     file: "/app/frontend/src/components/MenuTab.js"
     stuck_count: 1
     priority: "high"
@@ -204,6 +204,9 @@ frontend:
       - working: false
         agent: "testing"
         comment: "Button creation fails with 422 API error. Frontend sends action.value as string (e.g., 'Hello World') but API expects dictionary format (e.g., {'text': 'Hello World'}). Need to fix ActionEditor component to format action values correctly for different action types before sending to API."
+      - working: "NA"
+        agent: "main"
+        comment: "Fixed handleSave in CreateButtonView to format action values correctly before API submission. Now converts: text -> {text: value}, url -> {url: value}, label -> {label_id: value}, back -> null. Block type already returns correct dict format. Ready for retesting."
 
 metadata:
   created_by: "main_agent"
