@@ -24,7 +24,8 @@ from models import (
     BotMenu, BotMenuCreate, BotMenuResponse,
     BotMenuAssignment, BotMenuAssignmentResponse,
     SaleCreate, SaleResponse, SalesStatistics, ExportUsernamesRequest,
-    Timer, TimerCreate, TimerResponse
+    Timer, TimerCreate, TimerResponse,
+    User, UserCreate, UserUpdate, UserResponse, LoginRequest
 )
 from telegram_manager import get_telegram_manager
 
