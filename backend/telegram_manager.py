@@ -301,6 +301,94 @@ class TelegramBotManager:
                 chat_id=user_id,
                 text=f"📋 {menu['name']}",
                 reply_markup=reply_markup
+
+    async def _handle_button_press(self, update: Update, bot_id: str):
+        """Handle button press from inline keyboard"""
+        query = update.callback_query
+        if not query:
+            return
+        
+        await query.answer()
+        
+        user_id = query.from_user.id
+        callback_data = query.data
+        
+        # Parse button id from callback data
+        if not callback_data.startswith("btn_"):
+            return
+        
+        button_id = callback_data[4:]  # Remove "btn_" prefix
+        
+        try:
+            # Get button details
+            button = await self.db.menu_buttons.find_one({"id": button_id})
+            if not button:
+                logger.error(f"Button {button_id} not found")
+                return
+            
+            chat_id = f"{bot_id}_{user_id}"
+            
+            # Execute button actions
+            for action in button.get("actions", []):
+                action_type = action.get("type")
+                action_value = action.get("value")
+                
+                if action_type == "text" and action_value:
+                    # Send text message
+                    text = action_value.get("text", "")
+                    await self.send_message(bot_id, user_id, text)
+                
+                elif action_type == "url" and action_value:
+                    # Send URL as text (user can click it)
+                    url = action_value.get("url", "")
+                    await self.send_message(bot_id, user_id, f"🔗 {url}")
+                
+                elif action_type == "label" and action_value:
+                    # Add label to chat
+                    label_id = action_value.get("label_id")
+                    if label_id:
+                        await self.db.chats.update_one(
+                            {"id": chat_id},
+                            {"$addToSet": {"labels": label_id}}
+                        )
+                        logger.info(f"Label {label_id} added to chat {chat_id}")
+                
+                elif action_type == "block" and action_value:
+                    # Send block text with nested buttons
+                    text = action_value.get("text", "")
+                    nested_button_ids = action_value.get("button_ids", [])
+                    
+                    if nested_button_ids:
+                        from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+                        
+                        # Fetch nested buttons
+                        nested_buttons_cursor = self.db.menu_buttons.find({"id": {"$in": nested_button_ids}})
+                        nested_buttons = await nested_buttons_cursor.to_list(length=100)
+                        
+                        # Create keyboard
+                        keyboard = []
+                        for nb in nested_buttons:
+                            callback_data = f"btn_{nb['id']}"
+                            keyboard.append([InlineKeyboardButton(nb["name"], callback_data=callback_data)])
+                        
+                        reply_markup = InlineKeyboardMarkup(keyboard)
+                        
+                        bot = self.bots[bot_id]
+                        await bot.send_message(chat_id=user_id, text=text, reply_markup=reply_markup)
+                    else:
+                        await self.send_message(bot_id, user_id, text)
+                
+                elif action_type == "back":
+                    # Send menu again (go back to main menu)
+                    await self._send_bot_menu(bot_id, user_id)
+            
+            logger.info(f"Button {button['name']} executed for user {user_id}")
+            
+        except Exception as e:
+            logger.error(f"Failed to handle button press: {e}")
+            import traceback
+            traceback.print_exc()
+
             )
             logger.info(f"Menu sent to user {user_id} for bot {bot_id}")
             
