@@ -527,7 +527,7 @@ class TelegramChatPanelTester:
                 self.log_result("Create Second Sale", False, f"Failed: {response.status_code if response else 'No response'}")
                 
         # Test 4: Test with invalid chat_id
-        invalid_sale_data = {"amount": 100.0}
+        invalid_sale_data = {"chat_id": "invalid-chat-id", "amount": 100.0}
         response = self.make_request("POST", "/chats/invalid-chat-id/sale", invalid_sale_data)
         if response and response.status_code == 404:
             self.log_result("Invalid Chat ID", True, "Correctly returned 404 for invalid chat_id")
