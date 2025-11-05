@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implement bot countdown timer feature: add timer configuration UI in settings, display timer as menu button in Telegram with countdown text (e.g., '⏰ До акции: 5д 12ч 30м'), hide when expired, support London timezone"
+user_problem_statement: "Clean up test data: delete all test menu buttons, test menus, and test timers. Fix bot menu display so menu buttons appear correctly in Telegram bot alongside timer."
 
 backend:
   - task: "Menu System Models"
