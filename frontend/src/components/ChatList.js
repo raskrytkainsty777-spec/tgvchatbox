@@ -16,8 +16,10 @@ function ChatList({
   onSearchChange,
   onToggleBotFilter,
   onChatsUpdate,
-  onFilterChange 
+  onFilterChange,
+  userRole 
 }) {
+  const isAdmin = userRole === 'admin';
   const [selectedChats, setSelectedChats] = useState([]);
   const [showLabelMenu, setShowLabelMenu] = useState(false);
   const [labels, setLabels] = useState([]);
