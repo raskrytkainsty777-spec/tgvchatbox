@@ -490,15 +490,14 @@ function ChatList({
                       )}
                     </div>
                     {chatLabels.length > 0 && (
-                      <div className="chat-labels">
+                      <div className="chat-labels-dots">
                         {chatLabels.map(label => (
                           <span
                             key={label.id}
-                            className="chat-label"
+                            className="label-dot"
                             style={{ backgroundColor: label.color }}
-                          >
-                            {label.name}
-                          </span>
+                            title={label.name}
+                          />
                         ))}
                       </div>
                     )}
