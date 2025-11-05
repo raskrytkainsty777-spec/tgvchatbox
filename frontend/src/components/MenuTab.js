@@ -151,8 +151,8 @@ function MenuTab({ bots = [] }) {
   );
 }
 
-// Main View with 3 buttons
-function MainView({ buttons, menus, onCreateButton, onCreateMenu, onAssignMenu }) {
+// Main View with action buttons
+function MainView({ buttons, menus, onCreateButton, onCreateMenu, onAssignMenu, onManageButtons, onManageMenus }) {
   return (
     <div className="main-view">
       <h3>Управление меню ботов</h3>
@@ -169,13 +169,15 @@ function MainView({ buttons, menus, onCreateButton, onCreateMenu, onAssignMenu }
       </div>
 
       <div className="stats-section">
-        <div className="stat-card">
+        <div className="stat-card clickable" onClick={onManageButtons}>
           <div className="stat-number">{buttons.length}</div>
           <div className="stat-label">Кнопок создано</div>
+          <div className="stat-action">Нажмите для управления</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card clickable" onClick={onManageMenus}>
           <div className="stat-number">{menus.length}</div>
           <div className="stat-label">Меню создано</div>
+          <div className="stat-action">Нажмите для управления</div>
         </div>
       </div>
     </div>
