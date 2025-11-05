@@ -508,7 +508,7 @@ function ChatList({
                       </div>
                     </div>
                     <div className="chat-preview">
-                      <div className="preview-text">{chat.last_message}</div>
+                      <div className="preview-text">{truncateText(chat.last_message, 24)}</div>
                       {chat.unread_count > 0 && (
                         <div className="unread-badge" data-testid={`unread-${chat.id}`}>
                           {chat.unread_count}
