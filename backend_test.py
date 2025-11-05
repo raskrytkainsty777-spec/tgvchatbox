@@ -506,7 +506,7 @@ class TelegramChatPanelTester:
             
         # Test 2: Update existing sale
         if len(self.existing_chats) > 0:
-            update_data = {"amount": 2500.50}
+            update_data = {"chat_id": test_chat['id'], "amount": 2500.50}
             response = self.make_request("POST", f"/chats/{test_chat['id']}/sale", update_data)
             if response and response.status_code == 200:
                 sale_response = response.json()
