@@ -260,13 +260,15 @@ function ChatList({
             data-testid="search-input"
           />
         </div>
-        <button
-          className="export-btn"
-          onClick={() => setShowExportMenu(!showExportMenu)}
-          title="Экспорт username"
-        >
-          <FiDownload />
-        </button>
+        {isAdmin && (
+          <button
+            className="export-btn"
+            onClick={() => setShowExportMenu(!showExportMenu)}
+            title="Экспорт username"
+          >
+            <FiDownload />
+          </button>
+        )}
         <button
           className={`filter-btn ${activeFilters.length > 0 ? 'active' : ''}`}
           onClick={() => setShowFilterMenu(!showFilterMenu)}
