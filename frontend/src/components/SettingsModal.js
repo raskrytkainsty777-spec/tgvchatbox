@@ -495,6 +495,44 @@ function WelcomeMessagesTab({ messages, bots, onUpdate }) {
     }
   };
 
+  const handleEdit = (group) => {
+    setEditingGroup(group);
+    setText(group.text);
+    setSelectedBots(group.bot_ids);
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!text.trim() || selectedBots.length === 0) {
+      alert('Выберите ботов и введите текст сообщения');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Update all messages in the group
+      await axios.post(`${API}/welcome-messages`, {
+        bot_ids: selectedBots,
+        text: text,
+        is_active: true
+      });
+      setText('');
+      setSelectedBots([]);
+      setEditingGroup(null);
+      onUpdate();
+    } catch (error) {
+      alert('Не удалось обновить приветственное сообщение');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingGroup(null);
+    setText('');
+    setSelectedBots([]);
+  };
+
   // Группируем сообщения по тексту
   const groupedMessages = messages.reduce((acc, msg) => {
     const existing = acc.find(g => g.text === msg.text);
