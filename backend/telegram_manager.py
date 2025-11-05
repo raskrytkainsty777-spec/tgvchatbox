@@ -455,7 +455,7 @@ class TelegramBotManager:
                     if label_id:
                         await self.db.chats.update_one(
                             {"id": chat_id},
-                            {"$addToSet": {"labels": label_id}}
+                            {"$addToSet": {"label_ids": label_id}}
                         )
                         logger.info(f"Label {label_id} added to chat {chat_id}")
                 
