@@ -22,6 +22,7 @@ function App() {
   const [filterType, setFilterType] = useState('all'); // all, unread, label
   const [filterLabelId, setFilterLabelId] = useState(null);
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
+  const [showStatistics, setShowStatistics] = useState(false);
 
   useEffect(() => {
     loadBots();
