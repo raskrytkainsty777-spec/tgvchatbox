@@ -118,6 +118,13 @@ function App() {
         params.label_id = filterLabelId;
       }
       
+      // Фильтр по статусу (online/offline)
+      if (filterType === 'online') {
+        params.bot_status = 'active';
+      } else if (filterType === 'offline') {
+        params.bot_status = 'blocked';
+      }
+      
       console.log('Loading chats with params:', params);
       const response = await axios.get(`${API}/chats`, { params });
       console.log(`Loaded ${response.data.length} chats`);
