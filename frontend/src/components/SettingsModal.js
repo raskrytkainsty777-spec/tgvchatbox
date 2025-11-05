@@ -106,6 +106,12 @@ function SettingsModal({ bots, onClose, onBotUpdated }) {
           >
             <FiMenu /> Меню
           </button>
+          <button
+            className={`tab ${activeTab === 'timer' ? 'active' : ''}`}
+            onClick={() => setActiveTab('timer')}
+          >
+            <FiClock /> Таймер
+          </button>
         </div>
 
         <div className="settings-content">
