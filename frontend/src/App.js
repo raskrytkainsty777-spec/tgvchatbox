@@ -156,6 +156,7 @@ function App() {
             onSearchChange={setSearchQuery}
             onToggleBotFilter={handleToggleBotFilter}
             onChatsUpdate={loadChats}
+            onFilterChange={handleFilterChange}
           />
         </div>
 
