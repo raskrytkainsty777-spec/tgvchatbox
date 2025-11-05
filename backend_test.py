@@ -486,7 +486,7 @@ class TelegramChatPanelTester:
             
         # Test 1: Create new sale
         test_chat = self.existing_chats[0]
-        sale_data = {"amount": 1500.0}
+        sale_data = {"chat_id": test_chat['id'], "amount": 1500.0}
         
         response = self.make_request("POST", f"/chats/{test_chat['id']}/sale", sale_data)
         if response and response.status_code == 200:
