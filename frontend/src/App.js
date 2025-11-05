@@ -146,6 +146,13 @@ function App() {
             </div>
           )}
           <button 
+            className="btn-primary btn-statistics"
+            onClick={() => setShowStatistics(true)}
+            title="Статистика продаж"
+          >
+            <FiBarChart2 size={16} /> Статистика
+          </button>
+          <button 
             className="btn-primary btn-broadcast"
             onClick={() => setShowBroadcastModal(true)}
             data-testid="broadcast-button"
