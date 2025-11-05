@@ -485,6 +485,28 @@ async def update_bot_menu(menu_id: str, menu_data: BotMenuCreate):
     )
     return {"success": True}
 
+@api_router.put("/bot-menus/{menu_id}", response_model=BotMenuResponse)
+async def update_bot_menu_full(menu_id: str, menu_data: BotMenuCreate):
+    """Update a bot menu (full update)"""
+    menu_dict = {
+        "id": menu_id,
+        "name": menu_data.name,
+        "button_ids": menu_data.button_ids,
+        "created_at": datetime.now(timezone.utc)
+    }
+    
+    result = await db.bot_menus.update_one(
+        {"id": menu_id},
+        {"$set": menu_dict}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Menu not found")
+    
+    menu_doc = await db.bot_menus.find_one({"id": menu_id}, {"_id": 0})
+    return BotMenuResponse(**menu_doc)
+
+
 @api_router.delete("/bot-menus/{menu_id}")
 async def delete_bot_menu(menu_id: str):
     """Delete a bot menu"""
