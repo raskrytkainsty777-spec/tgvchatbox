@@ -68,6 +68,10 @@ class TelegramBotManager:
         message = update.message
         user = message.from_user
         
+        # Проверяем команду /start
+        if message.text and message.text.strip().lower() == '/start':
+            await self._send_welcome_message(bot_id, user.id)
+        
         # Save or update chat
         chat_id = f"{bot_id}_{user.id}"
         chat_data = {
