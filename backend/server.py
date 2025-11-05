@@ -1000,6 +1000,171 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ============= USER MANAGEMENT ENDPOINTS =============
+
+@api_router.post("/users", response_model=UserResponse)
+async def create_user(user_data: UserCreate):
+    """Create a new user"""
+    try:
+        # Check if username already exists
+        existing = await db.users.find_one({"username": user_data.username})
+        if existing:
+            raise HTTPException(status_code=400, detail="Username already exists")
+        
+        user_id = str(uuid.uuid4())
+        access_token = str(uuid.uuid4())
+        
+        user = {
+            "id": user_id,
+            "username": user_data.username,
+            "password": user_data.password,
+            "access_token": access_token,
+            "bot_ids": user_data.bot_ids,
+            "role": user_data.role,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.users.insert_one(user)
+        
+        return UserResponse(
+            id=user["id"],
+            username=user["username"],
+            access_token=user["access_token"],
+            bot_ids=user["bot_ids"],
+            role=user["role"],
+            created_at=datetime.fromisoformat(user["created_at"])
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating user: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/users", response_model=List[UserResponse])
+async def get_users():
+    """Get all users"""
+    try:
+        users = await db.users.find().to_list(length=None)
+        return [
+            UserResponse(
+                id=user["id"],
+                username=user["username"],
+                access_token=user["access_token"],
+                bot_ids=user.get("bot_ids", []),
+                role=user.get("role", "user"),
+                created_at=datetime.fromisoformat(user["created_at"])
+            )
+            for user in users
+        ]
+    except Exception as e:
+        logger.error(f"Error getting users: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/users/{user_id}", response_model=UserResponse)
+async def get_user(user_id: str):
+    """Get user by ID"""
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return UserResponse(
+        id=user["id"],
+        username=user["username"],
+        access_token=user["access_token"],
+        bot_ids=user.get("bot_ids", []),
+        role=user.get("role", "user"),
+        created_at=datetime.fromisoformat(user["created_at"])
+    )
+
+@api_router.patch("/users/{user_id}", response_model=UserResponse)
+async def update_user(user_id: str, user_data: UserUpdate):
+    """Update user"""
+    try:
+        user = await db.users.find_one({"id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        update_data = {}
+        if user_data.username is not None:
+            # Check if new username already exists
+            existing = await db.users.find_one({"username": user_data.username, "id": {"$ne": user_id}})
+            if existing:
+                raise HTTPException(status_code=400, detail="Username already exists")
+            update_data["username"] = user_data.username
+        
+        if user_data.password is not None:
+            update_data["password"] = user_data.password
+        
+        if user_data.bot_ids is not None:
+            update_data["bot_ids"] = user_data.bot_ids
+        
+        if update_data:
+            await db.users.update_one(
+                {"id": user_id},
+                {"$set": update_data}
+            )
+        
+        # Get updated user
+        updated_user = await db.users.find_one({"id": user_id})
+        return UserResponse(
+            id=updated_user["id"],
+            username=updated_user["username"],
+            access_token=updated_user["access_token"],
+            bot_ids=updated_user.get("bot_ids", []),
+            role=updated_user.get("role", "user"),
+            created_at=datetime.fromisoformat(updated_user["created_at"])
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating user: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/users/{user_id}")
+async def delete_user(user_id: str):
+    """Delete user"""
+    result = await db.users.delete_one({"id": user_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"success": True}
+
+@api_router.post("/auth/login", response_model=UserResponse)
+async def login(login_data: LoginRequest):
+    """Login with username and password"""
+    user = await db.users.find_one({
+        "username": login_data.username,
+        "password": login_data.password
+    })
+    
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    return UserResponse(
+        id=user["id"],
+        username=user["username"],
+        access_token=user["access_token"],
+        bot_ids=user.get("bot_ids", []),
+        role=user.get("role", "user"),
+        created_at=datetime.fromisoformat(user["created_at"])
+    )
+
+@api_router.get("/auth/token/{token}", response_model=UserResponse)
+async def login_by_token(token: str):
+    """Login with access token"""
+    user = await db.users.find_one({"access_token": token})
+    
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    return UserResponse(
+        id=user["id"],
+        username=user["username"],
+        access_token=user["access_token"],
+        bot_ids=user.get("bot_ids", []),
+        role=user.get("role", "user"),
+        created_at=datetime.fromisoformat(user["created_at"])
+    )
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize bots on startup and create system labels"""
