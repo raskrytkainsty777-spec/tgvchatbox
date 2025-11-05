@@ -137,132 +137,103 @@ function StatisticsPage({ onBack }) {
         <h1>Статистика продаж</h1>
       </div>
 
-      {/* Фильтры */}
-      <div className="stats-filters">
-        <div className="filter-section">
-          <h3>Фильтр по ботам</h3>
-          <div className="bots-filter">
-            <label className="bot-checkbox">
-              <input
-                type="checkbox"
-                checked={selectedBots.length === bots.length}
-                onChange={handleSelectAllBots}
-              />
-              <span>Все боты ({bots.length})</span>
-            </label>
-            {bots.map(bot => (
-              <label key={bot.id} className="bot-checkbox">
+      <div className="stats-container">
+        {/* Левая колонка - Фильтры */}
+        <div className="stats-sidebar">
+          <div className="filter-section">
+            <h3>Фильтр по ботам</h3>
+            <div className="bots-filter">
+              <label className="bot-checkbox">
                 <input
                   type="checkbox"
-                  checked={selectedBots.includes(bot.id)}
-                  onChange={() => handleToggleBot(bot.id)}
+                  checked={selectedBots.length === bots.length}
+                  onChange={handleSelectAllBots}
                 />
-                <span>@{bot.username}</span>
+                <span>Все боты ({bots.length})</span>
               </label>
-            ))}
-          </div>
-        </div>
-
-        <div className="filter-section">
-          <h3>Период</h3>
-          <div className="date-filter">
-            <div className="date-input-group">
-              <FiCalendar className="calendar-icon" />
-              <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
-                selectsStart
-                startDate={startDate}
-                endDate={endDate}
-                placeholderText="Начало периода"
-                dateFormat="dd.MM.yyyy"
-                isClearable
-                className="date-input"
-              />
-            </div>
-            <span className="date-separator">—</span>
-            <div className="date-input-group">
-              <FiCalendar className="calendar-icon" />
-              <DatePicker
-                selected={endDate}
-                onChange={(date) => setEndDate(date)}
-                selectsEnd
-                startDate={startDate}
-                endDate={endDate}
-                minDate={startDate}
-                placeholderText="Конец периода"
-                dateFormat="dd.MM.yyyy"
-                isClearable
-                className="date-input"
-              />
+              {bots.map(bot => (
+                <label key={bot.id} className="bot-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={selectedBots.includes(bot.id)}
+                    onChange={() => handleToggleBot(bot.id)}
+                  />
+                  <span>@{bot.username}</span>
+                </label>
+              ))}
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="stats-overview">
-        <div className="stat-card">
-          <div className="stat-icon total">
-            <FiDollarSign />
-          </div>
-          <div className="stat-content">
-            <div className="stat-label">Общая сумма</div>
-            <div className="stat-value">{filteredStats?.total_sales?.toFixed(2) || 0}</div>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-icon buyers">
-            <FiUsers />
-          </div>
-          <div className="stat-content">
-            <div className="stat-label">Всего покупателей</div>
-            <div className="stat-value">{filteredStats?.total_buyers || 0}</div>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-icon average">
-            <FiTrendingUp />
-          </div>
-          <div className="stat-content">
-            <div className="stat-label">Средний чек</div>
-            <div className="stat-value">
-              {filteredStats?.total_buyers > 0
-                ? (filteredStats.total_sales / filteredStats.total_buyers).toFixed(2)
-                : 0}
+          <div className="filter-section">
+            <h3>Период</h3>
+            <div className="date-filter">
+              <div className="date-input-group">
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date) => setStartDate(date)}
+                  selectsStart
+                  startDate={startDate}
+                  endDate={endDate}
+                  placeholderText="От"
+                  dateFormat="dd.MM.yyyy"
+                  isClearable
+                  className="date-input"
+                />
+              </div>
+              <div className="date-input-group">
+                <DatePicker
+                  selected={endDate}
+                  onChange={(date) => setEndDate(date)}
+                  selectsEnd
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={startDate}
+                  placeholderText="До"
+                  dateFormat="dd.MM.yyyy"
+                  isClearable
+                  className="date-input"
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="stats-sections">
-        {/* Sales by Day */}
-        <div className="stats-section full-width">
-          <h2>Продажи по дням</h2>
-          <div className="stats-table">
-            {!filteredStats?.sales_by_day || filteredStats.sales_by_day.length === 0 ? (
-              <div className="no-data">Нет данных за выбранный период</div>
-            ) : (
-              <table>
-                <thead>
-                  <tr>
-                    <th style={{width: '50%'}}>Дата</th>
-                    <th style={{width: '15%'}}>Кол-во</th>
-                    <th style={{width: '35%'}}>Сумма</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredStats.sales_by_day.map((day, index) => (
-                    <tr key={index}>
-                      <td>{new Date(day.date).toLocaleDateString('ru-RU')}</td>
-                      <td>{day.count}</td>
-                      <td className="amount">{day.total.toFixed(2)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+        {/* Правая колонка - Статистика */}
+        <div className="stats-content">
+          <div className="stats-overview">
+            <div className="stat-card">
+              <div className="stat-icon total">
+                <FiDollarSign />
+              </div>
+              <div className="stat-content">
+                <div className="stat-label">Общая сумма</div>
+                <div className="stat-value">{filteredStats?.total_sales?.toFixed(2) || 0}</div>
+              </div>
+            </div>
+
+            <div className="stat-card">
+              <div className="stat-icon buyers">
+                <FiUsers />
+              </div>
+              <div className="stat-content">
+                <div className="stat-label">Всего покупателей</div>
+                <div className="stat-value">{filteredStats?.total_buyers || 0}</div>
+              </div>
+            </div>
+
+            <div className="stat-card">
+              <div className="stat-icon average">
+                <FiTrendingUp />
+              </div>
+              <div className="stat-content">
+                <div className="stat-label">Средний чек</div>
+                <div className="stat-value">
+                  {filteredStats?.total_buyers > 0
+                    ? (filteredStats.total_sales / filteredStats.total_buyers).toFixed(2)
+                    : 0}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
