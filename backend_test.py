@@ -424,6 +424,280 @@ class TelegramChatPanelTester:
             self.log_result("Assignment to Invalid Bot", True, "API allows assignment to non-existent bot (expected behavior)")
         else:
             self.log_result("Assignment to Invalid Bot", True, f"API rejected invalid bot assignment: {response.status_code}")
+
+    # ============= SALES SYSTEM TESTS =============
+    
+    def test_get_existing_chats(self):
+        """Get existing chats for sales testing"""
+        print("\n=== Getting Existing Chats ===")
+        
+        response = self.make_request("GET", "/chats")
+        if response and response.status_code == 200:
+            self.existing_chats = response.json()
+            self.log_result("Get Existing Chats", True, f"Found {len(self.existing_chats)} chats")
+            
+            # Check for existing sales
+            chats_with_sales = [chat for chat in self.existing_chats if chat.get("sale_amount")]
+            if chats_with_sales:
+                self.log_result("Existing Sales Found", True, f"Found {len(chats_with_sales)} chats with existing sales")
+                for chat in chats_with_sales:
+                    print(f"  • Chat {chat['id']}: {chat.get('sale_amount', 0)} (Date: {chat.get('sale_date', 'N/A')})")
+            else:
+                self.log_result("Existing Sales Found", True, "No existing sales found")
+        else:
+            self.log_result("Get Existing Chats", False, f"Failed to get chats: {response.status_code if response else 'No response'}")
+    
+    def test_system_label_creation(self):
+        """Test that 'Покупатели' system label exists"""
+        print("\n=== Testing System Label Creation ===")
+        
+        response = self.make_request("GET", "/labels")
+        if response and response.status_code == 200:
+            labels = response.json()
+            buyers_labels = [label for label in labels if label.get("name") == "Покупатели"]
+            
+            if buyers_labels:
+                self.buyers_label_id = buyers_labels[0]["id"]
+                buyers_label = buyers_labels[0]
+                self.log_result("System Label Exists", True, f"'Покупатели' label found with ID: {self.buyers_label_id}")
+                
+                # Verify label properties
+                if buyers_label.get("color") == "#FFD700":
+                    self.log_result("System Label Color", True, "Correct gold color (#FFD700)")
+                else:
+                    self.log_result("System Label Color", False, f"Expected #FFD700, got {buyers_label.get('color')}")
+                    
+                if buyers_label.get("is_system") == True:
+                    self.log_result("System Label Flag", True, "Correctly marked as system label")
+                else:
+                    self.log_result("System Label Flag", False, f"Expected is_system=True, got {buyers_label.get('is_system')}")
+            else:
+                self.log_result("System Label Exists", False, "'Покупатели' system label not found")
+        else:
+            self.log_result("System Label Exists", False, f"Failed to get labels: {response.status_code if response else 'No response'}")
+    
+    def test_create_sales(self):
+        """Test creating and updating sales"""
+        print("\n=== Testing Sales Creation/Update ===")
+        
+        if not self.existing_chats:
+            self.log_result("Create Sale", False, "No chats available for sales testing")
+            return
+            
+        # Test 1: Create new sale
+        test_chat = self.existing_chats[0]
+        sale_data = {"amount": 1500.0}
+        
+        response = self.make_request("POST", f"/chats/{test_chat['id']}/sale", sale_data)
+        if response and response.status_code == 200:
+            sale_response = response.json()
+            self.created_sales.append(sale_response)
+            self.log_result("Create New Sale", True, f"Created sale for chat {test_chat['id']}: {sale_response['amount']}")
+            
+            # Verify response structure
+            required_fields = ["chat_id", "amount", "sale_date"]
+            if all(field in sale_response for field in required_fields):
+                self.log_result("Sale Response Structure", True, "All required fields present")
+            else:
+                missing = [field for field in required_fields if field not in sale_response]
+                self.log_result("Sale Response Structure", False, f"Missing fields: {missing}")
+        else:
+            self.log_result("Create New Sale", False, f"Failed: {response.status_code if response else 'No response'}")
+            
+        # Test 2: Update existing sale
+        if len(self.existing_chats) > 0:
+            update_data = {"amount": 2500.50}
+            response = self.make_request("POST", f"/chats/{test_chat['id']}/sale", update_data)
+            if response and response.status_code == 200:
+                sale_response = response.json()
+                self.log_result("Update Existing Sale", True, f"Updated sale amount to {sale_response['amount']}")
+            else:
+                self.log_result("Update Existing Sale", False, f"Failed: {response.status_code if response else 'No response'}")
+                
+        # Test 3: Create sale for second chat (if available)
+        if len(self.existing_chats) > 1:
+            second_chat = self.existing_chats[1]
+            sale_data2 = {"amount": 750.25}
+            response = self.make_request("POST", f"/chats/{second_chat['id']}/sale", sale_data2)
+            if response and response.status_code == 200:
+                sale_response = response.json()
+                self.created_sales.append(sale_response)
+                self.log_result("Create Second Sale", True, f"Created sale for second chat: {sale_response['amount']}")
+            else:
+                self.log_result("Create Second Sale", False, f"Failed: {response.status_code if response else 'No response'}")
+                
+        # Test 4: Test with invalid chat_id
+        invalid_sale_data = {"amount": 100.0}
+        response = self.make_request("POST", "/chats/invalid-chat-id/sale", invalid_sale_data)
+        if response and response.status_code == 404:
+            self.log_result("Invalid Chat ID", True, "Correctly returned 404 for invalid chat_id")
+        else:
+            self.log_result("Invalid Chat ID", False, f"Expected 404, got {response.status_code if response else 'No response'}")
+            
+        # Test 5: Test with invalid amount (negative)
+        if self.existing_chats:
+            invalid_amount_data = {"amount": -100.0}
+            response = self.make_request("POST", f"/chats/{self.existing_chats[0]['id']}/sale", invalid_amount_data)
+            if response and response.status_code >= 400:
+                self.log_result("Negative Amount", True, f"Correctly rejected negative amount: {response.status_code}")
+            else:
+                self.log_result("Negative Amount", False, f"Should reject negative amount, got: {response.status_code if response else 'No response'}")
+                
+        # Test 6: Test with zero amount
+        if self.existing_chats:
+            zero_amount_data = {"amount": 0.0}
+            response = self.make_request("POST", f"/chats/{self.existing_chats[0]['id']}/sale", zero_amount_data)
+            if response and response.status_code >= 400:
+                self.log_result("Zero Amount", True, f"Correctly rejected zero amount: {response.status_code}")
+            else:
+                self.log_result("Zero Amount", False, f"Should reject zero amount, got: {response.status_code if response else 'No response'}")
+    
+    def test_buyers_label_assignment(self):
+        """Test that 'Покупатели' label is automatically assigned to chats with sales"""
+        print("\n=== Testing Buyers Label Assignment ===")
+        
+        if not self.buyers_label_id:
+            self.log_result("Buyers Label Assignment", False, "Buyers label ID not available")
+            return
+            
+        # Get updated chat data to check label assignment
+        response = self.make_request("GET", "/chats")
+        if response and response.status_code == 200:
+            updated_chats = response.json()
+            
+            # Check chats with sales have the buyers label
+            chats_with_sales = [chat for chat in updated_chats if chat.get("sale_amount")]
+            
+            if chats_with_sales:
+                for chat in chats_with_sales:
+                    if self.buyers_label_id in chat.get("label_ids", []):
+                        self.log_result("Buyers Label Auto-Assignment", True, f"Chat {chat['id']} correctly has 'Покупатели' label")
+                    else:
+                        self.log_result("Buyers Label Auto-Assignment", False, f"Chat {chat['id']} missing 'Покупатели' label")
+            else:
+                self.log_result("Buyers Label Auto-Assignment", False, "No chats with sales found to verify label assignment")
+        else:
+            self.log_result("Buyers Label Auto-Assignment", False, f"Failed to get updated chats: {response.status_code if response else 'No response'}")
+    
+    def test_sales_statistics(self):
+        """Test sales statistics API"""
+        print("\n=== Testing Sales Statistics ===")
+        
+        response = self.make_request("GET", "/statistics/sales")
+        if response and response.status_code == 200:
+            stats = response.json()
+            self.log_result("Get Sales Statistics", True, "Successfully retrieved sales statistics")
+            
+            # Verify response structure
+            required_fields = ["total_sales", "total_buyers", "sales_by_bot", "sales_by_day"]
+            if all(field in stats for field in required_fields):
+                self.log_result("Statistics Structure", True, "All required fields present")
+            else:
+                missing = [field for field in required_fields if field not in stats]
+                self.log_result("Statistics Structure", False, f"Missing fields: {missing}")
+                
+            # Verify data types and values
+            if isinstance(stats.get("total_sales"), (int, float)) and stats["total_sales"] >= 0:
+                self.log_result("Total Sales Value", True, f"Total sales: {stats['total_sales']}")
+            else:
+                self.log_result("Total Sales Value", False, f"Invalid total_sales: {stats.get('total_sales')}")
+                
+            if isinstance(stats.get("total_buyers"), int) and stats["total_buyers"] >= 0:
+                self.log_result("Total Buyers Value", True, f"Total buyers: {stats['total_buyers']}")
+            else:
+                self.log_result("Total Buyers Value", False, f"Invalid total_buyers: {stats.get('total_buyers')}")
+                
+            # Verify sales_by_bot structure
+            if isinstance(stats.get("sales_by_bot"), list):
+                self.log_result("Sales by Bot Structure", True, f"Found {len(stats['sales_by_bot'])} bot entries")
+                for bot_entry in stats["sales_by_bot"]:
+                    required_bot_fields = ["bot_username", "total", "count"]
+                    if all(field in bot_entry for field in required_bot_fields):
+                        self.log_result("Bot Entry Structure", True, f"Bot {bot_entry['bot_username']}: {bot_entry['total']} ({bot_entry['count']} sales)")
+                    else:
+                        missing = [field for field in required_bot_fields if field not in bot_entry]
+                        self.log_result("Bot Entry Structure", False, f"Missing bot fields: {missing}")
+            else:
+                self.log_result("Sales by Bot Structure", False, f"Invalid sales_by_bot: {type(stats.get('sales_by_bot'))}")
+                
+            # Verify sales_by_day structure
+            if isinstance(stats.get("sales_by_day"), list):
+                self.log_result("Sales by Day Structure", True, f"Found {len(stats['sales_by_day'])} day entries")
+                for day_entry in stats["sales_by_day"]:
+                    required_day_fields = ["date", "total", "count"]
+                    if all(field in day_entry for field in required_day_fields):
+                        self.log_result("Day Entry Structure", True, f"Date {day_entry['date']}: {day_entry['total']} ({day_entry['count']} sales)")
+                    else:
+                        missing = [field for field in required_day_fields if field not in day_entry]
+                        self.log_result("Day Entry Structure", False, f"Missing day fields: {missing}")
+            else:
+                self.log_result("Sales by Day Structure", False, f"Invalid sales_by_day: {type(stats.get('sales_by_day'))}")
+                
+        else:
+            self.log_result("Get Sales Statistics", False, f"Failed: {response.status_code if response else 'No response'}")
+    
+    def test_username_export(self):
+        """Test username export by label"""
+        print("\n=== Testing Username Export ===")
+        
+        if not self.buyers_label_id:
+            self.log_result("Username Export", False, "Buyers label ID not available")
+            return
+            
+        # Test 1: Export usernames for buyers label
+        response = self.make_request("GET", f"/labels/{self.buyers_label_id}/export-usernames")
+        if response and response.status_code == 200:
+            self.log_result("Export Buyers Usernames", True, "Successfully exported usernames")
+            
+            # Verify Content-Type
+            content_type = response.headers.get("content-type", "")
+            if "text/plain" in content_type:
+                self.log_result("Export Content-Type", True, f"Correct content-type: {content_type}")
+            else:
+                self.log_result("Export Content-Type", False, f"Expected text/plain, got: {content_type}")
+                
+            # Verify Content-Disposition header
+            content_disposition = response.headers.get("content-disposition", "")
+            if "filename=" in content_disposition and "Покупатели" in content_disposition:
+                self.log_result("Export Filename", True, f"Correct filename in header: {content_disposition}")
+            else:
+                self.log_result("Export Filename", False, f"Invalid content-disposition: {content_disposition}")
+                
+            # Verify file content format
+            content = response.text
+            if content:
+                lines = content.strip().split('\n')
+                valid_usernames = all(line.startswith('@') for line in lines if line.strip())
+                if valid_usernames:
+                    self.log_result("Export Format", True, f"Valid username format ({len(lines)} usernames)")
+                else:
+                    self.log_result("Export Format", False, "Invalid username format (should start with @)")
+            else:
+                self.log_result("Export Format", True, "Empty export (no usernames with this label)")
+                
+        else:
+            self.log_result("Export Buyers Usernames", False, f"Failed: {response.status_code if response else 'No response'}")
+            
+        # Test 2: Export with invalid label_id
+        response = self.make_request("GET", "/labels/invalid-label-id/export-usernames")
+        if response and response.status_code == 404:
+            self.log_result("Export Invalid Label", True, "Correctly returned 404 for invalid label_id")
+        else:
+            self.log_result("Export Invalid Label", False, f"Expected 404, got {response.status_code if response else 'No response'}")
+            
+        # Test 3: Export for label with no chats (create a test label)
+        if self.existing_labels:
+            # Find a label that likely has no chats
+            test_labels = [label for label in self.existing_labels if label.get("name") != "Покупатели"]
+            if test_labels:
+                test_label_id = test_labels[0]["id"]
+                response = self.make_request("GET", f"/labels/{test_label_id}/export-usernames")
+                if response and response.status_code == 404:
+                    self.log_result("Export Empty Label", True, "Correctly returned 404 for label with no chats")
+                elif response and response.status_code == 200:
+                    self.log_result("Export Empty Label", True, "Successfully exported (label has chats)")
+                else:
+                    self.log_result("Export Empty Label", False, f"Unexpected response: {response.status_code if response else 'No response'}")
             
     def run_all_tests(self):
         """Run all tests in sequence"""
