@@ -264,14 +264,24 @@ class TelegramBotManager:
                     break  # Only one auto-reply per message
 
     async def _send_bot_menu(self, bot_id: str, user_id: int):
-        """Send bot menu with inline keyboard buttons"""
+        """Set bot menu commands (doesn't send message, just sets commands)"""
+        # This method is kept for compatibility but doesn't send anything
+        # Commands are set when bot is added/updated
+        pass
+    
+    async def set_bot_commands(self, bot_id: str):
+        """Set bot menu commands in Telegram"""
         try:
-            from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+            from telegram import BotCommand
             
             # Get menu assignment for this bot
             assignment = await self.db.bot_menu_assignments.find_one({"bot_id": bot_id})
             if not assignment:
                 logger.info(f"No menu assigned to bot {bot_id}")
+                # Clear commands if no menu
+                bot = self.bots.get(bot_id)
+                if bot:
+                    await bot.set_my_commands([])
                 return
             
             # Get menu
@@ -290,26 +300,35 @@ class TelegramBotManager:
             buttons_cursor = self.db.menu_buttons.find({"id": {"$in": button_ids}})
             buttons = await buttons_cursor.to_list(length=100)
             
-            # Create inline keyboard
-            keyboard = []
+            # Create bot commands (max 100 commands, max 32 chars for command, max 256 for description)
+            commands = []
             for button in buttons:
-                # Store button data for callback
-                callback_data = f"btn_{button['id']}"
-                keyboard.append([InlineKeyboardButton(button["name"], callback_data=callback_data)])
+                # Create command from button name (remove spaces, make lowercase)
+                command_text = button['name'].lower().replace(' ', '_').replace('/', '')[:32]
+                
+                # Get first action description
+                description = button['name'][:64]  # First 64 chars of button name
+                if button.get('actions'):
+                    first_action = button['actions'][0]
+                    if first_action.get('type') == 'text':
+                        text_value = first_action.get('value', {}).get('text', '')
+                        if text_value:
+                            description = text_value[:64]
+                
+                commands.append(BotCommand(command=command_text, description=description))
+                
+                # Store mapping in memory for later
+                if not hasattr(self, 'command_button_map'):
+                    self.command_button_map = {}
+                self.command_button_map[f"{bot_id}_{command_text}"] = button['id']
             
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            
-            # Send menu
+            # Set commands in Telegram
             bot = self.bots[bot_id]
-            await bot.send_message(
-                chat_id=user_id,
-                text=f"📋 {menu['name']}",
-                reply_markup=reply_markup
-            )
-            logger.info(f"Menu sent to user {user_id} for bot {bot_id}")
+            await bot.set_my_commands(commands)
+            logger.info(f"Set {len(commands)} commands for bot {bot_id}")
             
         except Exception as e:
-            logger.error(f"Failed to send bot menu: {e}")
+            logger.error(f"Failed to set bot commands: {e}")
             import traceback
             traceback.print_exc()
 
