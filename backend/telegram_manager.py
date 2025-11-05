@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import traceback
 from typing import Dict, Optional, List
 from telegram import Bot, Update, File
 from telegram.ext import Application, MessageHandler, filters, ContextTypes
