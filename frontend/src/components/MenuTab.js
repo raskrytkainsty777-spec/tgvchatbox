@@ -584,8 +584,68 @@ function AssignMenuView({ bots, menus, assignments, onBack }) {
   );
 }
 
-// Manage Buttons View
-function ManageButtonsView({ buttons, onBack }) {
+// Manage Buttons View (with create functionality)
+function ManageButtonsView({ labels, buttons, onBack }) {
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [name, setName] = useState('');
+  const [actions, setActions] = useState([]);
+  const [showActionMenu, setShowActionMenu] = useState(false);
+
+  const handleAddAction = (type) => {
+    const newAction = { type, value: null };
+    setActions([...actions, newAction]);
+    setShowActionMenu(false);
+  };
+
+  const handleUpdateAction = (index, value) => {
+    const updated = [...actions];
+    updated[index].value = value;
+    setActions(updated);
+  };
+
+  const handleRemoveAction = (index) => {
+    setActions(actions.filter((_, i) => i !== index));
+  };
+
+  const handleSaveButton = async () => {
+    if (!name.trim()) {
+      alert('Введите название кнопки');
+      return;
+    }
+
+    // Format actions for API
+    const formattedActions = actions.map(action => {
+      let formattedValue = action.value;
+      
+      if (action.type === 'text' && typeof action.value === 'string') {
+        formattedValue = { text: action.value };
+      } else if (action.type === 'url' && typeof action.value === 'string') {
+        formattedValue = { url: action.value };
+      } else if (action.type === 'label' && typeof action.value === 'string') {
+        formattedValue = { label_id: action.value };
+      } else if (action.type === 'back') {
+        formattedValue = null;
+      }
+      
+      return {
+        type: action.type,
+        value: formattedValue
+      };
+    });
+
+    try {
+      await axios.post(`${API}/menu-buttons`, { name, actions: formattedActions });
+      alert('Кнопка создана!');
+      setName('');
+      setActions([]);
+      setShowCreateForm(false);
+      onBack();
+    } catch (error) {
+      console.error('Failed to create button:', error);
+      alert('Ошибка при создании кнопки');
+    }
+  };
+
   const handleDelete = async (buttonId, buttonName) => {
     if (!window.confirm(`Удалить кнопку "${buttonName}"?`)) {
       return;
@@ -604,12 +664,105 @@ function ManageButtonsView({ buttons, onBack }) {
   return (
     <div className="manage-buttons-view">
       <div className="view-header">
-        <h3>Управление кнопками ({buttons.length})</h3>
+        <h3>Создать кнопки ({buttons.length})</h3>
         <button className="btn-secondary" onClick={onBack}>
           <FiX /> Назад
         </button>
       </div>
 
+      {/* Create Button Form */}
+      {!showCreateForm ? (
+        <button 
+          className="btn-primary btn-block" 
+          onClick={() => setShowCreateForm(true)}
+          style={{ marginBottom: '20px' }}
+        >
+          <FiPlus /> Добавить новую кнопку
+        </button>
+      ) : (
+        <div className="create-form" style={{ marginBottom: '20px' }}>
+          <h4>Новая кнопка</h4>
+          <div className="form-group">
+            <label>Название кнопки:</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Например: Главное меню"
+              data-testid="button-name-input"
+            />
+          </div>
+
+          <div className="form-group">
+            <div className="section-header">
+              <label>Действия кнопки:</label>
+              <button
+                className="btn-primary btn-sm"
+                onClick={() => setShowActionMenu(!showActionMenu)}
+                data-testid="add-action-btn"
+              >
+                <FiPlus /> Добавить действие
+              </button>
+            </div>
+
+            {showActionMenu && (
+              <div className="action-menu">
+                <div className="action-option" onClick={() => handleAddAction('label')}>
+                  Пометить меткой
+                </div>
+                <div className="action-option" onClick={() => handleAddAction('url')}>
+                  Открыть URL
+                </div>
+                <div className="action-option" onClick={() => handleAddAction('text')}>
+                  Отправить текст
+                </div>
+                <div className="action-option" onClick={() => handleAddAction('block')}>
+                  Отправить блок
+                </div>
+                <div className="action-option" onClick={() => handleAddAction('back')}>
+                  Назад (вернуться на предыдущий уровень)
+                </div>
+              </div>
+            )}
+
+            <div className="actions-list">
+              {actions.map((action, index) => (
+                <ActionEditor
+                  key={index}
+                  action={action}
+                  index={index}
+                  labels={labels}
+                  buttons={buttons}
+                  onUpdate={(value) => handleUpdateAction(index, value)}
+                  onRemove={() => handleRemoveAction(index)}
+                />
+              ))}
+              {actions.length === 0 && (
+                <div className="empty-state">Добавьте действия для кнопки</div>
+              )}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button className="btn-primary" onClick={handleSaveButton} data-testid="save-button-btn">
+              Сохранить кнопку
+            </button>
+            <button 
+              className="btn-secondary" 
+              onClick={() => {
+                setShowCreateForm(false);
+                setName('');
+                setActions([]);
+              }}
+            >
+              Отмена
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* List of existing buttons */}
+      <h4 style={{ marginBottom: '15px', color: '#fff' }}>Созданные кнопки</h4>
       {buttons.length === 0 ? (
         <div className="empty-state">Нет созданных кнопок</div>
       ) : (
