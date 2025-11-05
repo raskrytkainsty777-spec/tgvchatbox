@@ -214,4 +214,33 @@ class SalesStatistics(BaseModel):
 class ExportUsernamesRequest(BaseModel):
     label_id: Optional[str] = None
 
+
+# ============= TIMER MODELS =============
+
+class Timer(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    bot_id: str
+    end_datetime: datetime  # UTC timestamp
+    text_before: str = "⏰ До акции:"
+    text_after: str = "🎉 Акция завершена"
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class TimerCreate(BaseModel):
+    bot_id: str
+    end_datetime: datetime
+    text_before: Optional[str] = "⏰ До акции:"
+    text_after: Optional[str] = "🎉 Акция завершена"
+    is_active: bool = True
+
+class TimerResponse(BaseModel):
+    id: str
+    bot_id: str
+    end_datetime: datetime
+    text_before: str
+    text_after: str
+    is_active: bool
+    created_at: datetime
+
+
     menu_name: Optional[str] = None
