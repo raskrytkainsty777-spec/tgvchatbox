@@ -24,6 +24,9 @@ function ChatList({
   const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [activeFilters, setActiveFilters] = useState([]); // массив активных фильтров
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
+  const [showSalePopup, setShowSalePopup] = useState(false);
+  const [saleChat, setSaleChat] = useState(null);
+  const [saleAmount, setSaleAmount] = useState('');
 
   useEffect(() => {
     loadLabels();
