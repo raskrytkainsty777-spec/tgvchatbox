@@ -197,7 +197,8 @@ function ChatList({
         {showFilterMenu && (
           <div className="filter-menu">
             <div className="filter-option" onClick={() => applyFilter('unread')}>
-              Непрочитанные
+              <span>Непрочитанные</span>
+              <span className="filter-count">{countChatsForFilter('unread')}</span>
             </div>
             <div className="filter-divider">По меткам:</div>
             {labels.length === 0 ? (
@@ -211,8 +212,11 @@ function ChatList({
                   className="filter-option"
                   onClick={() => applyFilter('label', label.id, label.name)}
                 >
-                  <span className="label-dot" style={{ backgroundColor: label.color }}></span>
-                  {label.name}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                    <span className="label-dot" style={{ backgroundColor: label.color }}></span>
+                    <span>{label.name}</span>
+                  </div>
+                  <span className="filter-count">{countChatsForFilter('label', label.id)}</span>
                 </div>
               ))
             )}
