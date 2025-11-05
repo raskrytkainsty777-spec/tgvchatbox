@@ -16,6 +16,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 function App() {
+  const { user, loading } = useAuth();
   const [bots, setBots] = useState([]);
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
@@ -27,6 +28,7 @@ function App() {
   const [filterLabelId, setFilterLabelId] = useState(null);
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
+  const [showUsersModal, setShowUsersModal] = useState(false);
 
   useEffect(() => {
     loadBots();
