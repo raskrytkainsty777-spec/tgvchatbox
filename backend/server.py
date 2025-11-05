@@ -155,7 +155,8 @@ async def get_chats(
     bot_ids: Optional[str] = None, 
     search: Optional[str] = None,
     unread_only: Optional[bool] = None,
-    label_id: Optional[str] = None
+    label_id: Optional[str] = None,
+    bot_status: Optional[str] = None
 ):
     """Get all chats with optional filtering"""
     query = {}
@@ -180,6 +181,10 @@ async def get_chats(
     # Filter by label
     if label_id:
         query["label_ids"] = label_id
+    
+    # Filter by bot status (online/offline)
+    if bot_status:
+        query["bot_status"] = bot_status
     
     chats = await db.chats.find(query, {"_id": 0}).sort("last_message_time", -1).to_list(1000)
     return [Chat(**chat) for chat in chats]
