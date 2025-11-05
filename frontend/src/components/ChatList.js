@@ -449,24 +449,27 @@ function ChatList({
                     <FiSquare className="checkbox" />
                   )}
                 </div>
-                <div 
-                  className="chat-star-container"
-                  onClick={(e) => handleStarClick(chat, e)}
-                >
-                  <FiStar 
-                    className={`chat-star ${chat.sale_amount ? 'filled' : ''}`}
-                    fill={chat.sale_amount ? '#FFD700' : 'none'}
-                  />
-                  {chat.sale_amount && (
-                    <div className="sale-amount">{chat.sale_amount}</div>
-                  )}
-                </div>
                 <div
                   className="chat-item-content"
                   onClick={() => onChatSelect(chat)}
                 >
-                  <div className="chat-avatar">
-                    {(chat.first_name || chat.username || 'U').charAt(0).toUpperCase()}
+                  <div 
+                    className={`chat-avatar ${chat.sale_amount ? 'buyer-avatar' : ''}`}
+                    onClick={(e) => {
+                      if (chat.sale_amount) {
+                        e.stopPropagation();
+                        handleStarClick(chat, e);
+                      }
+                    }}
+                  >
+                    {chat.sale_amount ? (
+                      <div className="buyer-info">
+                        <FiDollarSign className="dollar-icon" />
+                        <div className="buyer-amount">{chat.sale_amount}</div>
+                      </div>
+                    ) : (
+                      (chat.first_name || chat.username || 'U').charAt(0).toUpperCase()
+                    )}
                   </div>
                   <div className="chat-content">
                     <div className="chat-header">
