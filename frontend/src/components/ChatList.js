@@ -22,8 +22,7 @@ function ChatList({
   const [showLabelMenu, setShowLabelMenu] = useState(false);
   const [labels, setLabels] = useState([]);
   const [showFilterMenu, setShowFilterMenu] = useState(false);
-  const [filter, setFilter] = useState('all'); // all, unread, label
-  const [filterLabelId, setFilterLabelId] = useState(null);
+  const [activeFilters, setActiveFilters] = useState([]); // массив активных фильтров
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
 
   useEffect(() => {
