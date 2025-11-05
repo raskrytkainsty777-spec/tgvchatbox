@@ -13,6 +13,7 @@ function SettingsModal({ bots, onClose, onBotUpdated }) {
   const [quickReplies, setQuickReplies] = useState([]);
   const [autoReplies, setAutoReplies] = useState([]);
   const [welcomeMessages, setWelcomeMessages] = useState([]);
+  const [showMenuManager, setShowMenuManager] = useState(false);
 
   useEffect(() => {
     loadLabels();
