@@ -559,6 +559,15 @@ function CreateMenuView({ buttons, menus, onBack }) {
 function AssignMenuView({ bots, menus, assignments, onBack }) {
   const [botMenus, setBotMenus] = useState({});
 
+  // Filter menus to show only recent ones (created in last 24 hours)
+  const recentMenus = menus.filter(menu => {
+    if (!menu.created_at) return true; // Show if no timestamp
+    const created = new Date(menu.created_at);
+    const now = new Date();
+    const hoursDiff = (now - created) / (1000 * 60 * 60);
+    return hoursDiff < 24; // Last 24 hours
+  });
+
   useEffect(() => {
     // Initialize with current assignments
     const initial = {};
