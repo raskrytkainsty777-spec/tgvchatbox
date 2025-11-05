@@ -363,6 +363,24 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.status-dot.online {
+  background: #4CAF50;
+}
+
+.status-dot.offline {
+  background: #F44336;
+}
+
+
 .filter-option {
   padding: 10px 16px;
   cursor: pointer;
