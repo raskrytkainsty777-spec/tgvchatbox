@@ -325,14 +325,19 @@ async def send_file(
 @api_router.patch("/messages/read")
 async def mark_messages_read(request: MarkReadRequest):
     """Mark all messages in chat as read"""
-    await db.messages.update_many(
+    logger.info(f"Marking messages as read for chat_id: {request.chat_id}")
+    
+    result = await db.messages.update_many(
         {"chat_id": request.chat_id, "is_read": False},
         {"$set": {"is_read": True}}
     )
+    logger.info(f"Updated {result.modified_count} messages")
+    
     await db.chats.update_one(
         {"id": request.chat_id},
         {"$set": {"unread_count": 0}}
     )
+    
     return {"success": True}
 
 # ============= LABEL ENDPOINTS =============
