@@ -246,29 +246,9 @@ function BroadcastModal({ bots, onClose, onSuccess }) {
             </div>
           </div>
 
-          {/* 4. Сообщение (старая секция 2 становится 4) */}
+          {/* 4. Текст сообщения */}
           <div className="form-section">
             <h3>4. Текст сообщения:</h3>
-            {recipientType === 'label' && (
-              <select
-                value={selectedLabelIds[0] || ''}
-                onChange={(e) => setSelectedLabelIds(e.target.value ? [e.target.value] : [])}
-                disabled={sending}
-                className="label-select"
-              >
-                <option value="">Выберите метку</option>
-                {labels.map(label => (
-                  <option key={label.id} value={label.id}>
-                    {label.name}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div>
-
-          {/* 3. Текст сообщения */}
-          <div className="form-section">
-            <h3>3. Текст сообщения:</h3>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
