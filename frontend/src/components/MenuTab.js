@@ -838,6 +838,7 @@ function ManageButtonsView({ labels, buttons, onBack }) {
   const handleEdit = (button) => {
     setEditingButton(button);
     setName(button.name);
+    setCommand(button.command || '');
     
     // Parse actions back to editable format
     const parsedActions = button.actions.map(action => {
