@@ -858,15 +858,11 @@ function ManageButtonsView({ labels, buttons, onBack }) {
 
           <div style={{ display: 'flex', gap: '10px' }}>
             <button className="btn-primary" onClick={handleSaveButton} data-testid="save-button-btn">
-              Сохранить кнопку
+              {editingButton ? 'Обновить кнопку' : 'Сохранить кнопку'}
             </button>
             <button 
               className="btn-secondary" 
-              onClick={() => {
-                setShowCreateForm(false);
-                setName('');
-                setActions([]);
-              }}
+              onClick={handleCancelEdit}
             >
               Отмена
             </button>
