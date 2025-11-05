@@ -18,7 +18,10 @@ from models import (
     QuickReply, QuickReplyCreate, QuickReplyResponse,
     AutoReply, AutoReplyCreate, AutoReplyResponse,
     SetLabelsRequest,
-    WelcomeMessage, WelcomeMessageCreate, WelcomeMessageResponse
+    WelcomeMessage, WelcomeMessageCreate, WelcomeMessageResponse,
+    MenuButton, MenuButtonCreate, MenuButtonResponse,
+    BotMenu, BotMenuCreate, BotMenuResponse,
+    BotMenuAssignment, BotMenuAssignmentResponse
 )
 from telegram_manager import get_telegram_manager
 
