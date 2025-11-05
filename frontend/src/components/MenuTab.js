@@ -6,28 +6,41 @@ import './MenuTab.css';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-function MenuTab({ bots }) {
+function MenuTab({ bots = [] }) {
   const [view, setView] = useState('main'); // main, createButton, createMenu, assignMenu
   const [buttons, setButtons] = useState([]);
   const [menus, setMenus] = useState([]);
   const [assignments, setAssignments] = useState([]);
   const [labels, setLabels] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadAll();
   }, []);
 
-  const loadAll = () => {
-    loadButtons();
-    loadMenus();
-    loadAssignments();
-    loadLabels();
+  const loadAll = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      await Promise.all([
+        loadButtons(),
+        loadMenus(),
+        loadAssignments(),
+        loadLabels()
+      ]);
+    } catch (err) {
+      console.error('Failed to load menu data:', err);
+      setError('Не удалось загрузить данные меню');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loadButtons = async () => {
     try {
       const response = await axios.get(`${API}/menu-buttons`);
-      setButtons(response.data);
+      setButtons(response.data || []);
     } catch (error) {
       console.error('Failed to load buttons:', error);
     }
