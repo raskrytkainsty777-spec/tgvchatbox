@@ -137,3 +137,50 @@ class WelcomeMessageResponse(BaseModel):
     text: str
     is_active: bool
     created_at: datetime
+
+# ============= MENU SYSTEM MODELS =============
+
+class ButtonAction(BaseModel):
+    type: str  # "label", "url", "text", "block", "back"
+    value: Optional[dict] = None  # Для разных типов разные значения
+
+class MenuButton(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str  # Название на кнопке
+    actions: List[ButtonAction] = []
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class MenuButtonCreate(BaseModel):
+    name: str
+    actions: List[ButtonAction] = []
+
+class MenuButtonResponse(BaseModel):
+    id: str
+    name: str
+    actions: List[ButtonAction]
+    created_at: datetime
+
+class BotMenu(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    button_ids: List[str] = []
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class BotMenuCreate(BaseModel):
+    name: str
+    button_ids: List[str] = []
+
+class BotMenuResponse(BaseModel):
+    id: str
+    name: str
+    button_ids: List[str]
+    created_at: datetime
+
+class BotMenuAssignment(BaseModel):
+    bot_id: str
+    menu_id: str
+
+class BotMenuAssignmentResponse(BaseModel):
+    bot_id: str
+    menu_id: str
+    menu_name: Optional[str] = None
