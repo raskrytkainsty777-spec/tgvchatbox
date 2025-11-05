@@ -692,6 +692,88 @@ async def get_stats():
 
 
 
+
+
+# ============= TIMER ENDPOINTS =============
+
+@api_router.post("/timers", response_model=TimerResponse)
+async def create_timer(timer_data: TimerCreate):
+    """Create or update timer for bot"""
+    try:
+        # Check if timer already exists for this bot
+        existing = await db.timers.find_one({"bot_id": timer_data.bot_id})
+        
+        if existing:
+            # Update existing
+            await db.timers.update_one(
+                {"bot_id": timer_data.bot_id},
+                {"$set": {
+                    "end_datetime": timer_data.end_datetime.isoformat(),
+                    "text_before": timer_data.text_before,
+                    "text_after": timer_data.text_after,
+                    "is_active": timer_data.is_active
+                }}
+            )
+            timer_id = existing["id"]
+        else:
+            # Create new
+            timer_id = str(uuid.uuid4())
+            await db.timers.insert_one({
+                "id": timer_id,
+                "bot_id": timer_data.bot_id,
+                "end_datetime": timer_data.end_datetime.isoformat(),
+                "text_before": timer_data.text_before,
+                "text_after": timer_data.text_after,
+                "is_active": timer_data.is_active,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+        
+        # Update bot commands
+        await telegram_manager.set_bot_commands(timer_data.bot_id)
+        
+        timer = await db.timers.find_one({"id": timer_id})
+        return TimerResponse(
+            id=timer["id"],
+            bot_id=timer["bot_id"],
+            end_datetime=datetime.fromisoformat(timer["end_datetime"]),
+            text_before=timer["text_before"],
+            text_after=timer["text_after"],
+            is_active=timer["is_active"],
+            created_at=datetime.fromisoformat(timer["created_at"])
+        )
+    except Exception as e:
+        logger.error(f"Error creating timer: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/timers/{bot_id}", response_model=TimerResponse)
+async def get_timer(bot_id: str):
+    """Get timer for bot"""
+    timer = await db.timers.find_one({"bot_id": bot_id})
+    if not timer:
+        raise HTTPException(status_code=404, detail="Timer not found")
+    
+    return TimerResponse(
+        id=timer["id"],
+        bot_id=timer["bot_id"],
+        end_datetime=datetime.fromisoformat(timer["end_datetime"]),
+        text_before=timer["text_before"],
+        text_after=timer["text_after"],
+        is_active=timer["is_active"],
+        created_at=datetime.fromisoformat(timer["created_at"])
+    )
+
+@api_router.delete("/timers/{bot_id}")
+async def delete_timer(bot_id: str):
+    """Delete timer for bot"""
+    result = await db.timers.delete_one({"bot_id": bot_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Timer not found")
+    
+    # Update bot commands
+    await telegram_manager.set_bot_commands(bot_id)
+    
+    return {"success": True}
+
 # ============= SALES ENDPOINTS =============
 
 @api_router.post("/chats/{chat_id}/sale", response_model=SaleResponse)
