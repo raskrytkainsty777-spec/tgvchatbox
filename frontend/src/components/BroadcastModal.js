@@ -9,7 +9,8 @@ const API = `${BACKEND_URL}/api`;
 function BroadcastModal({ bots, onClose, onSuccess }) {
   const [selectedBots, setSelectedBots] = useState([]);
   const [recipientType, setRecipientType] = useState('all'); // all, label
-  const [selectedLabelId, setSelectedLabelId] = useState('');
+  const [selectedLabelIds, setSelectedLabelIds] = useState([]);
+  const [excludeLabelIds, setExcludeLabelIds] = useState([]);
   const [message, setMessage] = useState('');
   const [labels, setLabels] = useState([]);
   const [sending, setSending] = useState(false);
