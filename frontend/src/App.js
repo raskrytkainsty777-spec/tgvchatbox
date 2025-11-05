@@ -142,6 +142,15 @@ function App() {
         />
       )}
 
+      {/* Broadcast Modal */}
+      {showBroadcastModal && (
+        <BroadcastModal
+          bots={bots}
+          onClose={() => setShowBroadcastModal(false)}
+          onSuccess={loadChats}
+        />
+      )}
+
       {/* Main Content */}
       <div className="app-content">
         {/* Sidebar */}
