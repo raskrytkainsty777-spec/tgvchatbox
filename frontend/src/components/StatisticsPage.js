@@ -118,9 +118,9 @@ function StatisticsPage({ onBack }) {
               <table>
                 <thead>
                   <tr>
-                    <th>Дата</th>
-                    <th>Продаж</th>
-                    <th>Сумма</th>
+                    <th style={{width: '50%'}}>Дата</th>
+                    <th style={{width: '15%'}}>Кол-во</th>
+                    <th style={{width: '35%'}}>Сумма</th>
                   </tr>
                 </thead>
                 <tbody>
