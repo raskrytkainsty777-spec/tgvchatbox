@@ -120,6 +120,69 @@ function StatisticsPage({ onBack }) {
         <h1>Статистика продаж</h1>
       </div>
 
+      {/* Фильтры */}
+      <div className="stats-filters">
+        <div className="filter-section">
+          <h3>Фильтр по ботам</h3>
+          <div className="bots-filter">
+            <label className="bot-checkbox">
+              <input
+                type="checkbox"
+                checked={selectedBots.length === bots.length}
+                onChange={handleSelectAllBots}
+              />
+              <span>Все боты ({bots.length})</span>
+            </label>
+            {bots.map(bot => (
+              <label key={bot.id} className="bot-checkbox">
+                <input
+                  type="checkbox"
+                  checked={selectedBots.includes(bot.id)}
+                  onChange={() => handleToggleBot(bot.id)}
+                />
+                <span>@{bot.username}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div className="filter-section">
+          <h3>Период</h3>
+          <div className="date-filter">
+            <div className="date-input-group">
+              <FiCalendar className="calendar-icon" />
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                placeholderText="Начало периода"
+                dateFormat="dd.MM.yyyy"
+                isClearable
+                className="date-input"
+              />
+            </div>
+            <span className="date-separator">—</span>
+            <div className="date-input-group">
+              <FiCalendar className="calendar-icon" />
+              <DatePicker
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+                placeholderText="Конец периода"
+                dateFormat="dd.MM.yyyy"
+                isClearable
+                className="date-input"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="stats-overview">
         <div className="stat-card">
           <div className="stat-icon total">
@@ -127,7 +190,7 @@ function StatisticsPage({ onBack }) {
           </div>
           <div className="stat-content">
             <div className="stat-label">Общая сумма</div>
-            <div className="stat-value">{statistics?.total_sales?.toFixed(2) || 0}</div>
+            <div className="stat-value">{filteredStats?.total_sales?.toFixed(2) || 0}</div>
           </div>
         </div>
 
@@ -137,7 +200,7 @@ function StatisticsPage({ onBack }) {
           </div>
           <div className="stat-content">
             <div className="stat-label">Всего покупателей</div>
-            <div className="stat-value">{statistics?.total_buyers || 0}</div>
+            <div className="stat-value">{filteredStats?.total_buyers || 0}</div>
           </div>
         </div>
 
@@ -148,8 +211,8 @@ function StatisticsPage({ onBack }) {
           <div className="stat-content">
             <div className="stat-label">Средний чек</div>
             <div className="stat-value">
-              {statistics?.total_buyers > 0
-                ? (statistics.total_sales / statistics.total_buyers).toFixed(2)
+              {filteredStats?.total_buyers > 0
+                ? (filteredStats.total_sales / filteredStats.total_buyers).toFixed(2)
                 : 0}
             </div>
           </div>
