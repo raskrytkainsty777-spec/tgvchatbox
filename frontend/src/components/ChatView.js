@@ -127,6 +127,62 @@ function ChatView({ chat, onMessageSent }) {
     }
   };
 
+
+  const handleContextMenu = (e, message) => {
+    e.preventDefault();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      message: message
+    });
+  };
+
+  const handleReply = (message) => {
+    setReplyToMessage(message);
+    setContextMenu(null);
+  };
+
+  const handleEdit = (message) => {
+    setEditingMessage(message);
+    setMessageText(message.text);
+    setContextMenu(null);
+  };
+
+  const handleDelete = async (message) => {
+    if (!window.confirm('Удалить сообщение?')) {
+      setContextMenu(null);
+      return;
+    }
+
+    try {
+      await axios.delete(`${API}/messages/${message.id}`);
+      await loadMessages();
+      onMessageSent();
+    } catch (error) {
+      alert('Не удалось удалить сообщение');
+    }
+    setContextMenu(null);
+  };
+
+  const cancelReply = () => {
+    setReplyToMessage(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingMessage(null);
+    setMessageText('');
+  };
+
+  // Close context menu on click outside
+  useEffect(() => {
+    const handleClick = () => setContextMenu(null);
+    if (contextMenu) {
+      document.addEventListener('click', handleClick);
+      return () => document.removeEventListener('click', handleClick);
+    }
+  }, [contextMenu]);
+
+
   const handleEmojiClick = (emojiData) => {
     setMessageText(prev => prev + emojiData.emoji);
   };
