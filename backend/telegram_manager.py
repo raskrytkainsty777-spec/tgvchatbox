@@ -309,8 +309,11 @@ class TelegramBotManager:
                 logger.info(f"Menu {menu['name']} has no buttons")
                 return
             
-            # Fetch button details
-            buttons_cursor = self.db.menu_buttons.find({"id": {"$in": button_ids}})
+            # Fetch button details - ONLY level 1 buttons for bot commands
+            buttons_cursor = self.db.menu_buttons.find({
+                "id": {"$in": button_ids},
+                "level": 1  # Only first level buttons appear in bot menu
+            })
             buttons = await buttons_cursor.to_list(length=100)
             
             # Create bot commands (max 100 commands, max 32 chars for command, max 256 for description)
