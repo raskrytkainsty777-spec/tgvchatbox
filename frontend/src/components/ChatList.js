@@ -91,19 +91,19 @@ function ChatList({
   const applyFilter = (type, labelId = null, labelName = null) => {
     setShowFilterMenu(false);
     
-    // Создаем объект фильтра
+    // Заменяем существующий фильтр такого же типа
+    let updatedFilters = activeFilters.filter(f => {
+      if (type === 'unread') return f.type !== 'unread';
+      if (type === 'label') return f.type !== 'label' || f.labelId !== labelId;
+      return true;
+    });
+    
+    // Добавляем новый фильтр
     const newFilter = { type, labelId, labelName };
+    updatedFilters.push(newFilter);
     
-    // Проверяем, не добавлен ли уже такой фильтр
-    const exists = activeFilters.some(f => 
-      f.type === type && (!labelId || f.labelId === labelId)
-    );
-    
-    if (!exists) {
-      const updatedFilters = [...activeFilters, newFilter];
-      setActiveFilters(updatedFilters);
-      applyFiltersToParent(updatedFilters);
-    }
+    setActiveFilters(updatedFilters);
+    applyFiltersToParent(updatedFilters);
   };
 
   const removeFilter = (index) => {
@@ -122,21 +122,14 @@ function ChatList({
   const applyFiltersToParent = (filters) => {
     if (!onFilterChange) return;
     
-    // Определяем тип и параметры фильтрации
-    const hasUnread = filters.some(f => f.type === 'unread');
-    const labelFilters = filters.filter(f => f.type === 'label');
-    
     if (filters.length === 0) {
       onFilterChange('all', null);
-    } else if (filters.length === 1) {
-      const f = filters[0];
-      onFilterChange(f.type, f.labelId);
-    } else {
-      // Множественная фильтрация - приоритет у первого фильтра
-      // В идеале нужно комбинировать, но для простоты берем первый
-      const f = filters[0];
-      onFilterChange(f.type, f.labelId);
+      return;
     }
+    
+    // Применяем последний добавленный фильтр (самый приоритетный)
+    const lastFilter = filters[filters.length - 1];
+    onFilterChange(lastFilter.type, lastFilter.labelId);
   };
 
   const getChatLabels = (chat) => {
