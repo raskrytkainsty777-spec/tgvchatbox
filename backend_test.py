@@ -517,7 +517,7 @@ class TelegramChatPanelTester:
         # Test 3: Create sale for second chat (if available)
         if len(self.existing_chats) > 1:
             second_chat = self.existing_chats[1]
-            sale_data2 = {"amount": 750.25}
+            sale_data2 = {"chat_id": second_chat['id'], "amount": 750.25}
             response = self.make_request("POST", f"/chats/{second_chat['id']}/sale", sale_data2)
             if response and response.status_code == 200:
                 sale_response = response.json()
