@@ -572,13 +572,24 @@ function ChatList({
               onChange={(e) => setSaleAmount(e.target.value)}
               className="sale-input"
               autoFocus
+              disabled={removeSale}
             />
+            {saleChat?.sale_amount && (
+              <label className="remove-sale-checkbox">
+                <input
+                  type="checkbox"
+                  checked={removeSale}
+                  onChange={(e) => setRemoveSale(e.target.checked)}
+                />
+                <span>Снять продажу</span>
+              </label>
+            )}
             <div className="sale-actions">
               <button onClick={() => setShowSalePopup(false)} className="cancel-btn">
                 Отмена
               </button>
               <button onClick={handleSaveSale} className="save-btn">
-                ОК
+                {removeSale ? 'Снять' : 'ОК'}
               </button>
             </div>
           </div>
