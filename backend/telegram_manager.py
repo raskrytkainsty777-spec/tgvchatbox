@@ -258,6 +258,10 @@ class TelegramBotManager:
                     # Send auto-reply
                     try:
                         await self.send_message(bot_id, user_id, auto_reply["message"])
+                        logger.info(f"Auto-reply sent to user {user_id} for keyword '{keyword}'")
+                    except Exception as e:
+                        logger.error(f"Failed to send auto-reply: {e}")
+                    break  # Only one auto-reply per message
 
     async def _send_bot_menu(self, bot_id: str, user_id: int):
         """Send bot menu with inline keyboard buttons"""
