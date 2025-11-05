@@ -15,7 +15,8 @@ function ChatList({
   onChatSelect, 
   onSearchChange,
   onToggleBotFilter,
-  onChatsUpdate 
+  onChatsUpdate,
+  onFilterChange 
 }) {
   const [selectedChats, setSelectedChats] = useState([]);
   const [showLabelMenu, setShowLabelMenu] = useState(false);
