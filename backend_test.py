@@ -1178,6 +1178,7 @@ class TelegramChatPanelTester:
         print(f"\n📝 Created {len(self.created_buttons)} test buttons")
         print(f"📝 Created {len(self.created_menus)} test menus")
         print(f"📝 Created {len(self.created_sales)} test sales")
+        print(f"📝 Created {len(self.created_timers)} test timers")
         
         return failed_tests == 0
 
