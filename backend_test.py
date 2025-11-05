@@ -38,17 +38,20 @@ class MenuSystemTester:
         url = f"{self.base_url}{endpoint}"
         try:
             if method == "GET":
-                response = self.session.get(url)
+                response = self.session.get(url, timeout=30)
             elif method == "POST":
-                response = self.session.post(url, json=data)
+                response = self.session.post(url, json=data, timeout=30)
             elif method == "DELETE":
-                response = self.session.delete(url)
+                response = self.session.delete(url, timeout=30)
             else:
                 raise ValueError(f"Unsupported method: {method}")
                 
             return response
-        except Exception as e:
+        except requests.exceptions.RequestException as e:
             print(f"❌ Request failed for {method} {endpoint}: {str(e)}")
+            return None
+        except Exception as e:
+            print(f"❌ Unexpected error for {method} {endpoint}: {str(e)}")
             return None
             
     def test_get_existing_data(self):
