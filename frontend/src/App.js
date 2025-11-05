@@ -39,9 +39,14 @@ function App() {
   const loadBots = async () => {
     try {
       const response = await axios.get(`${API}/bots`);
-      setBots(response.data);
-      if (selectedBots.length === 0) {
-        setSelectedBots(response.data.filter(b => b.is_active).map(b => b.id));
+      const botsData = response.data;
+      setBots(botsData);
+      
+      // Автоматически выбрать все активные боты при первой загрузке
+      if (selectedBots.length === 0 && botsData.length > 0) {
+        const activeBotIds = botsData.filter(b => b.is_active).map(b => b.id);
+        console.log('Auto-selecting active bots:', activeBotIds); // Отладка
+        setSelectedBots(activeBotIds);
       }
     } catch (error) {
       console.error('Failed to load bots:', error);
