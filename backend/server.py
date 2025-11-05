@@ -226,6 +226,58 @@ async def send_message(message_data: MessageCreate):
         logger.error(f"Failed to send message: {e}")
         raise HTTPException(status_code=400, detail=str(e))
 
+
+
+@api_router.patch("/messages/{message_id}")
+async def edit_message(message_id: str, text: dict):
+    """Edit a message"""
+    try:
+        message = await db.messages.find_one({"id": message_id})
+        if not message:
+            raise HTTPException(status_code=404, detail="Message not found")
+        
+        # Edit message via Telegram
+        await telegram_manager.edit_message(
+            message["bot_id"],
+            message["user_id"],
+            message["telegram_message_id"],
+            text["text"]
+        )
+        
+        # Update in database
+        await db.messages.update_one(
+            {"id": message_id},
+            {"$set": {"text": text["text"]}}
+        )
+        
+        return {"success": True}
+    except Exception as e:
+        logger.error(f"Failed to edit message: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@api_router.delete("/messages/{message_id}")
+async def delete_message(message_id: str):
+    """Delete a message"""
+    try:
+        message = await db.messages.find_one({"id": message_id})
+        if not message:
+            raise HTTPException(status_code=404, detail="Message not found")
+        
+        # Delete message via Telegram
+        await telegram_manager.delete_message(
+            message["bot_id"],
+            message["user_id"],
+            message["telegram_message_id"]
+        )
+        
+        # Delete from database
+        await db.messages.delete_one({"id": message_id})
+        
+        return {"success": True}
+    except Exception as e:
+        logger.error(f"Failed to delete message: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
 @api_router.post("/messages/broadcast")
 async def broadcast_message(broadcast_data: BroadcastMessage):
     """Send message to multiple users"""
