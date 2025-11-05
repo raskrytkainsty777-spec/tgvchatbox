@@ -365,6 +365,33 @@ function ChatView({ chat, onMessageSent }) {
           </button>
         </form>
       </div>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <div
+          className="context-menu"
+          style={{
+            position: 'fixed',
+            top: contextMenu.y,
+            left: contextMenu.x,
+            zIndex: 1000
+          }}
+        >
+          <button onClick={() => handleReply(contextMenu.message)}>
+            ↩️ Ответить
+          </button>
+          {contextMenu.message.is_from_bot && (
+            <>
+              <button onClick={() => handleEdit(contextMenu.message)}>
+                ✏️ Редактировать
+              </button>
+              <button onClick={() => handleDelete(contextMenu.message)} className="delete-btn">
+                🗑️ Удалить
+              </button>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
