@@ -177,6 +177,12 @@ function ChatList({
     }
   };
 
+  const truncateText = (text, maxLength = 24) => {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+
   const handleStarClick = (chat, e) => {
     e.stopPropagation();
     setSaleChat(chat);
