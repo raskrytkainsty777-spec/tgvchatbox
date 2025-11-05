@@ -7,7 +7,7 @@ Tests menu system and sales tracking system endpoints
 import requests
 import json
 import sys
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 # Get backend URL from frontend env
 BACKEND_URL = "https://telegram-panel-2.preview.emergentagent.com/api"
