@@ -137,6 +137,9 @@ function SettingsModal({ bots, onClose, onBotUpdated }) {
           {activeTab === 'menu' && (
             <MenuTab bots={bots} />
           )}
+          {activeTab === 'timer' && (
+            <TimerTab bots={bots} />
+          )}
         </div>
       </div>
     </div>
