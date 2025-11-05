@@ -118,3 +118,22 @@ class AutoReplyResponse(BaseModel):
 class SetLabelsRequest(BaseModel):
     chat_ids: List[str]
     label_ids: List[str]
+
+class WelcomeMessage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    bot_id: str
+    text: str
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class WelcomeMessageCreate(BaseModel):
+    bot_ids: List[str]  # Может быть несколько ботов
+    text: str
+    is_active: bool = True
+
+class WelcomeMessageResponse(BaseModel):
+    id: str
+    bot_id: str
+    text: str
+    is_active: bool
+    created_at: datetime
