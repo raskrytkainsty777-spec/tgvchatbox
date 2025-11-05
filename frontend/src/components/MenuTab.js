@@ -646,9 +646,10 @@ function AssignMenuView({ bots, menus, assignments, onBack }) {
                     Сохранить
                   </button>
                 </div>
-            </div>
-          ))}
-        </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
