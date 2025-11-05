@@ -385,7 +385,9 @@ class MenuSystemTester:
             "actions": [{"type": "text", "value": {"text": "test"}}]
         }
         response = self.make_request("POST", "/menu-buttons", invalid_button)
-        if response and response.status_code >= 400:
+        if response and response.status_code == 422:
+            self.log_result("Invalid Button Creation", True, f"Correctly rejected invalid button with validation error: {response.status_code}")
+        elif response and response.status_code >= 400:
             self.log_result("Invalid Button Creation", True, f"Correctly rejected invalid button: {response.status_code}")
         else:
             self.log_result("Invalid Button Creation", False, "Should have rejected invalid button")
