@@ -365,6 +365,9 @@ frontend:
       - working: true
         agent: "main"
         comment: "Added countChatsForFilter function to calculate chat counts for 'All', 'Unread', and each label. Fixed CSS specificity issue with .filter-count selectors (btn vs menu). Added 'Все' filter option with total chat count. All filter options now display counts correctly."
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE UI TESTING COMPLETED SUCCESSFULLY! Filter counts display working perfectly: 'Все' shows total chat count (3), 'Непрочитанные' shows unread count (2), 'Покупатели' label appears with correct count (2) and gold color (rgb(255, 215, 0)). All filter options display accurate counts and are visually correct. Filter menu opens/closes properly with no console errors."
         
   - task: "Sale Star Icon & Popup"
     implemented: true
@@ -377,6 +380,9 @@ frontend:
       - working: true
         agent: "main"
         comment: "Added FiStar icon to each chat item. Created sale popup with amount input field. Implemented handleStarClick and handleSaveSale functions. Star displays as outline when no sale, filled (gold) when sale exists. Sale amount displayed below star. Clicking star opens popup pre-filled with existing amount (if any). System label 'Покупатели' auto-assigned on save. Popup styled with Telegram Desktop theme."
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE UI TESTING COMPLETED SUCCESSFULLY! Sale star icons working perfectly: outline stars for chats without sales, filled gold stars for chats with sales, sale amounts displayed correctly under filled stars (750.25, 999.99). Sale popup functionality excellent: opens on star click, accepts amount input, saves successfully, closes properly. Tested both creating new sales and editing existing sales. Cancel button works correctly. Star state updates immediately after save. 'Покупатели' label auto-assigned on sale creation. No console errors detected."
         
   - task: "Statistics Page"
     implemented: true
@@ -389,6 +395,9 @@ frontend:
       - working: true
         agent: "main"
         comment: "Created StatisticsPage component with 3 overview cards (total sales, total buyers, average check). Added two tables: Sales by Bot and Sales by Day with horizontal scroll. Integrated into App.js with gold 'Статистика' button in header. Tables display bot/date, count, and amount columns. Responsive design with Telegram Desktop styling. Back button returns to main chat view."
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE UI TESTING COMPLETED SUCCESSFULLY! Statistics page working perfectly: loads correctly with title 'Статистика продаж', overview cards show accurate data (Total: 1750.24, Buyers: 2, Average: 875.12), 'Продажи по ботам' table displays correct headers (БОТ, КОЛ-ВО, СУММА) and data (@apotestimka_bot, 2, 1750.24), 'Продажи по дням' table shows proper date/count/amount data (2025-11-05, 2, 1750.24). Tables are horizontally scrollable. Back button navigation works correctly. All calculations accurate and data persists after page refresh."
         
   - task: "Username Export Feature"
     implemented: true
@@ -401,6 +410,9 @@ frontend:
       - working: true
         agent: "main"
         comment: "Added FiDownload export button next to filter button. Reduced search input width to 60% to make room. Created export menu showing all labels with color dots. Implemented handleExportUsernames function to download TXT file. Export menu styled consistently with filter menu. Export triggers file download with label-specific filename."
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE UI TESTING COMPLETED SUCCESSFULLY! Username export feature working perfectly: search input reduced to 60% width using compact wrapper, export button positioned correctly next to filter, export menu opens with title 'ЭКСПОРТ USERNAME ПО МЕТКАМ:', all labels visible including 'Покупатели' with correct gold color, download functionality works (file: usernames_6ed107df-afe1-4bd3-bfe0-3482d711d1de.txt), layout looks balanced with proper button placement. No console errors detected."
 
 metadata:
   created_by: "main_agent"
