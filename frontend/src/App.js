@@ -180,11 +180,33 @@ function App() {
     });
   };
 
+  // Show login page if not authenticated
+  if (loading) {
+    return <div className="loading-screen">Загрузка...</div>;
+  }
+
+  if (!user) {
+    return <LoginPage />;
+  }
+
+  const isAdmin = user && user.role === 'admin';
+
   return (
     <div className="telegram-app" data-testid="telegram-app">
       {/* Header */}
       <div className="app-header">
-        <h1 className="app-title">Telegram Chat Panel</h1>
+        <div className="header-left">
+          {isAdmin && (
+            <button 
+              className="btn-icon user-icon"
+              onClick={() => setShowUsersModal(true)}
+              title="Управление пользователями"
+            >
+              <FiUser size={20} />
+            </button>
+          )}
+          <h1 className="app-title">Telegram Chat Panel</h1>
+        </div>
         <div className="header-actions">
           {stats && (
             <div className="stats-bar" data-testid="stats-bar">
