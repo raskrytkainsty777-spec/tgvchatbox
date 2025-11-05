@@ -112,7 +112,12 @@ async def toggle_bot(bot_id: str):
 # ============= CHAT ENDPOINTS =============
 
 @api_router.get("/chats", response_model=List[Chat])
-async def get_chats(bot_ids: Optional[str] = None, search: Optional[str] = None):
+async def get_chats(
+    bot_ids: Optional[str] = None, 
+    search: Optional[str] = None,
+    unread_only: Optional[bool] = None,
+    label_id: Optional[str] = None
+):
     """Get all chats with optional filtering"""
     query = {}
     
@@ -128,6 +133,14 @@ async def get_chats(bot_ids: Optional[str] = None, search: Optional[str] = None)
             {"first_name": {"$regex": search, "$options": "i"}},
             {"last_name": {"$regex": search, "$options": "i"}}
         ]
+    
+    # Filter unread only
+    if unread_only:
+        query["unread_count"] = {"$gt": 0}
+    
+    # Filter by label
+    if label_id:
+        query["label_ids"] = label_id
     
     chats = await db.chats.find(query, {"_id": 0}).sort("last_message_time", -1).to_list(1000)
     return [Chat(**chat) for chat in chats]
