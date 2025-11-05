@@ -794,7 +794,7 @@ function ManageButtonsView({ labels, buttons, onBack }) {
         </button>
       ) : (
         <div className="create-form" style={{ marginBottom: '20px' }}>
-          <h4>Новая кнопка</h4>
+          <h4>{editingButton ? 'Редактировать кнопку' : 'Новая кнопка'}</h4>
           <div className="form-group">
             <label>Название кнопки:</label>
             <input
