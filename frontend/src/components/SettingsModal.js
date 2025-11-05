@@ -631,15 +631,25 @@ function WelcomeMessagesTab({ messages, bots, onUpdate }) {
                     {group.is_active ? '🟢 Активно' : '🔴 Неактивно'}
                   </div>
                 </div>
-                <button
-                  className="btn-icon-small btn-delete"
-                  onClick={() => {
-                    // Удаляем все сообщения этой группы
-                    group.ids.forEach(id => handleDelete(id));
-                  }}
-                >
-                  <FiTrash2 />
-                </button>
+                <div className="card-actions">
+                  <button
+                    className="btn-icon-small btn-edit"
+                    onClick={() => handleEdit(group)}
+                    title="Редактировать"
+                  >
+                    <FiEdit />
+                  </button>
+                  <button
+                    className="btn-icon-small btn-delete"
+                    onClick={() => {
+                      // Удаляем все сообщения этой группы
+                      group.ids.forEach(id => handleDelete(id));
+                    }}
+                    title="Удалить"
+                  >
+                    <FiTrash2 />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
