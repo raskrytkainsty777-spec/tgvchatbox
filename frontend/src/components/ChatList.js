@@ -123,12 +123,15 @@ function ChatList({
     if (!onFilterChange) return;
     
     if (filters.length === 0) {
+      console.log('ChatList: Clearing filters'); // Отладка
       onFilterChange('all', null);
       return;
     }
     
-    // Применяем последний добавленный фильтр (самый приоритетный)
+    // Применяем ПОСЛЕДНИЙ добавленный фильтр
+    // Backend не поддерживает комбинирование unread + label
     const lastFilter = filters[filters.length - 1];
+    console.log('ChatList: Applying filter', lastFilter); // Отладка
     onFilterChange(lastFilter.type, lastFilter.labelId);
   };
 
