@@ -111,13 +111,12 @@ function App() {
         </div>
       </div>
 
-      {/* Bot Manager Modal */}
+      {/* Settings Modal */}
       {showBotManager && (
-        <BotManager 
+        <SettingsModal 
           bots={bots}
           onClose={() => setShowBotManager(false)}
-          onBotAdded={handleBotAdded}
-          onBotDeleted={loadBots}
+          onBotUpdated={handleBotAdded}
         />
       )}
 
