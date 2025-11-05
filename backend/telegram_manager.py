@@ -649,6 +649,47 @@ class TelegramBotManager:
             import traceback
             traceback.print_exc()
 
+
+    
+    async def _handle_chat_member_update(self, update: Update, bot_id: str):
+        """Handle bot block/unblock events"""
+        try:
+            my_chat_member = update.my_chat_member
+            if not my_chat_member:
+                return
+            
+            user = my_chat_member.from_user
+            old_status = my_chat_member.old_chat_member.status
+            new_status = my_chat_member.new_chat_member.status
+            
+            # Determine if bot was blocked or unblocked
+            bot_status = "active"
+            if new_status in ["kicked", "left"]:
+                bot_status = "blocked"
+            elif new_status in ["member"]:
+                bot_status = "active"
+            
+            # Update chat status in database
+            chat_id = f"{bot_id}_{user.id}"
+            result = await self.db.chats.update_one(
+                {"id": chat_id},
+                {
+                    "$set": {
+                        "bot_status": bot_status,
+                        "updated_at": datetime.now(timezone.utc).isoformat()
+                    }
+                }
+            )
+            
+            if result.modified_count > 0:
+                # Import and call broadcast function
+                from server import broadcast_chat_status
+                await broadcast_chat_status(chat_id, bot_status)
+                logger.info(f"User {user.id} changed bot status: {old_status} -> {new_status} (bot_status={bot_status})")
+        except Exception as e:
+            logger.error(f"Error handling chat member update: {e}")
+            traceback.print_exc()
+
 # Global instance
 telegram_manager: Optional[TelegramBotManager] = None
 
