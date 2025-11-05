@@ -56,11 +56,22 @@ function App() {
       if (searchQuery) {
         params.search = searchQuery;
       }
+      if (filterType === 'unread') {
+        params.unread_only = true;
+      }
+      if (filterType === 'label' && filterLabelId) {
+        params.label_id = filterLabelId;
+      }
       const response = await axios.get(`${API}/chats`, { params });
       setChats(response.data);
     } catch (error) {
       console.error('Failed to load chats:', error);
     }
+  };
+
+  const handleFilterChange = (type, labelId = null) => {
+    setFilterType(type);
+    setFilterLabelId(labelId);
   };
 
   const loadStats = async () => {
