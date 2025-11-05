@@ -918,6 +918,23 @@ function ManageButtonsView({ labels, buttons, onBack }) {
           </div>
 
           <div className="form-group">
+            <label>Команда (латинские буквы, цифры, _):</label>
+            <input
+              type="text"
+              value={command}
+              onChange={(e) => setCommand(e.target.value)}
+              placeholder="Например: buy или start_order (необязательно)"
+              maxLength={32}
+              pattern="[a-z0-9_]*"
+              style={{ fontFamily: 'monospace' }}
+            />
+            <div style={{ fontSize: '12px', color: '#8d969e', marginTop: '5px' }}>
+              💡 Оставьте пустым для автоматической генерации из названия. 
+              Команда будет доступна как /{command || 'автогенерация'} в боте.
+            </div>
+          </div>
+
+          <div className="form-group">
             <div className="section-header">
               <label>Действия кнопки:</label>
               <button
