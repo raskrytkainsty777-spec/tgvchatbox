@@ -18,6 +18,7 @@ function SettingsModal({ bots, onClose, onBotUpdated }) {
     loadLabels();
     loadQuickReplies();
     loadAutoReplies();
+    loadWelcomeMessages();
   }, []);
 
   const loadLabels = async () => {
