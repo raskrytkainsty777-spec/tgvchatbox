@@ -28,14 +28,15 @@ function App() {
   }, []);
 
   useEffect(() => {
+    console.log('useEffect triggered:', { selectedBots, searchQuery, filterType, filterLabelId });
     loadChats();
-    // Автообновление каждые 5 секунд
+    // Автообновление каждые 10 секунд (увеличено для отладки)
     const interval = setInterval(() => {
       loadChats();
       loadStats();
-    }, 5000);
+    }, 10000);
     return () => clearInterval(interval);
-  }, [selectedBots, searchQuery, filterType, filterLabelId]);
+  }, [selectedBots, searchQuery, filterType, filterLabelId, loadChats]);
 
   const loadBots = async () => {
     try {
