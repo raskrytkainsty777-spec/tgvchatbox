@@ -169,6 +169,7 @@ class TelegramBotManager:
                 "user_id": user_id,
                 "text": text,
                 "file_id": file_id,
+                "telegram_message_id": sent_message.message_id,
                 "is_from_bot": True,
                 "is_read": True,
                 "created_at": datetime.now(timezone.utc)
