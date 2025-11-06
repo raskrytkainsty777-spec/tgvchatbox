@@ -1,0 +1,89 @@
+═══════════════════════════════════════════════════════════════
+  КАК ДОБАВИТЬ DEPLOYMENT ФАЙЛЫ В ВАШ GITHUB РЕПОЗИТОРИЙ
+═══════════════════════════════════════════════════════════════
+
+ВАРИАНТ 1: Через веб-интерфейс GitHub (САМЫЙ ПРОСТОЙ)
+────────────────────────────────────────────────────────────────
+
+1. Откройте ваш репозиторий:
+   https://github.com/raskrytkainsty777-spec/tgvchatbox
+
+2. Нажмите "Add file" → "Create new file"
+
+3. Создайте следующие файлы по очереди:
+
+   A) Файл: Dockerfile.backend
+      - Скопируйте содержимое из /app/Dockerfile.backend
+      - Нажмите "Commit changes"
+
+   B) Файл: Dockerfile.frontend
+      - Скопируйте содержимое из /app/Dockerfile.frontend
+      - Нажмите "Commit changes"
+
+   C) Файл: docker-compose.prod.yml
+      - Скопируйте содержимое из /app/docker-compose.prod.yml
+      - Нажмите "Commit changes"
+
+   D) Файл: nginx.conf
+      - Скопируйте содержимое из /app/nginx.conf
+      - Нажмите "Commit changes"
+
+   E) Файл: deploy/install-vps.sh
+      - Сначала создайте папку "deploy"
+      - Затем создайте файл install-vps.sh внутри
+      - Скопируйте содержимое из /app/deploy/install-vps.sh
+      - Нажмите "Commit changes"
+
+   F) Файл: deploy/QUICK_START.md
+      - Скопируйте содержимое из /app/deploy/QUICK_START.md
+      - Нажмите "Commit changes"
+
+
+ВАРИАНТ 2: Через командную строку (если умеете работать с Git)
+────────────────────────────────────────────────────────────────
+
+# Клонировать репозиторий
+git clone https://github.com/raskrytkainsty777-spec/tgvchatbox.git
+cd tgvchatbox
+
+# Создать папку для deployment файлов
+mkdir -p deploy
+
+# Скопировать файлы (замените пути на актуальные)
+cp /path/to/Dockerfile.backend .
+cp /path/to/Dockerfile.frontend .
+cp /path/to/docker-compose.prod.yml .
+cp /path/to/nginx.conf .
+cp /path/to/deploy/install-vps.sh deploy/
+cp /path/to/deploy/QUICK_START.md deploy/
+
+# Добавить и закоммитить
+git add .
+git commit -m "Add deployment files for VPS"
+git push origin main
+
+
+СПИСОК ФАЙЛОВ ДЛЯ ДОБАВЛЕНИЯ:
+────────────────────────────────────────────────────────────────
+
+В корень репозитория:
+  ✓ Dockerfile.backend
+  ✓ Dockerfile.frontend
+  ✓ docker-compose.prod.yml
+  ✓ nginx.conf
+
+В папку deploy/:
+  ✓ install-vps.sh
+  ✓ QUICK_START.md
+
+
+ПОСЛЕ ДОБАВЛЕНИЯ ФАЙЛОВ В GITHUB:
+────────────────────────────────────────────────────────────────
+
+Вы сможете развернуть приложение на VPS всего 3 командами:
+
+1. curl -o install-vps.sh https://raw.githubusercontent.com/raskrytkainsty777-spec/tgvchatbox/main/deploy/install-vps.sh
+2. chmod +x install-vps.sh
+3. ./install-vps.sh
+
+═══════════════════════════════════════════════════════════════
