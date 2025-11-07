@@ -593,7 +593,7 @@ function ChatList({
                   <div
                     key={chat.id}
                     className={`chat-item ${chat.id === selectedChat?.id ? 'selected' : ''} ${selectedChats.includes(chat.id) ? 'selected-for-action' : ''}`}
-                    onClick={() => handleChatClick(chat)}
+                    onClick={() => onChatSelect(chat)}
                     data-testid={`chat-item-${chat.id}`}
                   >
                     <div className="chat-checkbox" onClick={(e) => e.stopPropagation()}>
