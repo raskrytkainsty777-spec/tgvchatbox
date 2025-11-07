@@ -616,7 +616,7 @@ function ChatList({
                       title={chat.sale_amount ? `Продажа: ${chat.sale_amount}` : 'Добавить продажу'}
                     >
                       {chat.sale_amount ? (
-                        <FiDollarSign className="dollar-icon" />
+                        <div className="sale-amount-on-avatar">{chat.sale_amount}</div>
                       ) : (
                         (chat.first_name || chat.username || 'U').charAt(0).toUpperCase()
                       )}
