@@ -791,6 +791,21 @@ frontend:
       - working: true
         agent: "main"
         comment: "Fixed undefined function error. Changed onClick handler from handleChatClick(chat) to onChatSelect(chat) on line 596 of ChatList.js. The function was being called but never defined - should use the existing onChatSelect prop passed to the component. Tested with screenshot - chat opens successfully without errors."
+        
+  - task: "Bug Fixes: Labels Display, Star Click, Tabs Scroll"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ChatList.js, /app/frontend/src/components/ChatList.css, /app/frontend/src/components/SettingsModal.css, /app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported 3 issues: 1) Chat labels display incorrectly (криво отображаются), 2) Settings tabs overflow instead of scrolling, 3) Star click error: 'e.stopPropagation is not a function' - sale popup doesn't open"
+      - working: true
+        agent: "main"
+        comment: "Fixed all 3 issues: 1) Moved chat-labels-dots inside chat-info container for proper layout, 2) Added horizontal scroll to settings-tabs with overflow-x: auto, flex-shrink: 0 for tabs, scrollbar styling, and mobile-friendly hiding of scrollbar, 3) Fixed star click by correcting argument order from handleStarClick(e, chat) to handleStarClick(chat, e) to match function definition. Also fixed backend bug where level and command fields were not saved when creating menu buttons. Tested with screenshots - labels display correctly under messages, sale popup opens successfully."
 
 metadata:
   created_by: "main_agent"
