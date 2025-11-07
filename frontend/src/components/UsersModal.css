@@ -293,3 +293,117 @@
   border-color: #4a4a60;
   background: #2a2a40;
 }
+
+/* ==================== MOBILE STYLES ==================== */
+@media (max-width: 768px) {
+  .users-modal {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+  }
+
+  .users-modal-header {
+    padding: 14px 12px;
+  }
+
+  .users-modal-title {
+    font-size: 18px;
+  }
+
+  .users-modal-content {
+    padding: 16px 12px;
+  }
+
+  /* Form section */
+  .user-form-section {
+    margin-bottom: 20px;
+    padding: 14px;
+  }
+
+  .form-label {
+    font-size: 13px;
+  }
+
+  .form-input,
+  .form-select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    min-height: 48px;
+  }
+
+  /* Bot selection */
+  .bot-selection-chips {
+    gap: 8px;
+  }
+
+  .bot-chip {
+    padding: 10px 14px;
+    font-size: 13px;
+    min-height: 40px;
+  }
+
+  /* User list */
+  .users-list-section {
+    padding: 14px;
+  }
+
+  .users-list-title {
+    font-size: 15px;
+  }
+
+  .user-list {
+    gap: 10px;
+  }
+
+  .user-item {
+    padding: 14px;
+  }
+
+  .user-info {
+    gap: 6px;
+  }
+
+  .user-name {
+    font-size: 15px;
+  }
+
+  .user-email,
+  .user-role,
+  .user-bot-count {
+    font-size: 12px;
+  }
+
+  .user-actions {
+    gap: 6px;
+  }
+
+  .user-action-button {
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  /* Buttons */
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    min-height: 48px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .users-modal-header {
+    padding: 12px 10px;
+  }
+
+  .users-modal-content {
+    padding: 14px 10px;
+  }
+
+  .user-form-section,
+  .users-list-section {
+    padding: 12px;
+  }
+}
+
