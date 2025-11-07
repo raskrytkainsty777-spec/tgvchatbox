@@ -630,12 +630,12 @@ function ChatList({
                             : (chat.first_name || chat.username || 'User')
                           }
                         </div>
-                        <div className="chat-time">{formatTime(chat.last_message_date)}</div>
+                        <div className="chat-time">{formatTime(chat.last_message_time)}</div>
                       </div>
                       <div className="chat-last-message">
-                        {(chat.last_message_text || 'Нет сообщений').length > 20
-                          ? (chat.last_message_text || 'Нет сообщений').substring(0, 20) + '...'
-                          : (chat.last_message_text || 'Нет сообщений')
+                        {(chat.last_message || 'Нет сообщений').length > 20
+                          ? (chat.last_message || 'Нет сообщений').substring(0, 20) + '...'
+                          : (chat.last_message || 'Нет сообщений')
                         }
                       </div>
                       {chatLabels.length > 0 && (
