@@ -887,53 +887,114 @@ function ManageButtonsView({ labels, buttons, onBack }) {
       return;
     }
 
-    const urls = bulkUrls.split('\n').map(url => url.trim()).filter(url => url.length > 0);
-    
-    if (urls.length === 0) {
-      alert('Введите хотя бы одну ссылку');
-      return;
-    }
+    // Validate based on action type
+    if (bulkActionType === 'url') {
+      const urls = bulkUrls.split('\n').map(url => url.trim()).filter(url => url.length > 0);
+      
+      if (urls.length === 0) {
+        alert('Введите хотя бы одну ссылку');
+        return;
+      }
 
-    try {
-      let successCount = 0;
-      let failCount = 0;
+      try {
+        let successCount = 0;
+        let failCount = 0;
 
-      for (let i = 0; i < urls.length; i++) {
-        const buttonName = `${bulkPrefix}${i + 1}`;
-        const buttonData = {
-          name: buttonName,
-          command: generateCommand(buttonName),
-          level: bulkLevel,
-          actions: [{
-            type: 'url',
-            value: { url: urls[i] }
-          }]
-        };
+        for (let i = 0; i < urls.length; i++) {
+          const buttonName = `${bulkPrefix}${i + 1}`;
+          const buttonData = {
+            name: buttonName,
+            command: generateCommand(buttonName),
+            level: bulkLevel,
+            actions: [{
+              type: 'url',
+              value: { url: urls[i] }
+            }]
+          };
 
-        try {
-          await axios.post(`${API}/menu-buttons`, buttonData);
-          successCount++;
-        } catch (error) {
-          console.error(`Failed to create button ${buttonName}:`, error);
-          failCount++;
+          try {
+            await axios.post(`${API}/menu-buttons`, buttonData);
+            successCount++;
+          } catch (error) {
+            console.error(`Failed to create button ${buttonName}:`, error);
+            failCount++;
+          }
         }
+
+        if (failCount > 0) {
+          alert(`Создано кнопок: ${successCount}\nОшибок: ${failCount}`);
+        } else {
+          alert(`Успешно создано ${successCount} кнопок!`);
+        }
+
+        // Reset form
+        setBulkPrefix('');
+        setBulkLevel(1);
+        setBulkUrls('');
+        setBulkLabelId('');
+        setShowBulkCreateForm(false);
+        onBack();
+      } catch (error) {
+        console.error('Bulk create error:', error);
+        alert('Ошибка при массовом создании кнопок');
+      }
+    } else if (bulkActionType === 'label') {
+      // Create buttons with label action
+      if (!bulkLabelId) {
+        alert('Выберите метку');
+        return;
       }
 
-      if (failCount > 0) {
-        alert(`Создано кнопок: ${successCount}\nОшибок: ${failCount}`);
-      } else {
-        alert(`Успешно создано ${successCount} кнопок!`);
+      const countStr = prompt('Сколько кнопок создать?', '5');
+      const count = parseInt(countStr);
+      
+      if (!count || count < 1 || count > 100) {
+        alert('Введите корректное количество кнопок (1-100)');
+        return;
       }
 
-      // Reset form
-      setBulkPrefix('');
-      setBulkLevel(1);
-      setBulkUrls('');
-      setShowBulkCreateForm(false);
-      onBack();
-    } catch (error) {
-      console.error('Bulk create error:', error);
-      alert('Ошибка при массовом создании кнопок');
+      try {
+        let successCount = 0;
+        let failCount = 0;
+
+        for (let i = 0; i < count; i++) {
+          const buttonName = `${bulkPrefix}${i + 1}`;
+          const buttonData = {
+            name: buttonName,
+            command: generateCommand(buttonName),
+            level: bulkLevel,
+            actions: [{
+              type: 'label',
+              value: { label_id: bulkLabelId }
+            }]
+          };
+
+          try {
+            await axios.post(`${API}/menu-buttons`, buttonData);
+            successCount++;
+          } catch (error) {
+            console.error(`Failed to create button ${buttonName}:`, error);
+            failCount++;
+          }
+        }
+
+        if (failCount > 0) {
+          alert(`Создано кнопок: ${successCount}\nОшибок: ${failCount}`);
+        } else {
+          alert(`Успешно создано ${successCount} кнопок!`);
+        }
+
+        // Reset form
+        setBulkPrefix('');
+        setBulkLevel(1);
+        setBulkUrls('');
+        setBulkLabelId('');
+        setShowBulkCreateForm(false);
+        onBack();
+      } catch (error) {
+        console.error('Bulk create error:', error);
+        alert('Ошибка при массовом создании кнопок');
+      }
     }
   };
 
