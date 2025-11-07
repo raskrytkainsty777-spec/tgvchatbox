@@ -792,12 +792,18 @@ function AssignMenuView({ bots, menus, assignments, onBack }) {
 // Manage Buttons View (with create functionality)
 function ManageButtonsView({ labels, buttons, onBack }) {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showBulkCreateForm, setShowBulkCreateForm] = useState(false);
   const [editingButton, setEditingButton] = useState(null);
   const [name, setName] = useState('');
   const [command, setCommand] = useState('');
   const [level, setLevel] = useState(1);
   const [actions, setActions] = useState([]);
   const [showActionMenu, setShowActionMenu] = useState(false);
+  
+  // Bulk create states
+  const [bulkPrefix, setBulkPrefix] = useState('');
+  const [bulkLevel, setBulkLevel] = useState(1);
+  const [bulkUrls, setBulkUrls] = useState('');
 
   const handleAddAction = (type) => {
     const newAction = { type, value: null };
