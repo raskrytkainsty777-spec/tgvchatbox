@@ -191,6 +191,14 @@
   margin-bottom: 4px;
 }
 
+.chat-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+}
+
 .chat-name {
   font-size: 15px;
   font-weight: 500;
@@ -198,13 +206,15 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 }
 
 .chat-time {
   font-size: 12px;
   color: #8d969e;
   flex-shrink: 0;
-  margin-left: 8px;
+  margin-left: auto;
 }
 
 .chat-preview {
