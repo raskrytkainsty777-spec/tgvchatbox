@@ -10,7 +10,7 @@ import sys
 from datetime import datetime, timezone, timedelta
 
 # Get backend URL from frontend env
-BACKEND_URL = "https://telegram-panel-2.preview.emergentagent.com/api"
+BACKEND_URL = "https://telegram-bot-admin.preview.emergentagent.com/api"
 
 class TelegramChatPanelTester:
     def __init__(self):
