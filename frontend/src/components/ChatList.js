@@ -629,9 +629,6 @@ function ChatList({
                         </div>
                         <div className="chat-time">{formatTime(chat.last_message_date)}</div>
                       </div>
-                      {chat.username && (
-                        <div className="chat-username">@{chat.username}</div>
-                      )}
                       <div className="chat-last-message">
                         {(chat.last_message_text || 'Нет сообщений').length > 20
                           ? (chat.last_message_text || 'Нет сообщений').substring(0, 20) + '...'
