@@ -166,7 +166,10 @@ function ChatList({
   };
 
   const formatTime = (dateString) => {
+    if (!dateString) return '';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+    
     const now = new Date();
     const diff = now - date;
     const hours = Math.floor(diff / 3600000);
