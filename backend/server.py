@@ -539,6 +539,8 @@ async def create_menu_button(button_data: MenuButtonCreate):
     button_doc = {
         "id": str(uuid.uuid4()),
         "name": button_data.name,
+        "command": button_data.command,
+        "level": button_data.level,
         "actions": [action.dict() for action in button_data.actions],
         "created_at": datetime.now(timezone.utc)
     }
