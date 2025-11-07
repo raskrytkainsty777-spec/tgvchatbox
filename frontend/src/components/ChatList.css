@@ -919,3 +919,23 @@
   }
 }
 
+
+
+
+/* Pull to Refresh Styles */
+.ptr {
+  width: 100%;
+}
+
+.ptr__children {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ptr__pull-down,
+.ptr__release {
+  text-align: center;
+  padding: 10px;
+  color: #8d969e;
+  font-size: 14px;
+}
