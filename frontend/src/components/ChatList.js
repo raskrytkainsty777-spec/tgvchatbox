@@ -603,14 +603,29 @@ function ChatList({
                         onChange={() => handleSelectChat(chat.id)}
                       />
                     </div>
-                    <div className="chat-avatar">
-                      {(chat.first_name || chat.username || 'U').charAt(0).toUpperCase()}
+                    <div 
+                      className={`chat-avatar ${chat.sale_amount ? 'has-sale' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleStarClick(chat, e);
+                      }}
+                      style={{ cursor: 'pointer' }}
+                      title={chat.sale_amount ? `Продажа: ${chat.sale_amount}` : 'Добавить продажу'}
+                    >
+                      {chat.sale_amount ? (
+                        <FiDollarSign className="dollar-icon" />
+                      ) : (
+                        (chat.first_name || chat.username || 'U').charAt(0).toUpperCase()
+                      )}
                       <span className={`bot-status-indicator ${chat.bot_status === 'active' ? 'online' : 'offline'}`}></span>
                     </div>
                     <div className="chat-info">
                       <div className="chat-header-row">
                         <div className="chat-name">
-                          {chat.first_name || chat.username || 'User'}
+                          {(chat.first_name || chat.username || 'User').length > 20 
+                            ? (chat.first_name || chat.username || 'User').substring(0, 20) + '...'
+                            : (chat.first_name || chat.username || 'User')
+                          }
                         </div>
                         <div className="chat-time">{formatTime(chat.last_message_date)}</div>
                       </div>
@@ -618,7 +633,10 @@ function ChatList({
                         <div className="chat-username">@{chat.username}</div>
                       )}
                       <div className="chat-last-message">
-                        {chat.last_message_text || 'Нет сообщений'}
+                        {(chat.last_message_text || 'Нет сообщений').length > 20
+                          ? (chat.last_message_text || 'Нет сообщений').substring(0, 20) + '...'
+                          : (chat.last_message_text || 'Нет сообщений')
+                        }
                       </div>
                       {chatLabels.length > 0 && (
                         <div className="chat-labels-dots">
@@ -634,18 +652,9 @@ function ChatList({
                       )}
                     </div>
                     <div className="chat-end">
-                      <div className="star-container">
-                        <button
-                          className="star-icon"
-                          onClick={(e) => handleStarClick(chat, e)}
-                          title={chat.sale_amount ? `Продажа: ${chat.sale_amount}` : 'Добавить продажу'}
-                        >
-                          <FiDollarSign className={chat.sale_amount ? 'filled' : 'outline'} />
-                        </button>
-                        {chat.sale_amount && (
-                          <div className="sale-amount">{chat.sale_amount}</div>
-                        )}
-                      </div>
+                      {chat.sale_amount && (
+                        <div className="sale-amount-badge">{chat.sale_amount}</div>
+                      )}
                       {chat.unread_count > 0 && (
                         <div className="unread-badge">{chat.unread_count}</div>
                       )}
