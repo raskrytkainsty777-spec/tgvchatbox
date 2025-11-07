@@ -438,33 +438,42 @@ function ChatList({
 
       {/* Chats List */}
       <div className="chats-container">
-        {chats.length > 0 && (
-          <div className="select-all-bar">
-            <button
-              className="select-all-btn"
-              onClick={handleSelectAll}
-              data-testid="select-all-button"
-            >
-              {selectedChats.length === chats.length ? (
-                <FiCheckSquare className="checkbox checked" />
-              ) : (
-                <FiSquare className="checkbox" />
+        {isMobile ? (
+          <PullToRefresh
+            onRefresh={async () => {
+              await onChatsUpdate();
+            }}
+            pullingContent=""
+            refreshingContent={<div style={{ textAlign: 'center', padding: '10px', color: '#8d969e' }}>Обновление...</div>}
+          >
+            <div>
+              {chats.length > 0 && (
+                <div className="select-all-bar">
+                  <button
+                    className="select-all-btn"
+                    onClick={handleSelectAll}
+                    data-testid="select-all-button"
+                  >
+                    {selectedChats.length === chats.length ? (
+                      <FiCheckSquare className="checkbox checked" />
+                    ) : (
+                      <FiSquare className="checkbox" />
+                    )}
+                    <span>Выбрать все</span>
+                  </button>
+                </div>
               )}
-              <span>Выбрать все</span>
-            </button>
-          </div>
-        )}
 
-        {chats.length === 0 ? (
-          <div className="empty-chats">
-            <p>
-              {selectedBots.length === 0 
-                ? 'Выберите хотя бы одного бота' 
-                : 'Нет чатов'}
-            </p>
-          </div>
-        ) : (
-          chats.map(chat => {
+              {chats.length === 0 ? (
+                <div className="empty-chats">
+                  <p>
+                    {selectedBots.length === 0 
+                      ? 'Выберите хотя бы одного бота' 
+                      : 'Нет чатов'}
+                  </p>
+                </div>
+              ) : (
+                chats.map(chat => {
             const chatLabels = getChatLabels(chat);
             return (
               <div
