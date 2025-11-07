@@ -223,9 +223,14 @@ function ChatView({ chat, onMessageSent, onBack, isMobile }) {
   if (!chat) return null;
 
   return (
-    <div className="chat-view" data-testid="chat-view">
+    <div className={`chat-view ${isMobile ? 'mobile' : ''}`} data-testid="chat-view">
       {/* Chat Header */}
       <div className="chat-header-bar">
+        {isMobile && onBack && (
+          <button className="back-button" onClick={onBack}>
+            <FiArrowLeft size={24} />
+          </button>
+        )}
         <div className="chat-header-info">
           <div className="chat-header-avatar">
             {(chat.first_name || chat.username || 'U').charAt(0).toUpperCase()}
