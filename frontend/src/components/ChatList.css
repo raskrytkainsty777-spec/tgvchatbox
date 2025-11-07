@@ -222,6 +222,21 @@
   flex: 1;
 }
 
+.chat-last-message {
+  font-size: 13px;
+  color: #8d969e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.chat-username {
+  font-size: 12px;
+  color: #6b7480;
+  margin-top: 2px;
+}
+
 .chat-end {
   display: flex;
   flex-direction: column;
