@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import EmojiPicker from 'emoji-picker-react';
 import { FiSend, FiPaperclip, FiSmile, FiArrowLeft } from 'react-icons/fi';
+import { useSwipeable } from 'react-swipeable';
 import './ChatView.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
