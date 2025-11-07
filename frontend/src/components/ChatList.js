@@ -18,7 +18,8 @@ function ChatList({
   onToggleBotFilter,
   onChatsUpdate,
   onFilterChange,
-  userRole 
+  userRole,
+  isMobile
 }) {
   const isAdmin = userRole === 'admin';
   const [selectedChats, setSelectedChats] = useState([]);
