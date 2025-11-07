@@ -1156,28 +1156,73 @@ function ManageButtonsView({ labels, buttons, onBack }) {
           </div>
 
           <div className="form-group">
-            <label>Список ссылок (каждая с новой строки):</label>
-            <textarea
-              value={bulkUrls}
-              onChange={(e) => setBulkUrls(e.target.value)}
-              placeholder="https://example.com/page1&#10;https://example.com/page2&#10;https://example.com/page3"
-              rows={8}
-              style={{
-                width: '100%',
-                padding: '10px',
-                fontFamily: 'monospace',
-                fontSize: '13px',
-                resize: 'vertical',
-                background: '#17212b',
-                border: '1px solid #242f3d',
-                borderRadius: '4px',
-                color: '#fff'
-              }}
-            />
-            <div style={{ fontSize: '12px', color: '#8d969e', marginTop: '5px' }}>
-              💡 Введите по одной ссылке на строку. Будет создано {bulkUrls.split('\n').filter(url => url.trim()).length} кнопок
+            <label>Тип действия:</label>
+            <div style={{ display: 'flex', gap: '15px', marginTop: '8px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                <input
+                  type="radio"
+                  value="url"
+                  checked={bulkActionType === 'url'}
+                  onChange={(e) => setBulkActionType(e.target.value)}
+                />
+                <span>Открыть URL</span>
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                <input
+                  type="radio"
+                  value="label"
+                  checked={bulkActionType === 'label'}
+                  onChange={(e) => setBulkActionType(e.target.value)}
+                />
+                <span>Пометить меткой</span>
+              </label>
             </div>
           </div>
+
+          {bulkActionType === 'url' ? (
+            <div className="form-group">
+              <label>Список ссылок (каждая с новой строки):</label>
+              <textarea
+                value={bulkUrls}
+                onChange={(e) => setBulkUrls(e.target.value)}
+                placeholder="https://example.com/page1&#10;https://example.com/page2&#10;https://example.com/page3"
+                rows={8}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  fontFamily: 'monospace',
+                  fontSize: '13px',
+                  resize: 'vertical',
+                  background: '#17212b',
+                  border: '1px solid #242f3d',
+                  borderRadius: '4px',
+                  color: '#fff'
+                }}
+              />
+              <div style={{ fontSize: '12px', color: '#8d969e', marginTop: '5px' }}>
+                💡 Введите по одной ссылке на строку. Будет создано {bulkUrls.split('\n').filter(url => url.trim()).length} кнопок
+              </div>
+            </div>
+          ) : (
+            <div className="form-group">
+              <label>Выберите метку:</label>
+              <select
+                value={bulkLabelId}
+                onChange={(e) => setBulkLabelId(e.target.value)}
+                className="action-select"
+              >
+                <option value="">-- Выберите метку --</option>
+                {labels.map(label => (
+                  <option key={label.id} value={label.id}>
+                    {label.name}
+                  </option>
+                ))}
+              </select>
+              <div style={{ fontSize: '12px', color: '#8d969e', marginTop: '5px' }}>
+                💡 Будет создано N кнопок с одной меткой. Количество кнопок укажите на следующем шаге.
+              </div>
+            </div>
+          )}
 
           <div className="form-actions">
             <button 
@@ -1193,6 +1238,8 @@ function ManageButtonsView({ labels, buttons, onBack }) {
                 setBulkPrefix('');
                 setBulkLevel(1);
                 setBulkUrls('');
+                setBulkLabelId('');
+                setBulkActionType('url');
               }}
             >
               Отмена
