@@ -821,6 +821,29 @@ function ManageButtonsView({ labels, buttons, onBack }) {
       return;
     }
 
+    // Auto-generate command from name if not provided
+    const generateCommand = (name) => {
+      return name
+        .toLowerCase()
+        .replace(/[^a-z0-9а-яё\s]/gi, '') // Remove special chars
+        .replace(/[а-яё]/g, (char) => {
+          // Transliterate Russian to Latin
+          const map = {
+            'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
+            'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+            'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+            'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+            'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+          };
+          return map[char] || char;
+        })
+        .trim()
+        .replace(/\s+/g, '_') // Replace spaces with underscores
+        .substring(0, 32); // Limit to 32 chars
+    };
+
+    const autoCommand = generateCommand(name);
+
     // Format actions for API
     const formattedActions = actions.map(action => {
       let formattedValue = action.value;
@@ -844,7 +867,7 @@ function ManageButtonsView({ labels, buttons, onBack }) {
     try {
       const buttonData = { 
         name, 
-        command: command.trim() || null, // Send command if not empty
+        command: autoCommand,
         level: level,
         actions: formattedActions 
       };
