@@ -900,6 +900,81 @@ function ManageButtonsView({ labels, buttons, onBack }) {
     }
   };
 
+  const handleBulkCreate = async () => {
+    if (!bulkPrefix.trim()) {
+      alert('Введите начало названия кнопки');
+      return;
+    }
+
+    const urls = bulkUrls.split('\n').map(url => url.trim()).filter(url => url.length > 0);
+    
+    if (urls.length === 0) {
+      alert('Введите хотя бы одну ссылку');
+      return;
+    }
+
+    try {
+      let successCount = 0;
+      let failCount = 0;
+
+      for (let i = 0; i < urls.length; i++) {
+        const buttonName = `${bulkPrefix}${i + 1}`;
+        const buttonData = {
+          name: buttonName,
+          command: generateCommand(buttonName),
+          level: bulkLevel,
+          actions: [{
+            type: 'url',
+            value: { url: urls[i] }
+          }]
+        };
+
+        try {
+          await axios.post(`${API}/menu-buttons`, buttonData);
+          successCount++;
+        } catch (error) {
+          console.error(`Failed to create button ${buttonName}:`, error);
+          failCount++;
+        }
+      }
+
+      if (failCount > 0) {
+        alert(`Создано кнопок: ${successCount}\nОшибок: ${failCount}`);
+      } else {
+        alert(`Успешно создано ${successCount} кнопок!`);
+      }
+
+      // Reset form
+      setBulkPrefix('');
+      setBulkLevel(1);
+      setBulkUrls('');
+      setShowBulkCreateForm(false);
+      onBack();
+    } catch (error) {
+      console.error('Bulk create error:', error);
+      alert('Ошибка при массовом создании кнопок');
+    }
+  };
+
+  const generateCommand = (name) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9а-яё\s]/gi, '')
+      .replace(/[а-яё]/g, (char) => {
+        const map = {
+          'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
+          'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+          'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+          'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+          'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+        };
+        return map[char] || char;
+      })
+      .trim()
+      .replace(/\s+/g, '_')
+      .substring(0, 32);
+  };
+
   const handleEdit = (button) => {
     setEditingButton(button);
     setName(button.name);
