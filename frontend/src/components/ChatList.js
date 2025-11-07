@@ -652,9 +652,6 @@ function ChatList({
                       )}
                     </div>
                     <div className="chat-end">
-                      {chat.sale_amount && (
-                        <div className="sale-amount-badge">{chat.sale_amount}</div>
-                      )}
                       {chat.unread_count > 0 && (
                         <div className="unread-badge">{chat.unread_count}</div>
                       )}
