@@ -266,3 +266,109 @@
   font-style: italic;
 }
 
+
+/* ==================== MOBILE STYLES ==================== */
+@media (max-width: 768px) {
+  .broadcast-modal {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+  }
+
+  .broadcast-header {
+    padding: 14px 12px;
+  }
+
+  .broadcast-title {
+    font-size: 18px;
+  }
+
+  .broadcast-content {
+    padding: 16px 12px;
+  }
+
+  .form-section {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    font-size: 13px;
+  }
+
+  .form-input,
+  .form-textarea,
+  .form-select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    min-height: 48px;
+  }
+
+  .form-textarea {
+    min-height: 120px;
+  }
+
+  /* Buttons */
+  .btn-primary,
+  .btn-secondary {
+    min-height: 48px;
+    font-size: 15px;
+  }
+
+  /* Bot selection */
+  .bot-selector {
+    gap: 8px;
+  }
+
+  .bot-chip {
+    padding: 10px 14px;
+    font-size: 13px;
+    min-height: 40px;
+  }
+
+  /* Label filters */
+  .label-filters {
+    gap: 10px;
+  }
+
+  .label-filter-section {
+    padding: 14px;
+  }
+
+  .label-filter-title {
+    font-size: 14px;
+  }
+
+  .label-chip {
+    padding: 8px 12px;
+    font-size: 13px;
+    min-height: 36px;
+  }
+
+  /* Recipients info */
+  .recipients-info {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  /* File upload */
+  .file-upload-button {
+    min-height: 48px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .broadcast-header {
+    padding: 12px 10px;
+  }
+
+  .broadcast-content {
+    padding: 14px 10px;
+  }
+
+  .form-section {
+    margin-bottom: 16px;
+  }
+}
+
