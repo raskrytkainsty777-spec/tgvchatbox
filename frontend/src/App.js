@@ -248,12 +248,17 @@ function App() {
 
   const isAdmin = user && user.role === 'admin';
 
+  // Determine which content to show on mobile
+  const showMobileChat = isMobile && selectedChat;
+  const showMobileChatList = isMobile && !selectedChat && mobileTab === 'chats';
+  const showMobileStatistics = isMobile && mobileTab === 'statistics';
+
   return (
     <div className="telegram-app" data-testid="telegram-app">
       {/* Header */}
       <div className="app-header">
         <div className="header-left">
-          {isAdmin && (
+          {!isMobile && isAdmin && (
             <button 
               className="btn-icon user-icon"
               onClick={() => setShowUsersModal(true)}
@@ -265,27 +270,31 @@ function App() {
           <h1 className="app-title">Telegram Chat Panel</h1>
         </div>
         <div className="header-actions">
-          {stats && (
+          {!isMobile && stats && (
             <div className="stats-bar" data-testid="stats-bar">
               <span>Боты: {stats.active_bots}/{stats.total_bots}</span>
               <span>Чаты: {stats.total_chats}</span>
               <span className="unread-badge">Непрочитанные: {stats.total_unread}</span>
             </div>
           )}
-          <button 
-            className="btn-primary btn-statistics"
-            onClick={() => setShowStatistics(true)}
-            title="Статистика продаж"
-          >
-            <FiBarChart2 size={16} /> Статистика
-          </button>
-          <button 
-            className="btn-primary btn-broadcast"
-            onClick={() => setShowBroadcastModal(true)}
-            data-testid="broadcast-button"
-          >
-            <FiSend size={16} /> Массовая отправка
-          </button>
+          {!isMobile && (
+            <>
+              <button 
+                className="btn-primary btn-statistics"
+                onClick={() => setShowStatistics(true)}
+                title="Статистика продаж"
+              >
+                <FiBarChart2 size={16} /> Статистика
+              </button>
+              <button 
+                className="btn-primary btn-broadcast"
+                onClick={() => setShowBroadcastModal(true)}
+                data-testid="broadcast-button"
+              >
+                <FiSend size={16} /> Массовая отправка
+              </button>
+            </>
+          )}
           <button 
             className="btn-icon"
             onClick={() => setShowBotManager(!showBotManager)}
@@ -310,7 +319,10 @@ function App() {
       {showUsersModal && isAdmin && (
         <UsersModal 
           bots={bots}
-          onClose={() => setShowUsersModal(false)}
+          onClose={() => {
+            setShowUsersModal(false);
+            if (isMobile) setMobileTab('chats');
+          }}
         />
       )}
 
@@ -318,53 +330,113 @@ function App() {
       {showBroadcastModal && (
         <BroadcastModal
           bots={bots}
-          onClose={() => setShowBroadcastModal(false)}
+          onClose={() => {
+            setShowBroadcastModal(false);
+            if (isMobile) setMobileTab('chats');
+          }}
           onSuccess={loadChats}
         />
       )}
 
       {/* Main Content */}
-      <div className="app-content">
-        {showStatistics ? (
-          <StatisticsPage onBack={() => setShowStatistics(false)} />
-        ) : (
+      <div className={`app-content ${isMobile ? 'mobile' : ''}`}>
+        {isMobile ? (
+          // Mobile Layout
           <>
-            {/* Sidebar */}
-            <div className="sidebar">
-              <ChatList 
-                chats={chats}
-                bots={bots}
-                selectedBots={selectedBots}
-                selectedChat={selectedChat}
-                searchQuery={searchQuery}
-                onChatSelect={handleChatSelect}
-                onSearchChange={setSearchQuery}
-                onToggleBotFilter={handleToggleBotFilter}
-                onChatsUpdate={loadChats}
-                onFilterChange={handleFilterChange}
-                userRole={user?.role}
-              />
-            </div>
-
-            {/* Chat View */}
-            <div className="chat-area">
-              {selectedChat ? (
+            {showMobileChat && (
+              <div className="mobile-chat-view">
                 <ChatView 
                   chat={selectedChat}
                   onMessageSent={loadChats}
+                  onBack={() => setSelectedChat(null)}
+                  isMobile={true}
                 />
-              ) : (
-                <div className="no-chat-selected" data-testid="no-chat-selected">
-                  <div className="placeholder">
-                    <h2>Выберите чат</h2>
-                    <p>Выберите чат из списка слева, чтобы начать общение</p>
-                  </div>
+              </div>
+            )}
+            
+            {showMobileChatList && (
+              <div className="mobile-chat-list">
+                <ChatList 
+                  chats={chats}
+                  bots={bots}
+                  selectedBots={selectedBots}
+                  selectedChat={selectedChat}
+                  searchQuery={searchQuery}
+                  onChatSelect={handleChatSelectMobile}
+                  onSearchChange={setSearchQuery}
+                  onToggleBotFilter={handleToggleBotFilter}
+                  onChatsUpdate={loadChats}
+                  onFilterChange={handleFilterChange}
+                  userRole={user?.role}
+                  isMobile={true}
+                />
+              </div>
+            )}
+            
+            {showMobileStatistics && (
+              <StatisticsPage 
+                onBack={() => {
+                  setShowStatistics(false);
+                  setMobileTab('chats');
+                }}
+                isMobile={true}
+              />
+            )}
+          </>
+        ) : (
+          // Desktop Layout
+          <>
+            {showStatistics ? (
+              <StatisticsPage onBack={() => setShowStatistics(false)} />
+            ) : (
+              <>
+                {/* Sidebar */}
+                <div className="sidebar">
+                  <ChatList 
+                    chats={chats}
+                    bots={bots}
+                    selectedBots={selectedBots}
+                    selectedChat={selectedChat}
+                    searchQuery={searchQuery}
+                    onChatSelect={handleChatSelect}
+                    onSearchChange={setSearchQuery}
+                    onToggleBotFilter={handleToggleBotFilter}
+                    onChatsUpdate={loadChats}
+                    onFilterChange={handleFilterChange}
+                    userRole={user?.role}
+                  />
                 </div>
-              )}
-            </div>
+
+                {/* Chat View */}
+                <div className="chat-area">
+                  {selectedChat ? (
+                    <ChatView 
+                      chat={selectedChat}
+                      onMessageSent={loadChats}
+                    />
+                  ) : (
+                    <div className="no-chat-selected" data-testid="no-chat-selected">
+                      <div className="placeholder">
+                        <h2>Выберите чат</h2>
+                        <p>Выберите чат из списка слева, чтобы начать общение</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </>
         )}
       </div>
+
+      {/* Bottom Navigation - Mobile Only */}
+      {isMobile && (
+        <BottomNavigation 
+          activeTab={mobileTab}
+          onTabChange={handleMobileTabChange}
+          isAdmin={isAdmin}
+        />
+      )}
     </div>
   );
 }
