@@ -10,6 +10,28 @@
   gap: 5px;
   border-bottom: 1px solid #242f3d;
   margin-bottom: 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #2a3f5f #0e1621;
+  -webkit-overflow-scrolling: touch;
+}
+
+.settings-tabs::-webkit-scrollbar {
+  height: 6px;
+}
+
+.settings-tabs::-webkit-scrollbar-track {
+  background: #0e1621;
+}
+
+.settings-tabs::-webkit-scrollbar-thumb {
+  background: #2a3f5f;
+  border-radius: 3px;
+}
+
+.settings-tabs::-webkit-scrollbar-thumb:hover {
+  background: #3a5070;
 }
 
 .tab {
