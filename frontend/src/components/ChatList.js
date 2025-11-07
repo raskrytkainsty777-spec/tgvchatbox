@@ -620,6 +620,18 @@ function ChatList({
                       <div className="chat-last-message">
                         {chat.last_message_text || 'Нет сообщений'}
                       </div>
+                      {chatLabels.length > 0 && (
+                        <div className="chat-labels-dots">
+                          {chatLabels.map(label => (
+                            <span
+                              key={label.id}
+                              className="label-dot"
+                              style={{ backgroundColor: label.color }}
+                              title={label.name}
+                            />
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <div className="chat-end">
                       <div className="star-container">
@@ -638,18 +650,6 @@ function ChatList({
                         <div className="unread-badge">{chat.unread_count}</div>
                       )}
                     </div>
-                    {chatLabels.length > 0 && (
-                      <div className="chat-labels-dots">
-                        {chatLabels.map(label => (
-                          <span
-                            key={label.id}
-                            className="label-dot"
-                            style={{ backgroundColor: label.color }}
-                            title={label.name}
-                          />
-                        ))}
-                      </div>
-                    )}
                   </div>
                 );
               })
