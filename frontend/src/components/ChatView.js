@@ -223,8 +223,23 @@ function ChatView({ chat, onMessageSent, onBack, isMobile }) {
 
   if (!chat) return null;
 
+  // Swipe handlers for mobile
+  const swipeHandlers = useSwipeable({
+    onSwipedRight: () => {
+      if (isMobile && onBack) {
+        onBack();
+      }
+    },
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: false
+  });
+
   return (
-    <div className={`chat-view ${isMobile ? 'mobile' : ''}`} data-testid="chat-view">
+    <div 
+      className={`chat-view ${isMobile ? 'mobile' : ''}`} 
+      data-testid="chat-view"
+      {...(isMobile ? swipeHandlers : {})}
+    >
       {/* Chat Header */}
       <div className="chat-header-bar">
         {isMobile && onBack && (
