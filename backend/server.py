@@ -1127,12 +1127,10 @@ async def delete_user(user_id: str):
 @api_router.post("/auth/login", response_model=UserResponse)
 async def login(login_data: LoginRequest):
     """Login with username and password"""
-    logger.info(f"Login attempt: username={login_data.username}")
     user = await db.users.find_one({
         "username": login_data.username,
         "password": login_data.password
     })
-    logger.info(f"User found: {user is not None}")
     
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
