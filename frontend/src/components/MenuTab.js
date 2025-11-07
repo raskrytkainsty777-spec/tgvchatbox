@@ -923,6 +923,35 @@ function ManageButtonsView({ labels, buttons, onBack }) {
     setActions([]);
   };
 
+  const handleCopy = (button) => {
+    // Set button data without setting editingButton (so it creates new instead of updating)
+    setEditingButton(null);
+    setName(`${button.name} (копия)`);
+    setCommand(button.command || '');
+    setLevel(button.level || 1);
+    
+    // Parse actions back to editable format
+    const parsedActions = button.actions.map(action => {
+      let value = action.value;
+      
+      if (action.type === 'text' && action.value?.text) {
+        value = action.value.text;
+      } else if (action.type === 'url' && action.value?.url) {
+        value = action.value.url;
+      } else if (action.type === 'label' && action.value?.label_id) {
+        value = action.value.label_id;
+      }
+      
+      return {
+        type: action.type,
+        value: value
+      };
+    });
+    
+    setActions(parsedActions);
+    setShowCreateForm(true);
+  };
+
   return (
     <div className="manage-buttons-view">
       <div className="view-header">
