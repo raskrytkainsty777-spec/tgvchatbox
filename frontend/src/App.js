@@ -204,6 +204,39 @@ function App() {
     });
   };
 
+  const handleMobileTabChange = (tabId) => {
+    setMobileTab(tabId);
+    
+    // Close chat view when switching tabs on mobile
+    if (tabId !== 'chats') {
+      setSelectedChat(null);
+    }
+    
+    // Handle tab-specific actions
+    switch (tabId) {
+      case 'statistics':
+        setShowStatistics(true);
+        break;
+      case 'users':
+        if (isAdmin) {
+          setShowUsersModal(true);
+        }
+        break;
+      case 'broadcast':
+        setShowBroadcastModal(true);
+        break;
+      default:
+        setShowStatistics(false);
+        setShowUsersModal(false);
+        setShowBroadcastModal(false);
+    }
+  };
+
+  const handleChatSelectMobile = (chat) => {
+    handleChatSelect(chat);
+    // On mobile, chat view takes full screen
+  };
+
   // Show login page if not authenticated
   if (loading) {
     return <div className="loading-screen">Загрузка...</div>;
