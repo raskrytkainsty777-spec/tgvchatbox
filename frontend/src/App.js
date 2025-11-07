@@ -9,6 +9,7 @@ import ChatList from './components/ChatList';
 import ChatView from './components/ChatView';
 import StatisticsPage from './components/StatisticsPage';
 import UsersModal from './components/UsersModal';
+import BottomNavigation from './components/BottomNavigation';
 import { FiSettings, FiSend, FiBarChart2, FiUser } from 'react-icons/fi';
 import BroadcastModal from './components/BroadcastModal';
 
