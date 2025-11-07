@@ -557,6 +557,105 @@ function ChatList({
             );
           })
         )}
+            </div>
+          </PullToRefresh>
+        ) : (
+          <>
+            {chats.length > 0 && (
+              <div className="select-all-bar">
+                <button
+                  className="select-all-btn"
+                  onClick={handleSelectAll}
+                  data-testid="select-all-button"
+                >
+                  {selectedChats.length === chats.length ? (
+                    <FiCheckSquare className="checkbox checked" />
+                  ) : (
+                    <FiSquare className="checkbox" />
+                  )}
+                  <span>Выбрать все</span>
+                </button>
+              </div>
+            )}
+
+            {chats.length === 0 ? (
+              <div className="empty-chats">
+                <p>
+                  {selectedBots.length === 0 
+                    ? 'Выберите хотя бы одного бота' 
+                    : 'Нет чатов'}
+                </p>
+              </div>
+            ) : (
+              chats.map(chat => {
+                const chatLabels = getChatLabels(chat);
+                return (
+                  <div
+                    key={chat.id}
+                    className={`chat-item ${chat.id === selectedChat?.id ? 'selected' : ''} ${selectedChats.includes(chat.id) ? 'selected-for-action' : ''}`}
+                    onClick={() => handleChatClick(chat)}
+                    data-testid={`chat-item-${chat.id}`}
+                  >
+                    <div className="chat-checkbox" onClick={(e) => e.stopPropagation()}>
+                      <input
+                        type="checkbox"
+                        checked={selectedChats.includes(chat.id)}
+                        onChange={() => handleSelectChat(chat.id)}
+                      />
+                    </div>
+                    <div className="chat-avatar">
+                      {(chat.first_name || chat.username || 'U').charAt(0).toUpperCase()}
+                      <span className={`bot-status-indicator ${chat.bot_status === 'active' ? 'online' : 'offline'}`}></span>
+                    </div>
+                    <div className="chat-info">
+                      <div className="chat-header-row">
+                        <div className="chat-name">
+                          {chat.first_name || chat.username || 'User'}
+                        </div>
+                        <div className="chat-time">{formatTime(chat.last_message_date)}</div>
+                      </div>
+                      {chat.username && (
+                        <div className="chat-username">@{chat.username}</div>
+                      )}
+                      <div className="chat-last-message">
+                        {chat.last_message_text || 'Нет сообщений'}
+                      </div>
+                    </div>
+                    <div className="chat-end">
+                      <div className="star-container">
+                        <button
+                          className="star-icon"
+                          onClick={(e) => handleStarClick(e, chat)}
+                          title={chat.sale_amount ? `Продажа: ${chat.sale_amount}` : 'Добавить продажу'}
+                        >
+                          <FiDollarSign className={chat.sale_amount ? 'filled' : 'outline'} />
+                        </button>
+                        {chat.sale_amount && (
+                          <div className="sale-amount">{chat.sale_amount}</div>
+                        )}
+                      </div>
+                      {chat.unread_count > 0 && (
+                        <div className="unread-badge">{chat.unread_count}</div>
+                      )}
+                    </div>
+                    {chatLabels.length > 0 && (
+                      <div className="chat-labels-dots">
+                        {chatLabels.map(label => (
+                          <span
+                            key={label.id}
+                            className="label-dot"
+                            style={{ backgroundColor: label.color }}
+                            title={label.name}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </>
+        )}
       </div>
 
       {/* Broadcast Modal */}
