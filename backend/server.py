@@ -188,7 +188,9 @@ async def get_chats(
     if bot_status:
         query["bot_status"] = bot_status
     
+    logger.info(f"Chats query: {query}")
     chats = await db.chats.find(query, {"_id": 0}).sort("last_message_time", -1).to_list(1000)
+    logger.info(f"Found {len(chats)} chats")
     return [Chat(**chat) for chat in chats]
 
 @api_router.get("/chats/{chat_id}", response_model=Chat)
