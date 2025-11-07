@@ -804,6 +804,8 @@ function ManageButtonsView({ labels, buttons, onBack }) {
   const [bulkPrefix, setBulkPrefix] = useState('');
   const [bulkLevel, setBulkLevel] = useState(1);
   const [bulkUrls, setBulkUrls] = useState('');
+  const [bulkActionType, setBulkActionType] = useState('url'); // 'url' or 'label'
+  const [bulkLabelId, setBulkLabelId] = useState('');
 
   const handleAddAction = (type) => {
     const newAction = { type, value: null };
