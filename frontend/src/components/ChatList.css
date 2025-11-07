@@ -235,6 +235,19 @@
   margin-left: 8px;
 }
 
+.sale-amount-badge {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #000;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+  text-align: center;
+  flex-shrink: 0;
+  margin-bottom: 4px;
+  box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+}
+
 /* Filter Button */
 .filter-btn {
   width: 36px;
