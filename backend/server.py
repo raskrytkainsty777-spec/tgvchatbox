@@ -1135,13 +1135,18 @@ async def login(login_data: LoginRequest):
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
+    # Handle created_at - can be datetime object or ISO string
+    created_at = user["created_at"]
+    if isinstance(created_at, str):
+        created_at = datetime.fromisoformat(created_at)
+    
     return UserResponse(
         id=user["id"],
         username=user["username"],
         access_token=user["access_token"],
         bot_ids=user.get("bot_ids", []),
         role=user.get("role", "user"),
-        created_at=datetime.fromisoformat(user["created_at"])
+        created_at=created_at
     )
 
 @api_router.get("/auth/token/{token}", response_model=UserResponse)
