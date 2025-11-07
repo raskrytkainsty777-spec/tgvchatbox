@@ -625,7 +625,7 @@ function ChatList({
                       <div className="star-container">
                         <button
                           className="star-icon"
-                          onClick={(e) => handleStarClick(e, chat)}
+                          onClick={(e) => handleStarClick(chat, e)}
                           title={chat.sale_amount ? `Продажа: ${chat.sale_amount}` : 'Добавить продажу'}
                         >
                           <FiDollarSign className={chat.sale_amount ? 'filled' : 'outline'} />
