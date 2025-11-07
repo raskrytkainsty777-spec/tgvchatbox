@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiPlus, FiTrash2, FiEdit, FiX } from 'react-icons/fi';
+import { FiPlus, FiTrash2, FiEdit, FiX, FiCopy } from 'react-icons/fi';
 import './MenuTab.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
