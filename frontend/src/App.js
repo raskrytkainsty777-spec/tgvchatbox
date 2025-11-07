@@ -37,6 +37,13 @@ function App() {
     loadBots();
     loadStats();
     
+    // Detect mobile device
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
     // Initialize WebSocket connection
     const socket = io(BACKEND_URL, {
       transports: ['websocket', 'polling']
@@ -64,6 +71,7 @@ function App() {
     
     return () => {
       socket.disconnect();
+      window.removeEventListener('resize', checkMobile);
     };
   }, []);
 
