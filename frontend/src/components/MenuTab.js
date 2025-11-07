@@ -1103,6 +1103,13 @@ function ManageButtonsView({ labels, buttons, onBack }) {
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button
                   className="btn-icon-small"
+                  onClick={() => handleCopy(button)}
+                  title="Копировать кнопку"
+                >
+                  <FiCopy />
+                </button>
+                <button
+                  className="btn-icon-small"
                   onClick={() => handleEdit(button)}
                   title="Редактировать кнопку"
                 >
