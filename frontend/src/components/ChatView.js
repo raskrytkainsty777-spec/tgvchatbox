@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import EmojiPicker from 'emoji-picker-react';
-import { FiSend, FiPaperclip, FiSmile } from 'react-icons/fi';
+import { FiSend, FiPaperclip, FiSmile, FiArrowLeft } from 'react-icons/fi';
 import './ChatView.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-function ChatView({ chat, onMessageSent }) {
+function ChatView({ chat, onMessageSent, onBack, isMobile }) {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
