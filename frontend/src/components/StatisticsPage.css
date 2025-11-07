@@ -259,3 +259,106 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ==================== MOBILE STYLES ==================== */
+@media (max-width: 768px) {
+  .statistics-page {
+    padding-bottom: 60px; /* Space for bottom navigation */
+  }
+
+  .statistics-header {
+    padding: 14px 12px;
+  }
+
+  .back-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .statistics-title {
+    font-size: 18px;
+  }
+
+  .statistics-content {
+    padding: 12px;
+  }
+
+  /* Overview cards */
+  .overview-cards {
+    grid-template-columns: 1fr; /* Stack on mobile */
+    gap: 12px;
+  }
+
+  .overview-card {
+    padding: 16px;
+  }
+
+  .overview-card-label {
+    font-size: 12px;
+  }
+
+  .overview-card-value {
+    font-size: 26px;
+  }
+
+  /* Tables section */
+  .tables-section {
+    gap: 16px;
+  }
+
+  .table-container {
+    padding: 12px;
+  }
+
+  .table-title {
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  .sales-table {
+    font-size: 13px;
+  }
+
+  .sales-table th,
+  .sales-table td {
+    padding: 10px 8px;
+  }
+
+  /* Make table horizontally scrollable */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sales-table {
+    min-width: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .statistics-header {
+    padding: 12px 8px;
+  }
+
+  .statistics-title {
+    font-size: 16px;
+  }
+
+  .statistics-content {
+    padding: 10px;
+  }
+
+  .overview-card-value {
+    font-size: 24px;
+  }
+
+  .sales-table {
+    font-size: 12px;
+  }
+
+  .sales-table th,
+  .sales-table td {
+    padding: 8px 6px;
+  }
+}
+
