@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Clean up test data: delete all test menu buttons, test menus, and test timers. Fix bot menu display so menu buttons appear correctly in Telegram bot alongside timer."
+user_problem_statement: "Mobile adaptation: Create full Telegram-like mobile interface with bottom navigation (Chats, Statistics, Users, Broadcast), settings button on top, swipe gestures, pull-to-refresh, and optimized touch elements."
 
 backend:
   - task: "Menu System Models"
