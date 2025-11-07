@@ -30,6 +30,8 @@ function App() {
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
   const [showUsersModal, setShowUsersModal] = useState(false);
+  const [mobileTab, setMobileTab] = useState('chats'); // chats, statistics, users, broadcast
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     loadBots();
