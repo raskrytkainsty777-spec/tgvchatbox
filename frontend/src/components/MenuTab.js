@@ -1045,14 +1045,97 @@ function ManageButtonsView({ labels, buttons, onBack }) {
       </div>
 
       {/* Create Button Form */}
-      {!showCreateForm ? (
-        <button 
-          className="btn-primary btn-block" 
-          onClick={() => setShowCreateForm(true)}
-          style={{ marginBottom: '20px' }}
-        >
-          <FiPlus /> Добавить новую кнопку
-        </button>
+      {!showCreateForm && !showBulkCreateForm ? (
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+          <button 
+            className="btn-primary" 
+            onClick={() => setShowCreateForm(true)}
+            style={{ flex: 1 }}
+          >
+            <FiPlus /> Добавить кнопку
+          </button>
+          <button 
+            className="btn-primary" 
+            onClick={() => setShowBulkCreateForm(true)}
+            style={{ flex: 1 }}
+          >
+            <FiPlus /> Массовое добавление
+          </button>
+        </div>
+      ) : showBulkCreateForm ? (
+        <div className="create-form" style={{ marginBottom: '20px' }}>
+          <h4>Массовое добавление кнопок</h4>
+          
+          <div className="form-group">
+            <label>Начало названия (с #):</label>
+            <input
+              type="text"
+              value={bulkPrefix}
+              onChange={(e) => setBulkPrefix(e.target.value)}
+              placeholder="Например: Продажа #"
+            />
+            <div style={{ fontSize: '12px', color: '#8d969e', marginTop: '5px' }}>
+              К этому префиксу будут добавлены порядковые номера: Продажа #1, Продажа #2...
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label>Уровень меню:</label>
+            <select
+              value={bulkLevel}
+              onChange={(e) => setBulkLevel(parseInt(e.target.value))}
+              className="action-select"
+            >
+              <option value={1}>Уровень 1</option>
+              <option value={2}>Уровень 2</option>
+              <option value={3}>Уровень 3</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Список ссылок (каждая с новой строки):</label>
+            <textarea
+              value={bulkUrls}
+              onChange={(e) => setBulkUrls(e.target.value)}
+              placeholder="https://example.com/page1&#10;https://example.com/page2&#10;https://example.com/page3"
+              rows={8}
+              style={{
+                width: '100%',
+                padding: '10px',
+                fontFamily: 'monospace',
+                fontSize: '13px',
+                resize: 'vertical',
+                background: '#17212b',
+                border: '1px solid #242f3d',
+                borderRadius: '4px',
+                color: '#fff'
+              }}
+            />
+            <div style={{ fontSize: '12px', color: '#8d969e', marginTop: '5px' }}>
+              💡 Введите по одной ссылке на строку. Будет создано {bulkUrls.split('\n').filter(url => url.trim()).length} кнопок
+            </div>
+          </div>
+
+          <div className="form-actions">
+            <button 
+              className="btn-primary" 
+              onClick={handleBulkCreate}
+            >
+              Создать кнопки
+            </button>
+            <button 
+              className="btn-secondary" 
+              onClick={() => {
+                setShowBulkCreateForm(false);
+                setBulkPrefix('');
+                setBulkLevel(1);
+                setBulkUrls('');
+              }}
+            >
+              Отмена
+            </button>
+          </div>
+        </div>
       ) : (
         <div className="create-form" style={{ marginBottom: '20px' }}>
           <h4>{editingButton ? 'Редактировать кнопку' : 'Новая кнопка'}</h4>
