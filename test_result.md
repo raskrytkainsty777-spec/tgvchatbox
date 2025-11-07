@@ -776,6 +776,21 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ STATISTICS PAGE MOBILE WORKING PERFECTLY! All mobile features verified: ✅ Statistics page visible and accessible via bottom nav ✅ 3 overview cards displayed ✅ Cards stacked vertically (confirmed: card2.y > card1.y + 50px) ✅ Back button visible and functional ✅ Back button returns to chats correctly ✅ Proper spacing for bottom navigation ✅ Mobile responsive layout working as expected"
+        
+  - task: "Chat Click Handler Fix"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ChatList.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported runtime error: 'handleChatClick is not defined' when clicking on chat items. ReferenceError in ChatList.js line 596."
+      - working: true
+        agent: "main"
+        comment: "Fixed undefined function error. Changed onClick handler from handleChatClick(chat) to onChatSelect(chat) on line 596 of ChatList.js. The function was being called but never defined - should use the existing onChatSelect prop passed to the component. Tested with screenshot - chat opens successfully without errors."
 
 metadata:
   created_by: "main_agent"
