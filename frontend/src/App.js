@@ -3,7 +3,7 @@ import axios from 'axios';
 import { io } from 'socket.io-client';
 import './App.css';
 import { useAuth } from './AuthContext';
-import LoginPage from './LoginPage';
+// import LoginPage from './LoginPage'; // Not used - admin auto-login
 import SettingsModal from './components/SettingsModal';
 import ChatList from './components/ChatList';
 import ChatView from './components/ChatView';
