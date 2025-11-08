@@ -19,22 +19,57 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in from localStorage
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      // Validate token and load user
-      axios.get(`${API}/auth/token/${token}`)
-        .then(response => {
+    const initAuth = async () => {
+      // Check for token in URL (for regular users)
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlToken = urlParams.get('token');
+      
+      if (urlToken) {
+        // User with token in URL - login via token
+        try {
+          const response = await axios.get(`${API}/auth/token/${urlToken}`);
+          setUser(response.data);
+          localStorage.setItem('access_token', response.data.access_token);
+          // Remove token from URL
+          window.history.replaceState({}, document.title, window.location.pathname);
+          setLoading(false);
+          return;
+        } catch (error) {
+          console.error('Token login failed:', error);
+          // Continue to check localStorage
+        }
+      }
+      
+      // Check if user is logged in from localStorage
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        // Validate token and load user
+        try {
+          const response = await axios.get(`${API}/auth/token/${token}`);
           setUser(response.data);
           setLoading(false);
-        })
-        .catch(() => {
+          return;
+        } catch (error) {
           localStorage.removeItem('access_token');
-          setLoading(false);
+        }
+      }
+      
+      // Auto-login as admin (default behavior)
+      try {
+        const response = await axios.post(`${API}/auth/login`, { 
+          username: 'admin', 
+          password: 'admin123' 
         });
-    } else {
-      setLoading(false);
-    }
+        setUser(response.data);
+        localStorage.setItem('access_token', response.data.access_token);
+        setLoading(false);
+      } catch (error) {
+        console.error('Admin auto-login failed:', error);
+        setLoading(false);
+      }
+    };
+    
+    initAuth();
   }, []);
 
   const login = async (username, password) => {
