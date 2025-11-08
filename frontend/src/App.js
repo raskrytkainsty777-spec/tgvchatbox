@@ -237,13 +237,9 @@ function App() {
     // On mobile, chat view takes full screen
   };
 
-  // Show login page if not authenticated
-  if (loading) {
+  // Show loading screen while authenticating
+  if (loading || !user) {
     return <div className="loading-screen">Загрузка...</div>;
-  }
-
-  if (!user) {
-    return <LoginPage />;
   }
 
   const isAdmin = user && user.role === 'admin';
